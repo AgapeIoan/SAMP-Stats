@@ -1,4 +1,6 @@
 import json
+import discord
+from discord import embeds
 
 from discord.ext import commands
 from dislash import InteractionClient, ActionRow, Button, ButtonStyle, SelectMenu, SelectOption, ContextMenuInteraction, Option, OptionType
@@ -10,11 +12,23 @@ with open("config.json", "r") as f:
 
 test_guilds = [722442573137969174]
 BOT_TOKEN = config["BOT_TOKEN"]
+POZA_MASINA_SAMP = "https://i.imgur.com/KC9rlJd.png"
 
 bot = commands.Bot(command_prefix="!")
 inter_client = InteractionClient(bot, test_guilds = [722442573137969174])
 # If 'test_guilds' param isn't specified, the commands are registered globally.
 # Global registration takes up to 1 hour.
+
+def create_car_embed(car_name, nickname):
+    embed=discord.Embed(color=0x00ff00)
+
+    if car_name:
+        embed.set_thumbnail(url="https://i.imgur.com/KC9rlJd.png")
+        embed.add_field(name=car_name, value="DETALII_MASINA", inline=False)
+
+    embed.set_footer(text=f"{nickname} | ruby.nephrite.ro")
+
+    return embed
 
 @inter_client.user_command(name="Press me")
 async def press_me(inter):
@@ -51,7 +65,11 @@ async def test2(ctx):
     inter = await msg.wait_for_dropdown()
     # Send what you received
     labels = [option.label for option in inter.select_menu.selected_options]
-    await inter.reply(f"Options: {', '.join(labels)}")
+
+
+
+    await inter.reply(content=f"Options: {', '.join(labels)}")
+    await inter.send(embed=embed)
 
 
 
@@ -114,17 +132,20 @@ async def buton(ctx, nickname):
         Button(
             style=ButtonStyle.blurple,
             label="Properties",
-            custom_id="properties_button"
+            custom_id="properties_button",
+            disabled=True
         ),
         Button(
             style=ButtonStyle.blurple,
             label="Faction History",
-            custom_id="faction_button"
+            custom_id="faction_button",
+            disabled=True
         ),
         Button(
             style=ButtonStyle.blurple,
             label="Clan",
-            custom_id="clan_button"
+            custom_id="clan_button",
+            disabled=True
         )
     )
     msg = await ctx.send("panel ruby 2021 color", components=[row])
@@ -155,25 +176,26 @@ async def buton(ctx, nickname):
         # Becase otherwise the previous decorator cancels this one
 
         aux=[]
-        lista_masini = await panou.ruby.vstats(inter, nickname)
+        lista_masini = await panou.ruby.vstats_debug(inter, nickname) #TODO
         for masina in lista_masini:
             aux.append(SelectOption(masina[0], lista_masini.index(masina)))
 
         row_cars = ActionRow(
             SelectMenu(
                 custom_id="test",
-                placeholder="Masini rubi nefrit",
+                placeholder="Selecteaza o masina",
                 max_values=1,
                 options=aux
             )
     )
 
-        msg = await inter.send(content = "masinute", components=[row_cars])
+        msg = await inter.send(embed = create_car_embed(None, "nickname"), components=[row_cars])
         inter_2 = await msg.wait_for_dropdown()
         # Send what you received
         labels = [option.label for option in inter_2.select_menu.selected_options]
-        print(inter, type(inter))
-        await inter.edit(f"Options: {', '.join(labels)}", components=[row_cars])
+        print(labels)
+        
+        await inter.edit(embed=create_car_embed(f"{', '.join(labels)}", "nickname"), components=[row_cars])
 
     @on_click.timeout
     async def on_timeout():
