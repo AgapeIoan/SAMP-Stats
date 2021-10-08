@@ -167,8 +167,12 @@ async def buton(ctx, nickname):
         # This function only works if the author presses the button
         # Becase otherwise the previous decorator cancels this one
 
-        content = await panou.ruby.stats(nickname)
-        await msg.edit(content='', components=[row], embed=content)
+        empty_embed=discord.Embed(color=0x00ff00)
+
+        empty_embed.set_footer(text=f"{nickname} | ruby.nephrite.ro")
+
+        await msg.edit(content='', components=[row], embed=empty_embed)
+        await msg.edit(content='', components=[row], embed=panou.ruby.stats(nickname))
 
     @on_click.matching_id("vehicles_button")
     async def on_test_button(inter):
@@ -196,6 +200,7 @@ async def buton(ctx, nickname):
         print(labels)
         
         await inter.edit(embed=create_car_embed(f"{', '.join(labels)}", "nickname"), components=[row_cars])
+
 
     @on_click.timeout
     async def on_timeout():

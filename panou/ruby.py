@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from functii.samp import vezi_asociere
 from functii.creier import scrape_panou, get_nickname, login_panou, este_player_online
 
-async def stats(player):
+def stats(player):
 
     with requests.Session() as s:
         lista_valori_scrape = [
