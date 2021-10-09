@@ -1,5 +1,6 @@
 import json
 import discord
+import asyncio
 from discord import embeds
 
 from discord.ext import commands
@@ -18,6 +19,40 @@ bot = commands.Bot(command_prefix="!")
 inter_client = InteractionClient(bot, test_guilds = [722442573137969174])
 # If 'test_guilds' param isn't specified, the commands are registered globally.
 # Global registration takes up to 1 hour.
+
+def lista_butoane_stats(stats=False, vstats=False, bstats=False, fstats=False, cstats=False):
+    return ActionRow(
+        Button(
+            style=ButtonStyle.blurple,
+            label="Player Stats",
+            custom_id="stats_button",
+            disabled=stats
+        ),
+        Button(
+            style=ButtonStyle.blurple,
+            label="Vehicles",
+            custom_id="vehicles_button",
+            disabled=vstats
+        ),
+        Button(
+            style=ButtonStyle.blurple,
+            label="Properties",
+            custom_id="properties_button",
+            disabled=bstats
+        ),
+        Button(
+            style=ButtonStyle.blurple,
+            label="Faction History",
+            custom_id="faction_button",
+            disabled=fstats
+        ),
+        Button(
+            style=ButtonStyle.blurple,
+            label="Clan",
+            custom_id="clan_button",
+            disabled=cstats
+        )
+    )
 
 def create_car_embed(car_name, nickname):
     embed=discord.Embed(color=0x00ff00)
@@ -122,37 +157,8 @@ async def test(ctx):
 )
 async def buton(ctx, nickname):
     
-    row = ActionRow(
-        Button(
-            style=ButtonStyle.blurple,
-            label="Player Stats",
-            custom_id="stats_button"
-        ),
-        Button(
-            style=ButtonStyle.blurple,
-            label="Vehicles",
-            custom_id="vehicles_button"
-        ),
-        Button(
-            style=ButtonStyle.blurple,
-            label="Properties",
-            custom_id="properties_button",
-            disabled=True
-        ),
-        Button(
-            style=ButtonStyle.blurple,
-            label="Faction History",
-            custom_id="faction_button",
-            disabled=True
-        ),
-        Button(
-            style=ButtonStyle.blurple,
-            label="Clan",
-            custom_id="clan_button",
-            disabled=True
-        )
-    )
-    msg = await ctx.send("panel ruby 2021 color", components=[row])
+    row = lista_butoane_stats()
+    msg = await ctx.send(content="Selecteaza o optiune:", components=[row])
 
     # Here timeout=60 means that the listener will
     # finish working after 60 seconds of inactivity
@@ -168,20 +174,16 @@ async def buton(ctx, nickname):
 
     @on_click.matching_id("stats_button")
     async def on_test_button(inter):
+        print(inter)
         # This function only works if the author presses the button
         # Becase otherwise the previous decorator cancels this one
-
         # empty_embed=discord.Embed(color=0x00ff00)
         # empty_embed.set_footer(text=f"{nickname} | ruby.nephrite.ro")
-        # await msg.edit(content='', components=[row], embed=empty_embed)
+        await inter.reply(content='Procesez comanda...', components=[], embed=None, type=7)
 
-        # await inter.create_response(type=2)        
-
-        # await inter.reply(content='', components=[row], embed=panou.ruby.stats(nickname), type=5)
-
-        # mesaj = await inter.create_response(type=5)
-        await inter.reply(content="proba", type=5)
-        await inter.reply(content="proba 123", type=7)
+        await msg.edit(content=None, embed=panou.ruby.stats(nickname), components=[lista_butoane_stats(stats=True)])
+        # TODO In momentul in care aflam datele pe care vrem sa le afisam, salvam embed-ul undeva local pe aici si il folosim iar
+        # daca respectivul vrea sa revina la meniul anterior, in caz ca pleaca la alt meniu 
 
     @on_click.matching_id("vehicles_button")
     async def on_test_button(inter):
