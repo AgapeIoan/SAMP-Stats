@@ -158,42 +158,40 @@ async def test(ctx):
 async def buton(ctx, nickname):
     
     row = lista_butoane_stats()
-    msg = await ctx.send(content="Selecteaza o optiune:", components=[row])
+    msg = await ctx.send(content="**Selecteaza o optiune:**", components=[row])
 
-    # Here timeout=60 means that the listener will
-    # finish working after 60 seconds of inactivity
-    on_click = msg.create_click_listener(timeout=180)
+    on_click = msg.create_click_listener(timeout=60) # TODO Vedem ce iese si marim la nevoie
 
     @on_click.not_from_user(ctx.author, cancel_others=True, reset_timeout=False)
     async def on_wrong_user(inter):
-        # This function is called in case a button was clicked not by the author
-        # cancel_others=True prevents all on_click-functions under this function from working
-        # regardless of their checks
-        # reset_timeout=False makes the timer keep going after this function is called
         await inter.reply("You're not the author", ephemeral=True)
 
-    @on_click.matching_id("stats_button")
+    @on_click.matching_id("stats_button", reset_timeout=True)
     async def on_test_button(inter):
         print(inter)
         # This function only works if the author presses the button
         # Becase otherwise the previous decorator cancels this one
         # empty_embed=discord.Embed(color=0x00ff00)
         # empty_embed.set_footer(text=f"{nickname} | ruby.nephrite.ro")
-        await inter.reply(content='Procesez comanda...', components=[], embed=None, type=7)
+        await inter.reply(content='**Procesez comanda...**', components=[], embed=None, type=7)
 
         await msg.edit(content=None, embed=panou.ruby.stats(nickname), components=[lista_butoane_stats(stats=True)])
         # TODO In momentul in care aflam datele pe care vrem sa le afisam, salvam embed-ul undeva local pe aici si il folosim iar
         # daca respectivul vrea sa revina la meniul anterior, in caz ca pleaca la alt meniu 
 
-    @on_click.matching_id("vehicles_button")
+    @on_click.matching_id("vehicles_button", reset_timeout=True)
     async def on_test_button(inter):
-        # This function only works if the author presses the button
-        # Becase otherwise the previous decorator cancels this one
+        await inter.reply(content='**Procesez comanda...**', components=[], embed=None, type=7)
 
         aux=[]
-        lista_masini = await panou.ruby.vstats_debug(inter, nickname) #TODO
+        lista_masini = await panou.ruby.vstats_debug(inter, nickname) 
+        # TODO Lista masini sa fie splited in grupe de cate 23. Prima optiune BACK te duce inapoi, ultima optiune NEXT te duce la urmatoarea grupa.
+        # BACK-ul cand esti la prima lista te duce la meniul principal aka lista butoane panou
+        aux.append(SelectOption("🔙 Inapoi 🔙", "valoare_back"))
         for masina in lista_masini:
             aux.append(SelectOption(masina[0], lista_masini.index(masina)))
+            print(masina)
+        aux.append(SelectOption("➡️ Inainte ➡️", "valoare_next"))
 
         row_cars = ActionRow(
             SelectMenu(
@@ -203,20 +201,30 @@ async def buton(ctx, nickname):
                 options=aux
             )
     )
+        # row_cars.components[0].options[INDEX_MASINA].default = True
+        await msg.edit(content="**Selecteaza o masina:**", components=[row_cars])
 
-        msg = await inter.send(embed = create_car_embed(None, "nickname"), components=[row_cars])
-        inter_2 = await msg.wait_for_dropdown()
-        # Send what you received
-        labels = [option.label for option in inter_2.select_menu.selected_options]
-        print(labels)
-        
-        await inter.edit(embed=create_car_embed(f"{', '.join(labels)}", "nickname"), components=[row_cars])
-
+        labels = []
+        while labels != ['🔙 Inapoi 🔙']:
+            inter = await msg.wait_for_dropdown()
+            print(inter)
+            # Send what you received
+            labels = [option.label for option in inter.select_menu.selected_options]
+            print(labels[0])
+            
+            if labels != ['🔙 Inapoi 🔙']:
+                await inter.reply(content='', embed=create_car_embed(f"{', '.join(labels)}", "nickname"), components=[row_cars], type=7)
+            else:
+                await inter.reply(content="**Selecteaza o optiune:**", embed=None, components=[row], type=7)
 
     @on_click.timeout
     async def on_timeout():
-        await msg.edit(components=[])
-
+        await msg.edit(content="Mesajul a fost inactiv pentru prea mult timp, astfel butoanele au fost dezactivate.", components=[lista_butoane_stats(True, True, True, True, True)])
+        await asyncio.sleep(180)
+        try:
+            await msg.edit(content='', components=[])
+        except discord.errors.HTTPException:
+            pass
 
 bot.load_extension("cogs.mycog")
 print("LOADED ZA COG, STARTING ZA BOT")
