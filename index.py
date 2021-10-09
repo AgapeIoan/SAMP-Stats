@@ -30,6 +30,10 @@ def create_car_embed(car_name, nickname):
 
     return embed
 
+@bot.listen()
+async def on_ready():
+    print("Hatz cu buna dimineata, a pornit botu")
+
 @inter_client.user_command(name="Press me")
 async def press_me(inter):
     # User commands are visible in user context menus
@@ -167,12 +171,17 @@ async def buton(ctx, nickname):
         # This function only works if the author presses the button
         # Becase otherwise the previous decorator cancels this one
 
-        empty_embed=discord.Embed(color=0x00ff00)
+        # empty_embed=discord.Embed(color=0x00ff00)
+        # empty_embed.set_footer(text=f"{nickname} | ruby.nephrite.ro")
+        # await msg.edit(content='', components=[row], embed=empty_embed)
 
-        empty_embed.set_footer(text=f"{nickname} | ruby.nephrite.ro")
+        # await inter.create_response(type=2)        
 
-        await msg.edit(content='', components=[row], embed=empty_embed)
-        await msg.edit(content='', components=[row], embed=panou.ruby.stats(nickname))
+        # await inter.reply(content='', components=[row], embed=panou.ruby.stats(nickname), type=5)
+
+        # mesaj = await inter.create_response(type=5)
+        await inter.reply(content="proba", type=5)
+        await inter.reply(content="proba 123", type=7)
 
     @on_click.matching_id("vehicles_button")
     async def on_test_button(inter):
@@ -209,5 +218,5 @@ async def buton(ctx, nickname):
 
 bot.load_extension("cogs.mycog")
 print("LOADED ZA COG, STARTING ZA BOT")
-
+# TODO Fac ceva event on_ready() sa anunte ca so logat botu
 bot.run(BOT_TOKEN)
