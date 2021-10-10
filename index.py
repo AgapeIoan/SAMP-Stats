@@ -2,6 +2,7 @@ import json
 import discord
 import asyncio
 from discord import embeds
+from discord import player
 
 from discord.ext import commands
 from dislash import InteractionClient, ActionRow, Button, ButtonStyle, SelectMenu, SelectOption, ContextMenuInteraction, Option, OptionType
@@ -54,12 +55,33 @@ def lista_butoane_stats(stats=False, vstats=False, bstats=False, fstats=False, c
         )
     )
 
-def create_car_embed(car_name, nickname):
+def create_car_embed(car_stats, nickname):
     embed=discord.Embed(color=0x00ff00)
 
-    if car_name:
-        embed.set_thumbnail(url="https://i.imgur.com/KC9rlJd.png")
-        embed.add_field(name=car_name, value="DETALII_MASINA", inline=False)
+    formated_car_stats = ''
+
+    # 'Stretch (ID:128170)   Formerly ID: 47132 VIP text: ksn'
+    if "VIP text:" in car_stats[0]:
+        # De exemplu, din "Picador (ID:212281)  VIP text: SILV Rank 2"
+        # o sa extragem doar "VIP text: SILV Rank 2"
+        vip_text = car_stats[0][car_stats[0].find("VIP text: "):]
+        formated_car_stats+=vip_text+'\n'
+        car_stats[0] = car_stats[0].replace(vip_text, '').strip()
+
+    if "Formerly ID: " in car_stats[0]:
+        # 'Fortune (ID:166619)   Formerly ID: 50996'
+        # Nu are cum sa faca cineva prank cu Formerly ID in VIP text, ca VIP text-ul se scoate in if-ul de mai sus :creier:
+        formerly_id = car_stats[0][car_stats[0].find("Formerly ID: "):]
+        formated_car_stats+=formerly_id+'\n'
+        car_stats[0] = car_stats[0].replace(formerly_id, '').strip()
+
+    formated_car_stats+=f"{car_stats[1]}\n{car_stats[3]}\n"
+    if car_stats[2] != "No":
+        # Avem neon
+        formated_car_stats+=f"Neon: {car_stats[2]}"
+
+    embed.set_thumbnail(url="https://i.imgur.com/KC9rlJd.png")
+    embed.add_field(name=car_stats[0], value=formated_car_stats, inline=False)
 
     embed.set_footer(text=f"{nickname} | ruby.nephrite.ro")
 
@@ -82,69 +104,6 @@ async def resend(inter):
     await inter.respond(inter.message.content)
 
 
-
-@bot.command()
-async def test2(ctx):
-    msg = await ctx.send(
-        "This message has a select menu!",
-        components=[
-            SelectMenu(
-                custom_id="test",
-                placeholder="Choose up to 2 options",
-                max_values=2,
-                options=[
-                    SelectOption("Option 1", "value 1"),
-                    SelectOption("Option 2", "value 2"),
-                    SelectOption("Option 3", "value 3")
-                ]
-            )
-        ]
-    )
-    # Wait for someone to click on it
-    inter = await msg.wait_for_dropdown()
-    # Send what you received
-    labels = [option.label for option in inter.select_menu.selected_options]
-
-
-
-    await inter.reply(content=f"Options: {', '.join(labels)}")
-    await inter.send(embed=embed)
-
-
-
-
-@bot.command()
-async def test(ctx):
-    # Make a row of buttons
-    row_of_buttons = ActionRow(
-        Button(
-            style=ButtonStyle.green,
-            label="Green button",
-            custom_id="green"
-        ),
-        Button(
-            style=ButtonStyle.red,
-            label="Red button",
-            custom_id="red"
-        )
-    )
-    # Send a message with buttons
-    msg = await ctx.send(
-        "This message has buttons!",
-        components=[row_of_buttons]
-    )
-    # Wait for someone to click on them
-    def check(inter):
-        return inter.message.id == msg.id
-    inter = await ctx.wait_for_button_click(check)
-    # Send what you received
-    button_text = inter.clicked_button.label
-    await inter.reply(f"Button: {button_text}")
-    await msg.delete()
-
-
-
-
 @inter_client.slash_command(
     name="buton", # Defaults to the function name
     description="butoane",
@@ -159,6 +118,7 @@ async def buton(ctx, nickname):
     
     row = lista_butoane_stats()
     msg = await ctx.send(content="**Selecteaza o optiune:**", components=[row])
+    print(panou.ruby.get_panel_data(nickname))
 
     on_click = msg.create_click_listener(timeout=60) # TODO Vedem ce iese si marim la nevoie
 
@@ -168,11 +128,6 @@ async def buton(ctx, nickname):
 
     @on_click.matching_id("stats_button", reset_timeout=True)
     async def on_test_button(inter):
-        print(inter)
-        # This function only works if the author presses the button
-        # Becase otherwise the previous decorator cancels this one
-        # empty_embed=discord.Embed(color=0x00ff00)
-        # empty_embed.set_footer(text=f"{nickname} | ruby.nephrite.ro")
         await inter.reply(content='**Procesez comanda...**', components=[], embed=None, type=7)
 
         await msg.edit(content=None, embed=panou.ruby.stats(nickname), components=[lista_butoane_stats(stats=True)])
@@ -184,14 +139,15 @@ async def buton(ctx, nickname):
         await inter.reply(content='**Procesez comanda...**', components=[], embed=None, type=7)
 
         aux=[]
-        lista_masini = await panou.ruby.vstats_debug(inter, nickname) 
+        lista_masini = await panou.ruby.vstats_debug(inter, nickname)
         # TODO Lista masini sa fie splited in grupe de cate 23. Prima optiune BACK te duce inapoi, ultima optiune NEXT te duce la urmatoarea grupa.
         # BACK-ul cand esti la prima lista te duce la meniul principal aka lista butoane panou
-        aux.append(SelectOption("🔙 Inapoi 🔙", "valoare_back"))
+        aux.append(SelectOption("🔙 Inapoi 🔙", "back"))
         for masina in lista_masini:
-            aux.append(SelectOption(masina[0], lista_masini.index(masina)))
+            stats_masina_packed = f"{masina[0]}+{masina[1]}+{masina[2]}+{masina[3]}"
+            aux.append(SelectOption(masina[0], stats_masina_packed))
             print(masina)
-        aux.append(SelectOption("➡️ Inainte ➡️", "valoare_next"))
+        aux.append(SelectOption("➡️ Inainte ➡️", "next"))
 
         row_cars = ActionRow(
             SelectMenu(
@@ -204,23 +160,28 @@ async def buton(ctx, nickname):
         # row_cars.components[0].options[INDEX_MASINA].default = True
         await msg.edit(content="**Selecteaza o masina:**", components=[row_cars])
 
-        labels = []
-        while labels != ['🔙 Inapoi 🔙']:
+        values = [None]
+        while values[0] != "back":
             inter = await msg.wait_for_dropdown()
             print(inter)
             # Send what you received
-            labels = [option.label for option in inter.select_menu.selected_options]
-            print(labels[0])
+            # labels = [option.label for option in inter.select_menu.selected_options]
+            values = [option.value for option in inter.select_menu.selected_options]
+            print(values)
             
-            if labels != ['🔙 Inapoi 🔙']:
-                await inter.reply(content='', embed=create_car_embed(f"{', '.join(labels)}", "nickname"), components=[row_cars], type=7)
-            else:
+            if values[0] == "back":
+                # Ne intoarcem la meniul anterior cu butoane selectie stats
                 await inter.reply(content="**Selecteaza o optiune:**", embed=None, components=[row], type=7)
+            else:
+                # Trimitem frumos embed cu masina ceruta
+                # Embedul o sa fie generat pe baza dev-value a selectiei
+                await inter.reply(content='', embed=create_car_embed(values[0].split("+"), nickname), components=[row_cars], type=7)
 
     @on_click.timeout
     async def on_timeout():
         await msg.edit(content="Mesajul a fost inactiv pentru prea mult timp, astfel butoanele au fost dezactivate.", components=[lista_butoane_stats(True, True, True, True, True)])
         await asyncio.sleep(180)
+        # TODO Ar fi bine sa verificam inainte de sleep daca picam in except-ul de mai jos, astfel economisim timp si resurse yeeee
         try:
             await msg.edit(content='', components=[])
         except discord.errors.HTTPException:
