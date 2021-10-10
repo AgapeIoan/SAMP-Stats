@@ -19,11 +19,8 @@ def login_panou(s):
 
     return r
 
-def scrape_panou(s, url, datas, supa=False):
+def scrape_panou(soup, datas):
     scrapped = []
-
-    r = s.get(url, headers=headers)
-    soup = BeautifulSoup(r.content, features='html5lib')
 
     for dictionar in datas:
         dictionar = dict(dictionar)
@@ -31,32 +28,12 @@ def scrape_panou(s, url, datas, supa=False):
             datele_mele = soup.find_all(k, v)
             scrapped.append(datele_mele)
 
-    # if len(scrapped) == 1:
-    #    scrapped = scrapped[0] # Sa nu pasam din greseala lista in loc de element
-
-    if supa:
-        scrapped.append(soup)
-
     return scrapped
 
-def este_player_online(username, player):
-    ussr = username
-    while True:
-        if '<i class="fa fa-circle text-success"></i>' in ussr:
-            player_online_str = "online"
-        else:
-            player_online_str = "offline"
-        lungime_nickname_player = len(player)
-        if 'data-original-title' in ussr:
-            capat_lungime_nickname_player = -12
-            server_de_provenienta = 'jade'
-        else:
-            capat_lungime_nickname_player = -7
-            server_de_provenienta = 'ruby'
-        lungime_nickname_player = -lungime_nickname_player + capat_lungime_nickname_player
-        nickname_player = ussr[lungime_nickname_player:capat_lungime_nickname_player]
-        break
-    return nickname_player, player_online_str, server_de_provenienta
+def este_player_online(soup):
+    f3 = soup.findAll('h3', {'class': 'profile-username'})
+    return f3[0].findAll('i')[0]['class'][2] != "text-danger"
+    # Aflam daca e player online/offline | True/False
 
 def get_nickname(soup):
     f3 = soup.findAll('h3', {'class': 'profile-username'})
@@ -68,6 +45,14 @@ def get_nickname(soup):
     # nickname_ruby va fi mereu gasit, nickname jade o sa dea IndexError si trebuie obligatoriu inca o conditie
     # sau un try except si ar fi fost mai spachetti cod-ul in caz ca mergeam pe ruta asta
     # As fi putut scapa si de nickname_ruby insa deja era prea lung return-ul
+
+def get_server_provenienta(soup):
+    f3 = soup.findAll('h3', {'class': 'profile-username'})
+    provenienta = f3[0].findAll('a')
+    if provenienta: 
+        return "jade" 
+    else: 
+        return "ruby"
 
 
 def get_player_id(soup):

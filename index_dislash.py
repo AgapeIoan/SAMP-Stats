@@ -1,11 +1,10 @@
 import json
 import disnake
 import asyncio
-from disnake import embeds
-from disnake import player
+
+from disnake import ActionRow, Button, ButtonStyle, SelectMenu, SelectOption, Option, OptionType
 
 from disnake.ext import commands
-from dislash import InteractionClient, ActionRow, Button, ButtonStyle, SelectMenu, SelectOption, ContextMenuInteraction, Option, OptionType
 
 import panou.ruby
 
@@ -16,39 +15,68 @@ test_guilds = [722442573137969174]
 BOT_TOKEN = config["BOT_TOKEN"]
 POZA_MASINA_SAMP = "https://i.imgur.com/KC9rlJd.png"
 
-bot = commands.Bot(command_prefix="!")
-inter_client = InteractionClient(bot, test_guilds = [722442573137969174])
+bot = commands.Bot(command_prefix="!", test_guilds = [722442573137969174])
 # If 'test_guilds' param isn't specified, the commands are registered globally.
 # Global registration takes up to 1 hour.
 
+# Define a simple View that gives us a confirmation menu
+class Confirm(disnake.ui.View):
+    def __init__(self):
+        super().__init__()
+        self.value = None
+
+    # When the confirm button is pressed, set the inner value to `True` and
+    # stop the View from listening to more input.
+    # We also send the user an ephemeral message that we're confirming their choice.
+    @disnake.ui.button(label='Confirm', style=disnake.ButtonStyle.green)
+    async def confirm(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
+        await interaction.response.send_message('Confirming', ephemeral=True)
+        self.value = True
+        self.stop()
+
+    # This one is similar to the confirmation button except sets the inner value to `False`
+    @disnake.ui.button(label='Cancel', style=disnake.ButtonStyle.grey)
+    async def cancel(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
+        await interaction.response.send_message('Cancelling', ephemeral=True)
+        self.value = False
+        self.stop()
+
+
 def lista_butoane_stats(stats=False, vstats=False, bstats=False, fstats=False, cstats=False):
+    return disnake.ui.Button(
+            style=ButtonStyle.primary,
+            label="Player Stats",
+            custom_id="stats_button",
+            disabled=stats
+        )
+    
     return ActionRow(
-        Button(
-            style=ButtonStyle.blurple,
+        disnake.ui.Button(
+            style=ButtonStyle.primary,
             label="Player Stats",
             custom_id="stats_button",
             disabled=stats
         ),
-        Button(
-            style=ButtonStyle.blurple,
+        disnake.ui.Button(
+            style=ButtonStyle.primary,
             label="Vehicles",
             custom_id="vehicles_button",
             disabled=vstats
         ),
-        Button(
-            style=ButtonStyle.blurple,
+        disnake.ui.Button(
+            style=ButtonStyle.primary,
             label="Properties",
             custom_id="properties_button",
             disabled=bstats
         ),
-        Button(
-            style=ButtonStyle.blurple,
+        disnake.ui.Button(
+            style=ButtonStyle.primary,
             label="Faction History",
             custom_id="faction_button",
             disabled=fstats
         ),
-        Button(
-            style=ButtonStyle.blurple,
+        disnake.ui.Button(
+            style=ButtonStyle.primary,
             label="Clan",
             custom_id="clan_button",
             disabled=cstats
@@ -56,7 +84,7 @@ def lista_butoane_stats(stats=False, vstats=False, bstats=False, fstats=False, c
     )
 
 def create_car_embed(car_stats, nickname):
-    embed=discord.Embed(color=0x00ff00)
+    embed=disnake.Embed(color=0x00ff00)
 
     formated_car_stats = ''
 
@@ -87,50 +115,39 @@ def create_car_embed(car_stats, nickname):
 
     return embed
 
-@bot.listen()
-async def on_ready():
-    print("Hatz cu buna dimineata, a pornit botu")
+@bot.slash_command()
+async def ping(inter):
+    await inter.response.send_message('pong')
 
-@inter_client.user_command(name="Press me")
-async def press_me(inter):
-    # User commands are visible in user context menus
-    # They can be global or per guild, just like slash commands
-    await inter.respond("Hello there!")
-
-@inter_client.message_command(name="Resend")
-async def resend(inter):
-    # Message commands are visible in message context menus
-    # inter is instance of ContextMenuInteraction
-    await inter.respond(inter.message.content)
-
-
-@inter_client.slash_command(
+@bot.slash_command(
     name="buton", # Defaults to the function name
     description="butoane",
     guild_ids=test_guilds,
     options=[
-        Option("nickname", "Introdu nickname-ul", OptionType.STRING, required=True)
+        Option("nickname", "Introdu nickname-ul", OptionType.string, required=True)
         # By default, Option is optional
         # Pass required=True to make it a required arg
     ]
 )
-async def buton(ctx, nickname):
-    msg = await ctx.send(content="test", type=5)
-    await asyncio.sleep(3.2)
+async def buton(inter, nickname):
+    await inter.response.defer()
 
     try:
         soup = panou.ruby.get_panel_data(nickname)
     except IndexError:
         # TODO Sa isi dea seama bot-ul daca e vorba de panel picat, pagina blank, lipsa profil sau orice altceva se poate intampla
         # si sa afiseze un mesaj de eroare corespunzator
-        await ctx.send(f"Jucatorul **{nickname}** nu a fost gasit. Verifica daca ai introdus corect nickname-ul!", ephemeral=True)
+        await inter.edit_original_message(f"Jucatorul **{nickname}** nu a fost gasit. Verifica daca ai introdus corect nickname-ul!", ephemeral=True)
         return
 
-    await ctx.edit_original_message("Test")
-    # msg = await msg.edit(content="**Selecteaza o optiune:**", components=[lista_butoane_stats()], type=4)
-    on_click = msg.create_click_listener(timeout=60) # TODO Vedem ce iese si marim timeout la nevoie
+    view = Confirm()
 
-    @on_click.not_from_user(ctx.author, cancel_others=True, reset_timeout=False)
+    await inter.edit_original_message(content="**Selecteaza o optiune:**", view=view)
+    #await view.wait()
+    print(view.value)
+    return
+
+    @on_click.not_from_user(inter.author, cancel_others=True, reset_timeout=False)
     async def on_wrong_user(inter):
         await inter.reply("You're not the author", ephemeral=True)
 
@@ -192,10 +209,14 @@ async def buton(ctx, nickname):
         # TODO Ar fi bine sa verificam inainte de sleep daca picam in except-ul de mai jos, astfel economisim timp si resurse yeeee
         try:
             await msg.edit(content='', components=[])
-        except discord.errors.HTTPException:
+        except disnake.errors.HTTPException:
             pass
 
-bot.load_extension("cogs.mycog")
+
+@bot.listen()
+async def on_ready():
+    print("Hatz cu buna dimineata, a pornit botu")
+
 print("LOADED ZA COG, STARTING ZA BOT")
 # TODO Fac ceva event on_ready() sa anunte ca so logat botu
 bot.run(BOT_TOKEN)
