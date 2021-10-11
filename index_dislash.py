@@ -3,10 +3,10 @@ import disnake
 import asyncio
 
 from disnake import ActionRow, Button, ButtonStyle, SelectMenu, SelectOption, Option, OptionType
-
 from disnake.ext import commands
 
 import panou.ruby
+import clase_menus
 
 with open("config.json", "r") as f:
     config = json.load(f)
@@ -18,70 +18,6 @@ POZA_MASINA_SAMP = "https://i.imgur.com/KC9rlJd.png"
 bot = commands.Bot(command_prefix="!", test_guilds = [722442573137969174])
 # If 'test_guilds' param isn't specified, the commands are registered globally.
 # Global registration takes up to 1 hour.
-
-# Define a simple View that gives us a confirmation menu
-class Confirm(disnake.ui.View):
-    def __init__(self):
-        super().__init__()
-        self.value = None
-
-    # When the confirm button is pressed, set the inner value to `True` and
-    # stop the View from listening to more input.
-    # We also send the user an ephemeral message that we're confirming their choice.
-    @disnake.ui.button(label='Confirm', style=disnake.ButtonStyle.green)
-    async def confirm(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        await interaction.response.send_message('Confirming', ephemeral=True)
-        self.value = True
-        self.stop()
-
-    # This one is similar to the confirmation button except sets the inner value to `False`
-    @disnake.ui.button(label='Cancel', style=disnake.ButtonStyle.grey)
-    async def cancel(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        await interaction.response.send_message('Cancelling', ephemeral=True)
-        self.value = False
-        self.stop()
-
-
-def lista_butoane_stats(stats=False, vstats=False, bstats=False, fstats=False, cstats=False):
-    return disnake.ui.Button(
-            style=ButtonStyle.primary,
-            label="Player Stats",
-            custom_id="stats_button",
-            disabled=stats
-        )
-    
-    return ActionRow(
-        disnake.ui.Button(
-            style=ButtonStyle.primary,
-            label="Player Stats",
-            custom_id="stats_button",
-            disabled=stats
-        ),
-        disnake.ui.Button(
-            style=ButtonStyle.primary,
-            label="Vehicles",
-            custom_id="vehicles_button",
-            disabled=vstats
-        ),
-        disnake.ui.Button(
-            style=ButtonStyle.primary,
-            label="Properties",
-            custom_id="properties_button",
-            disabled=bstats
-        ),
-        disnake.ui.Button(
-            style=ButtonStyle.primary,
-            label="Faction History",
-            custom_id="faction_button",
-            disabled=fstats
-        ),
-        disnake.ui.Button(
-            style=ButtonStyle.primary,
-            label="Clan",
-            custom_id="clan_button",
-            disabled=cstats
-        )
-    )
 
 def create_car_embed(car_stats, nickname):
     embed=disnake.Embed(color=0x00ff00)
@@ -140,11 +76,9 @@ async def buton(inter, nickname):
         await inter.edit_original_message(f"Jucatorul **{nickname}** nu a fost gasit. Verifica daca ai introdus corect nickname-ul!", ephemeral=True)
         return
 
-    view = Confirm()
+    view = clase_menus.Main_Menu()
 
-    await inter.edit_original_message(content="**Selecteaza o optiune:**", view=view)
-    #await view.wait()
-    print(view.value)
+    await inter.edit_original_message(content="**Test:**", view=view)
     return
 
     @on_click.not_from_user(inter.author, cancel_others=True, reset_timeout=False)
