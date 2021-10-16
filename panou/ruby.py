@@ -99,18 +99,10 @@ def stats(soup):
         print("STATS DATA WAS RETURNED")
         return embed
 
-async def vstats(inter, player):
+def vstats(soup):
     with requests.Session() as s:
-        lista_valori_scrape = [
-            {'div': {'class': 'col-md-8'}},
-            {'h3': {'class': 'profile-username'}}
-        ]
-        url = f"https://rubypanel.nephrite.ro/profile/{player}"
-
-        f2, user_name_panou, soup = scrape_panou(s, url, lista_valori_scrape, True)
         f2 = soup.findAll('div', {'class': 'col-md-8'})
-
-        car_list = await extract_cars(f2)
+        car_list = extract_cars(f2)
         
         # with open("debug_cars.txt", "w+") as f:
         #     f.write(str(car_list))        
@@ -134,7 +126,7 @@ async def vstats(inter, player):
         
 
 
-async def extract_cars(f2):
+def extract_cars(f2):
     # Functie de returneaza lista cu masinile jucatorului specificat
         data = [
             [td.text for td in tr.find_all('td')]
