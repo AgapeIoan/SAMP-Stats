@@ -1,6 +1,4 @@
 import disnake
-from disnake import emoji
-from disnake.ext.commands import bot
 from functii.creier import get_nickname
 import panou.ruby
 
@@ -47,7 +45,7 @@ class Main_Menu(disnake.ui.View):
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Player Stats", custom_id="stats_button")
     async def stats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        await interaction.response.edit_message(embed=panou.ruby.stats(self.soup), view=self)
+        await interaction.response.edit_message(embed=panou.ruby.stats(self.soup), view=Main_Menu(self.soup))
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Vehicles", custom_id="vehicles_button")
     async def vstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
@@ -88,46 +86,3 @@ class Confirm(disnake.ui.View):
         await interaction.response.send_message('Cancelling', ephemeral=True)
         self.value = False
         self.stop()
-
-
-def lista_butoane_stats(stats=False, vstats=False, bstats=False, fstats=False, cstats=False):
-    return disnake.ui.Button(
-            style=ButtonStyle.primary,
-            label="Player Stats",
-            custom_id="stats_button",
-            disabled=stats
-        )
-    
-    return ActionRow(
-        disnake.ui.Button(
-            style=ButtonStyle.primary,
-            label="Player Stats",
-            custom_id="stats_button",
-            disabled=stats
-        ),
-        disnake.ui.Button(
-            style=ButtonStyle.primary,
-            label="Vehicles",
-            custom_id="vehicles_button",
-            disabled=vstats
-        ),
-        disnake.ui.Button(
-            style=ButtonStyle.primary,
-            label="Properties",
-            custom_id="properties_button",
-            disabled=bstats
-        ),
-        disnake.ui.Button(
-            style=ButtonStyle.primary,
-            label="Faction History",
-            custom_id="faction_button",
-            disabled=fstats
-        ),
-        disnake.ui.Button(
-            style=ButtonStyle.primary,
-            label="Clan",
-            custom_id="clan_button",
-            disabled=cstats
-        )
-    )
-

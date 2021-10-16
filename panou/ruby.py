@@ -53,10 +53,11 @@ def stats(soup):
 
         nickname_player = get_nickname(soup)
         player_online = "online" if este_player_online(soup) else "offline"
+        culoare_player_online = 0x00ff00 if este_player_online(soup) else 0xff0000
         server_de_provenienta = get_server_provenienta(soup)
 
         embed = discord.Embed(
-            title=nickname_player, description="Status: " + player_online, color=0x00ff00)
+            title=nickname_player, description="Status: " + player_online, color=culoare_player_online)
         if server_de_provenienta == "ruby":
             embed.set_thumbnail(url="https://i.imgur.com/mZvN9jZ.png")
         else:
