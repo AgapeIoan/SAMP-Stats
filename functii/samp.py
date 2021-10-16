@@ -1,4 +1,6 @@
 import json
+import disnake
+
 from bs4 import BeautifulSoup
 
 headers = {
@@ -97,3 +99,61 @@ def vezi_asociere(player, ctx):
         if player:
             player = str(player)
     return player
+
+def create_car_embed(car_stats, nickname):
+    embed=disnake.Embed(color=0x00ff00)
+
+    formated_car_stats = ''
+
+    # 'Stretch (ID:128170)   Formerly ID: 47132 VIP text: ksn'
+    if "VIP text:" in car_stats[0]:
+        # De exemplu, din "Picador (ID:212281)  VIP text: SILV Rank 2"
+        # o sa extragem doar "VIP text: SILV Rank 2"
+        vip_text = car_stats[0][car_stats[0].find("VIP text: "):]
+        formated_car_stats+=vip_text+'\n'
+        car_stats[0] = car_stats[0].replace(vip_text, '').strip()
+
+    if "Formerly ID: " in car_stats[0]:
+        # 'Fortune (ID:166619)   Formerly ID: 50996'
+        # Nu are cum sa faca cineva prank cu Formerly ID in VIP text, ca VIP text-ul se scoate in if-ul de mai sus :creier:
+        formerly_id = car_stats[0][car_stats[0].find("Formerly ID: "):]
+        formated_car_stats+=formerly_id+'\n'
+        car_stats[0] = car_stats[0].replace(formerly_id, '').strip()
+
+    formated_car_stats+=f"{car_stats[1]}\n{car_stats[3]}\n"
+    if car_stats[2] != "No":
+        # Avem neon
+        formated_car_stats+=f"Neon: {car_stats[2]}"
+
+    embed.set_thumbnail(url="https://i.imgur.com/KC9rlJd.png")
+    embed.add_field(name=car_stats[0], value=formated_car_stats, inline=False)
+
+    embed.set_footer(text=f"{nickname} | ruby.nephrite.ro")
+
+    return embed
+
+def format_car_data(car_data):
+    formated_car_data = ''
+
+        # 'Stretch (ID:128170)   Formerly ID: 47132 VIP text: ksn'
+    if "VIP text:" in car_data[0]:
+        # De exemplu, din "Picador (ID:212281)  VIP text: SILV Rank 2"
+        # o sa extragem doar "VIP text: SILV Rank 2"
+        vip_text = car_data[0][car_data[0].find("VIP text: "):]
+        formated_car_data+=vip_text+' | '
+        car_data[0] = car_data[0].replace(vip_text, '').strip()
+
+    if "Formerly ID: " in car_data[0]:
+        # 'Fortune (ID:166619)   Formerly ID: 50996'
+        # Nu are cum sa faca cineva prank cu Formerly ID in VIP text, ca VIP text-ul se scoate in if-ul de mai sus :creier:
+        formerly_id = car_data[0][car_data[0].find("Formerly ID: "):]
+        formated_car_data+=formerly_id+' | '
+        car_data[0] = car_data[0].replace(formerly_id, '').strip()
+
+    if car_data[2] != "No":
+        # Avem neon
+        formated_car_data+=f"Neon: {car_data[2]} | "
+
+    formated_car_data+=f"{car_data[1]} | {car_data[3]}"
+
+    return car_data[0], formated_car_data
