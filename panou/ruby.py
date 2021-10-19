@@ -79,7 +79,7 @@ def stats(soup):
             embed.add_field(name="Banned", value=de_trm_ban)
 
         # Bagam badges sa fie treaba buna
-        badges_de_trimis = ''
+        badges_de_trimis = '' # Stiu ca puteam sa join() dar lasa asa
         data_badges = badges_raw[0].findAll('i')
         for badge in data_badges:
             badges_de_trimis += str(badge.nextSibling).title() + '\n'
@@ -101,31 +101,7 @@ def stats(soup):
         return embed
 
 def vstats(soup):
-    with requests.Session() as s:
-        f2 = soup.findAll('div', {'class': 'col-md-8'})
-        car_list = extract_cars(f2)
-        
-        # with open("debug_cars.txt", "w+") as f:
-        #     f.write(str(car_list))        
-        # car_list = [['Infernus (ID:5621)  VIP text: John', '27502 kilometers', 'Blue', '1568 days', 'display location'], ['Intruder (ID:7021)', '2043 kilometers', 'No', '1556 days', 'display location'], ['Sandking (ID:9803)', '8997 kilometers', 'No', '1534 days', 'display location'], ['Comet (ID:14739)', '435 kilometers', 'No', '1507 days', 'display location'], ['NRG-500 (ID:19621)', '24400 kilometers', 'No', '1475 days', 'display location'], ['Bike (ID:19825)', '4 kilometers', 'No', '1474 days', 'display location'], ['Sultan (ID:25697)  VIP text: LiderAdv', '8853 kilometers', 'Green', '1439 days', 'display location'], ['Alpha (ID:29007)', '24 kilometers', 'No', '1418 days', 'display location'], ['Phoenix (ID:75826)  VIP text: Agency 510', '26 kilometers', 'No', '1104 days', 'display location'], ['Romero (ID:80068)  VIP text: Alexandrescu', '143 kilometers', 'No', '1070 days', 'display location'], ['Fortune (ID:166619)   Formerly ID: 50996', '415 kilometers', 'No', '1000 days', 'display location'], ['Premier (ID:103088)  VIP text: Taxi', '161 kilometers', 'No', '963 days', 'display location'], ['Stretch (ID:108589)  VIP text: TesterAdv', '299 kilometers', 'No', '908 days', 'display location'], ['Huntley (ID:123183)', '0 kilometers', 'No', '837 days', 'display location'], ['Bloodring Banger (ID:123944)', '746 kilometers', 'No', '832 days', 'display location'], ['Roadtrain (ID:187391)', '1271 kilometers', 'No', '563 days', 'display location'], ['Picador (ID:212281)  VIP text: SILV Rank 2', '11 kilometers', 'No', '519 days', 'display location'], ['Vortex (ID:225291)', '41 kilometers', 'No', '444 days', 'display location'], ['Huntley (ID:235951)', '0 kilometers', 'No', '389 days', 'display location'], ['Huntley (ID:273219)', '0 kilometers', 'No', '211 days', 'display location'], ['Buffalo (ID:287536)', '0 kilometers', 'No', '126 days', 'display location'], ['FCR-900 (ID:290093)', '0 kilometers', 'No', '95 days', 'display location'], ['ZR-350 (ID:290577)  VIP text: NULL', '0 kilometers', 'No', '92 days', 'display location'], ['Phoenix (ID:290596)', '0 kilometers', 'No', '92 days', 'display location'], ['Infernus (ID:295078)', '0 kilometers', 'No', '67 days', 'display location']]
-        # DEBUGING
-
-        return car_list
-
-        nickname_player, player_online, server_de_provenienta = este_player_online(
-            str(user_name_panou), player)
-
-        embed = discord.Embed(
-            title=nickname_player, description="Status: " + player_online, color=0x00ff00)
-        if server_de_provenienta == "ruby":
-            embed.set_thumbnail(
-                url="https://i.imgur.com/mZvN9jZ.png")
-        else:
-            embed.set_thumbnail(
-                url="https://i.imgur.com/jnTomOg.png")
-
-        
-
+    return extract_cars(soup.findAll('div', {'class': 'col-md-8'}))
 
 def extract_cars(f2):
     # Functie de returneaza lista cu masinile jucatorului specificat
@@ -146,10 +122,11 @@ def extract_cars(f2):
                         aux_list.append(aux_2)
                 lista_de_trimis.append(aux_list)
 
-        for i in lista_de_trimis:
-            print(i)
+        # for i in lista_de_trimis:
+        #     print(i)
         return lista_de_trimis
 
+def fstats()
 
         
 async def stats_debug(player):
@@ -158,5 +135,4 @@ async def stats_debug(player):
     embed.set_thumbnail(url="https://i.imgur.com/mZvN9jZ.png")
 
 async def vstats_debug(inter, player):
-    car_list = [['Stretch (ID:128170)   Formerly ID: 47132 VIP text: ksn', '8997 kilometers', 'White', '1534 days', 'display location'], ['Comet (ID:14739)', '435 kilometers', 'No', '1507 days', 'display location'], ['NRG-500 (ID:19621)', '24400 kilometers', 'No', '1475 days', 'display location'], ['Bike (ID:19825)', '4 kilometers', 'No', '1474 days', 'display location'], ['Sultan (ID:25697)  VIP text: LiderAdv', '8853 kilometers', 'Green', '1439 days', 'display location'], ['Alpha (ID:29007)', '24 kilometers', 'No', '1418 days', 'display location'], ['Phoenix (ID:75826)  VIP text: Agency 510', '26 kilometers', 'No', '1104 days', 'display location'], ['Romero (ID:80068)  VIP text: Alexandrescu', '143 kilometers', 'No', '1070 days', 'display location'], ['Fortune (ID:166619)   Formerly ID: 50996', '415 kilometers', 'No', '1000 days', 'display location'], ['Premier (ID:103088)  VIP text: Taxi', '161 kilometers', 'No', '963 days', 'display location'], ['Stretch (ID:108589)  VIP text: TesterAdv', '299 kilometers', 'No', '908 days', 'display location'], ['Huntley (ID:123183)', '0 kilometers', 'No', '837 days', 'display location'], ['Bloodring Banger (ID:123944)', '746 kilometers', 'No', '832 days', 'display location'], ['Roadtrain (ID:187391)', '1271 kilometers', 'No', '563 days', 'display location'], ['Picador (ID:212281)  VIP text: SILV Rank 2', '11 kilometers', 'No', '519 days', 'display location'], ['Vortex (ID:225291)', '41 kilometers', 'No', '444 days', 'display location'], ['Huntley (ID:235951)', '0 kilometers', 'No', '389 days', 'display location'], ['Huntley (ID:273219)', '0 kilometers', 'No', '211 days', 'display location'], ['Buffalo (ID:287536)', '0 kilometers', 'No', '126 days', 'display location'], ['FCR-900 (ID:290093)', '0 kilometers', 'No', '95 days', 'display location'], ['ZR-350 (ID:290577)  VIP text: NULL', '0 kilometers', 'No', '92 days', 'display location'], ['Phoenix (ID:290596)', '0 kilometers', 'No', '92 days', 'display location'], ['Infernus (ID:295078)', '0 kilometers', 'No', '67 days', 'display location']]
-    return car_list
+    return [['Stretch (ID:128170)   Formerly ID: 47132 VIP text: ksn', '8997 kilometers', 'White', '1534 days', 'display location'], ['Comet (ID:14739)', '435 kilometers', 'No', '1507 days', 'display location'], ['NRG-500 (ID:19621)', '24400 kilometers', 'No', '1475 days', 'display location'], ['Bike (ID:19825)', '4 kilometers', 'No', '1474 days', 'display location'], ['Sultan (ID:25697)  VIP text: LiderAdv', '8853 kilometers', 'Green', '1439 days', 'display location'], ['Alpha (ID:29007)', '24 kilometers', 'No', '1418 days', 'display location'], ['Phoenix (ID:75826)  VIP text: Agency 510', '26 kilometers', 'No', '1104 days', 'display location'], ['Romero (ID:80068)  VIP text: Alexandrescu', '143 kilometers', 'No', '1070 days', 'display location'], ['Fortune (ID:166619)   Formerly ID: 50996', '415 kilometers', 'No', '1000 days', 'display location'], ['Premier (ID:103088)  VIP text: Taxi', '161 kilometers', 'No', '963 days', 'display location'], ['Stretch (ID:108589)  VIP text: TesterAdv', '299 kilometers', 'No', '908 days', 'display location'], ['Huntley (ID:123183)', '0 kilometers', 'No', '837 days', 'display location'], ['Bloodring Banger (ID:123944)', '746 kilometers', 'No', '832 days', 'display location'], ['Roadtrain (ID:187391)', '1271 kilometers', 'No', '563 days', 'display location'], ['Picador (ID:212281)  VIP text: SILV Rank 2', '11 kilometers', 'No', '519 days', 'display location'], ['Vortex (ID:225291)', '41 kilometers', 'No', '444 days', 'display location'], ['Huntley (ID:235951)', '0 kilometers', 'No', '389 days', 'display location'], ['Huntley (ID:273219)', '0 kilometers', 'No', '211 days', 'display location'], ['Buffalo (ID:287536)', '0 kilometers', 'No', '126 days', 'display location'], ['FCR-900 (ID:290093)', '0 kilometers', 'No', '95 days', 'display location'], ['ZR-350 (ID:290577)  VIP text: NULL', '0 kilometers', 'No', '92 days', 'display location'], ['Phoenix (ID:290596)', '0 kilometers', 'No', '92 days', 'display location'], ['Infernus (ID:295078)', '0 kilometers', 'No', '67 days', 'display location']]
