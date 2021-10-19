@@ -1,0 +1,14 @@
+<div class="tab-pane active" id="sign1">
+<div class="content">
+<center>
+<img src="https://rubypanel.nephrite.ro/userbar/type/1/user/288876"/>
+<br/>
+<br/>
+<b>Cod pentru forum (semnatura):</b><br/>
+<input class="form-control input-sm" style="width: 30%" type="text" value="[img]https://rubypanel.nephrite.ro/userbar/type/1/user/288876.png[/img]"/>
+<br/>
+<b>Cod HTML:</b><br/>
+<input class="form-control input-sm" style="width: 30%" type="text" value='&lt;img src = "https://rubypanel.nephrite.ro/userbar/type/1/user/288876"&gt;&lt;/img&gt;'/>
+</center>
+</div>
+</div>

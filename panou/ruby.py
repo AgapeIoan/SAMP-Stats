@@ -1,5 +1,6 @@
 import discord
 import requests
+import re
 
 from bs4 import BeautifulSoup
 from functii.samp import vezi_asociere
@@ -87,14 +88,8 @@ def stats(soup):
             embed.add_field(name="Badges", value=badges_de_trimis)
         # Amu bagam datele playerului
         for date in data:
-            try:
-                nume = date[0]
-                valoare = date[1]
-                if not nume:
-                    break
-                embed.add_field(name=nume, value=valoare)
-            except IndexError:
-                pass
+            embed.add_field(name=date[0], value=date[1])
+
 
         embed.set_footer(text="Ruby Nephrite | ruby.nephrite.ro:7777")
         print("STATS DATA WAS RETURNED")
@@ -126,9 +121,100 @@ def extract_cars(f2):
         #     print(i)
         return lista_de_trimis
 
+<<<<<<< Updated upstream
 def fstats()
+=======
+def fhstats(soup):
+    f2 = soup.findAll('ul', {'class': 'timeline timeline-inverse'})
 
+    # embed = discord.Embed(
+    #     title=get_nickname(soup), description="Status: " + "DEBUG", color=0x00ff00)
+
+    # Datele legate de player
+    data = [
+        [td.text for td in tr.find_all('span')]
+        for table in f2 for tr in table.find_all('div')
+    ]
+
+    for date in data:
+        if len(date) == 1:
+            data.remove(date)
+
+    # pattern = "(.+?) was uninvited by (.+?) (.+?) from faction (.+?) ((.+?)) after (.+?) days, with (.+?) FP. Reason: (.+?)."
+    # for date in data:
+    #     try:
+    #         found = re.search(pattern, date[1]).group(2)
+    #     except AttributeError:
+    #         found = ''
+    #     print(found)
+
+    # AgapeIoan was uninvited by Admin Rares. from faction Taxi Los Santos (rank 7) after 200 days, without FP. Reason: Finalizare mandat lider.
+    mare_fh = []
+>>>>>>> Stashed changes
+
+    for date in data:
+        faction_string = date[1]
+        try:
+            nickname = faction_string[0:faction_string.find(" was uninvited")]
+            lider = re.search("by(.*)from", faction_string).group()[3:-5]
+            factiune = re.search("faction(.*).rank", faction_string).group()[8:-6]
+            rank = re.search("rank.\d", faction_string).group()[-1:]
+            zile = re.search("after (\d+) days", faction_string).group()[6:-5]
+            reason = re.search("Reason: (.*)", faction_string).group()[7:-1].strip()
+            if "without FP" in faction_string or " 0 FP" in faction_string:
+                fp = False
+            else:
+                fp = re.search("with (.*) FP", faction_string).group()
+
+            print(fp)
+            
+        except:
+            continue
+
+        # titlu_factiune = f"{factiune} | {zile} days | {rank}"
+        # valoare_factiune = (f"Nickname: {nickname}\n" +
+        #                     f"Uninvited by: {lider} ")
+
+        # valoare_factiune_post_fp = (f"\nReason: {reason}\n" +
+        #                             f"Data: {date[0]}\n")
+
+        # valoare_factiune += (fp + valoare_factiune_post_fp) if fp else valoare_factiune_post_fp
+
+        dictionar = {
+            "faction": factiune,
+            "days": zile,
+            "rank": rank,
+            "nickname": nickname,
+            "leader": lider,
+            "reason": reason,
+            "date": date[0].strip(),
+            "fp": fp
+        }
+        mare_fh.append(dictionar)
+
+        # embed.add_field(name=titlu_factiune, value=valoare_factiune, inline=False)
         
+
+    # embed.set_footer(text="Ruby Nephrite | ruby.nephrite.ro:7777")
+    
+    return mare_fh
+        
+def bstats(soup):
+    f2 = soup.findAll('div', {'class': 'tab-pane'}, {'id': 'properties'})
+
+    # for i in f2:
+    #     with open(f"skema{f2.index(i)}.txt", "w+", encoding='utf-8') as f:
+    #         f.write(str(i))
+    data = [
+        [td.text for td in tr.find_all('td')]
+        for table in [f2[5]] for tr in table.find_all('tr')
+    ]
+    for i in data:
+        print(i)
+    
+
+    return 'bstats'
+
 async def stats_debug(player):
     embed = discord.Embed(
     title="nickDEBUG", description="Status: " + "DEBUGGING", color=0x00ff00)

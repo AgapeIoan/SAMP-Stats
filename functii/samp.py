@@ -119,6 +119,7 @@ def create_car_embed(car_stats, nickname):
         formerly_id = car_stats[0][car_stats[0].find("Formerly ID: "):]
         formated_car_stats+=formerly_id+'\n'
         car_stats[0] = car_stats[0].replace(formerly_id, '').strip()
+        formated_car_stats+=f"{formerly_id}\n"
 
     formated_car_stats+=f"{car_stats[1]}\n{car_stats[3]}\n"
     if car_stats[2] != "No":
@@ -157,3 +158,34 @@ def format_car_data(car_data):
     formated_car_data+=f"{car_data[1]} | {car_data[3]}"
 
     return car_data[0], formated_car_data
+
+def format_faction_history_data(fh):
+    menu_text = f"{fh['date'][:10]} | {fh['faction']}"
+    specs = ''
+    specs = (f"Days: {fh['days']} | Rank: {fh['rank']} | Uninvited by: {fh['leader']}")
+
+    valoare_factiune_post_fp = f"Reason: {fh['reason']}"
+    specs += (" " + fh['fp'] + " | " + valoare_factiune_post_fp) if fh['fp'] else " | " + valoare_factiune_post_fp
+
+    return menu_text, specs
+
+def create_fh_embed(fh, nickname):
+    embed=disnake.Embed(color=0x00ff00)
+
+    menu_text = f"{fh['faction']}"
+    specs = ''
+    specs = (f"Nickname: {fh['nickname']}\n" +
+            f"Days: {fh['days']}\n" +
+            f"Rank: {fh['rank']}\n" +
+            f"Uninvited by: {fh['leader']} ")
+
+    valoare_factiune_post_fp = (f"\nReason: {fh['reason']}\n" +
+                                f"Data: {fh['date']}\n")
+
+    specs += (fh['fp'] + valoare_factiune_post_fp) if fh['fp'] else valoare_factiune_post_fp
+
+    embed.add_field(name=menu_text, value=specs, inline=False)
+
+    embed.set_footer(text=f"{nickname} | ruby.nephrite.ro")
+
+    return embed

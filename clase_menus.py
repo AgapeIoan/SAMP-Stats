@@ -2,9 +2,13 @@ import disnake
 from functii.creier import get_nickname
 import panou.ruby
 
+<<<<<<< Updated upstream
 from functii.samp import create_car_embed, format_car_data
 from functii.discord import enable_buttons
 from functii.creier import este_player_online
+=======
+from functii.samp import create_car_embed, create_fh_embed, format_car_data, format_faction_history_data
+>>>>>>> Stashed changes
 
 class Vehicles_Menu(disnake.ui.Select):
     def __init__(self, soup: str):
@@ -13,7 +17,7 @@ class Vehicles_Menu(disnake.ui.Select):
         options = [
             disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️'),
         ]
-#https://cdn.discordapp.com/emojis/897425271475560481.png?size=44
+        # https://cdn.discordapp.com/emojis/897425271475560481.png?size=44
         self.cars = panou.ruby.vstats(soup)
         for i, contor in zip(self.cars, range(23)):
             aux = i.copy()
@@ -41,6 +45,36 @@ class Vehicles_Menu(disnake.ui.Select):
             # TODO: In momentul in care alegem masina, sa se faca optiunea ca default ca sa apara in ui.Select
             await interaction.response.edit_message(embed=embed)
 
+class Faction_History(disnake.ui.Select):
+    def __init__(self, soup: str):
+        self.soup = soup
+
+        options = [
+            disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️'),
+        ]
+        self.fh = panou.ruby.fhstats(soup)
+        for i, contor in zip(self.fh, range(23)):
+            aux = i.copy()
+            car_name, car_specs = format_faction_history_data(aux)
+            options.append(disnake.SelectOption(label=car_name, description=car_specs, emoji="👮"))
+        
+        options.append(disnake.SelectOption(label="Inainte", description="Afiseaza urmatoarea pagina de factiuni", emoji="➡️"))
+
+        super().__init__(placeholder='Faction History', min_values=1, max_values=1, options=options)
+
+    async def callback(self, interaction: disnake.MessageInteraction):
+        car_name = self.values[0]
+
+        if car_name == "Inapoi":
+            await interaction.response.edit_message(content="**Selecteaza o optiune:**", embed=None, view=Main_Menu(self.soup))
+        else:
+            for i in self.fh:
+                if(i['date'][:10] in car_name):
+                    embed = create_fh_embed(i, nickname=get_nickname(self.soup))
+
+            await interaction.response.edit_message(embed=embed)
+
+
 # Define a simple View that gives us a counter button
 class Main_Menu(disnake.ui.View):
     def __init__(self, soup: str):
@@ -64,11 +98,12 @@ class Main_Menu(disnake.ui.View):
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Properties", custom_id="properties_button")
     async def bstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        await interaction.response.edit_message(content="bstats", view=self)
+        await interaction.response.edit_message(content=panou.ruby.bstats(self.soup), view=self)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Faction History", custom_id="faction_button")
     async def fstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        await interaction.response.edit_message(content="fstats", view=self)
+        self.add_item(Faction_History(self.soup))
+        await interaction.response.edit_message(content="Lista factiuni:", view=self)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Clan", custom_id="clan_button")
     async def cstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
