@@ -8,6 +8,7 @@ from disnake.ext import commands
 
 import panou.ruby
 import clase_menus
+from functii.discord import disable_button
 
 with open("config.json", "r") as f:
     config = json.load(f)
@@ -47,54 +48,15 @@ async def buton(inter, nickname):
 
     view = clase_menus.Main_Menu(soup)
 
-    await inter.edit_original_message(content="**Selecteaza o optiune:**", view=view)
+    if not panou.ruby.vstats(soup):
+        disable_button(view.children[1])
+    
+    await inter.edit_original_message(content=f"**Selecteaza o optiune pentru jucatorul `{nickname}`:**", view=view)
+    # print(view)
 
     # @on_click.not_from_user(inter.author, cancel_others=True, reset_timeout=False)
     # async def on_wrong_user(inter):
     #     await inter.reply("You're not the author", ephemeral=True)
-
-    # @on_click.matching_id("vehicles_button", reset_timeout=True)
-    # async def on_test_button(inter):
-    #     await inter.reply(content='**Procesez comanda...**', components=[], embed=None, type=7)
-
-    #     aux=[]
-    #     lista_masini = await panou.ruby.vstats_debug(inter, nickname)
-    #     # TODO Lista masini sa fie splited in grupe de cate 23. Prima optiune BACK te duce inapoi, ultima optiune NEXT te duce la urmatoarea grupa.
-    #     # BACK-ul cand esti la prima lista te duce la meniul principal aka lista butoane panou
-    #     aux.append(SelectOption("🔙 Inapoi 🔙", "back"))
-    #     for masina in lista_masini:
-    #         stats_masina_packed = f"{masina[0]}+{masina[1]}+{masina[2]}+{masina[3]}"
-    #         aux.append(SelectOption(masina[0], stats_masina_packed))
-    #         print(masina)
-    #     aux.append(SelectOption("➡️ Inainte ➡️", "next"))
-
-    #     row_cars = ActionRow(
-    #         SelectMenu(
-    #             custom_id="test",
-    #             placeholder="Selecteaza o masina",
-    #             max_values=1,
-    #             options=aux
-    #         )
-    # )
-    #     # row_cars.components[0].options[INDEX_MASINA].default = True
-    #     await msg.edit(content="**Selecteaza o masina:**", components=[row_cars])
-
-    #     values = [None]
-    #     while values[0] != "back":
-    #         inter = await msg.wait_for_dropdown()
-    #         print(inter)
-    #         # Send what you received
-    #         # labels = [option.label for option in inter.select_menu.selected_options]
-    #         values = [option.value for option in inter.select_menu.selected_options]
-    #         print(values)
-            
-    #         if values[0] == "back":
-    #             # Ne intoarcem la meniul anterior cu butoane selectie stats
-    #             await inter.reply(content="**Selecteaza o optiune:**", embed=None, components=[row], type=7)
-    #         else:
-    #             # Trimitem frumos embed cu masina ceruta
-    #             # Embedul o sa fie generat pe baza dev-value a selectiei
-    #             await inter.reply(content='', embed=create_car_embed(values[0].split("+"), nickname), components=[row_cars], type=7)
 
     # @on_click.timeout
     # async def on_timeout():

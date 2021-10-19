@@ -3,6 +3,8 @@ from functii.creier import get_nickname
 import panou.ruby
 
 from functii.samp import create_car_embed, format_car_data
+from functii.discord import enable_buttons
+from functii.creier import este_player_online
 
 class Vehicles_Menu(disnake.ui.Select):
     def __init__(self, soup: str):
@@ -16,8 +18,8 @@ class Vehicles_Menu(disnake.ui.Select):
         for i, contor in zip(self.cars, range(23)):
             aux = i.copy()
             car_name, car_specs = format_car_data(aux)
-            print(i)
-            print(car_name, car_specs)
+            # print(i)
+            # print(car_name, car_specs)
             # Za name alternative: emoji="<:emoji:897425271475560481>"
             options.append(disnake.SelectOption(label=car_name, description=car_specs, emoji="🚗"))
         
@@ -34,7 +36,9 @@ class Vehicles_Menu(disnake.ui.Select):
             for i in self.cars:
                 if(car_name in i[0]):
                     embed = create_car_embed(i, nickname=get_nickname(self.soup))
+                    embed.color = 0x00ff00 if este_player_online(self.soup) else 0xff0000
 
+            # TODO: In momentul in care alegem masina, sa se faca optiunea ca default ca sa apara in ui.Select
             await interaction.response.edit_message(embed=embed)
 
 # Define a simple View that gives us a counter button
@@ -45,10 +49,16 @@ class Main_Menu(disnake.ui.View):
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Player Stats", custom_id="stats_button")
     async def stats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        await interaction.response.edit_message(embed=panou.ruby.stats(self.soup), view=Main_Menu(self.soup))
+        if len(self.children) > 5:
+            self.remove_item(self.children[5])
+        enable_buttons(self.children)
+        button.disabled = True
+        await interaction.response.edit_message(embed=panou.ruby.stats(self.soup), view=self)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Vehicles", custom_id="vehicles_button")
     async def vstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
+        enable_buttons(self.children)
+        button.disabled = True
         self.add_item(Vehicles_Menu(self.soup))
         await interaction.response.edit_message(content="**Selecteaza o masina:**", view=self, embed=None)
 

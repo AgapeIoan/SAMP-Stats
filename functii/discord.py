@@ -1,9 +1,20 @@
 import json
+import disnake
 from utils import default
 
 config = default.config()
 
-DEFAULT_PREFIX = config["prefix"][0]
+def disable_button(buton_fain):
+    buton_fain.disabled = True
+    buton_fain.style = disnake.ButtonStyle.gray
+
+def enable_buttons(butoane_faine):
+    for i in butoane_faine:
+        if i.style != disnake.ButtonStyle.gray:
+            i.disabled = False
+
+
+# DEFAULT_PREFIX = config["prefix"][0]
 
 def get_prefix(bot, message):
     with open('prefixes.json', 'r') as f:
