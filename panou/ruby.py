@@ -121,9 +121,6 @@ def extract_cars(f2):
         #     print(i)
         return lista_de_trimis
 
-<<<<<<< Updated upstream
-def fstats()
-=======
 def fhstats(soup):
     f2 = soup.findAll('ul', {'class': 'timeline timeline-inverse'})
 
@@ -150,7 +147,6 @@ def fhstats(soup):
 
     # AgapeIoan was uninvited by Admin Rares. from faction Taxi Los Santos (rank 7) after 200 days, without FP. Reason: Finalizare mandat lider.
     mare_fh = []
->>>>>>> Stashed changes
 
     for date in data:
         faction_string = date[1]
@@ -209,11 +205,7 @@ def bstats(soup):
         [td.text for td in tr.find_all('td')]
         for table in [f2[5]] for tr in table.find_all('tr')
     ]
-    for i in data:
-        print(i)
-    
-
-    return 'bstats'
+    return data[1:] # lista_properties
 
 async def stats_debug(player):
     embed = discord.Embed(
