@@ -2,13 +2,9 @@ import disnake
 from functii.creier import get_nickname
 import panou.ruby
 
-<<<<<<< Updated upstream
-from functii.samp import create_car_embed, format_car_data
+from functii.samp import create_car_embed, create_fh_embed, format_car_data, format_faction_history_data
 from functii.discord import enable_buttons
 from functii.creier import este_player_online
-=======
-from functii.samp import create_car_embed, create_fh_embed, format_car_data, format_faction_history_data
->>>>>>> Stashed changes
 
 class Vehicles_Menu(disnake.ui.Select):
     def __init__(self, soup: str):
@@ -102,15 +98,16 @@ class Main_Menu(disnake.ui.View):
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Faction History", custom_id="faction_button")
     async def fstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
+        enable_buttons(self.children)
+        button.disabled = True
         self.add_item(Faction_History(self.soup))
-        await interaction.response.edit_message(content="Lista factiuni:", view=self)
+        await interaction.response.edit_message(content="**Lista factiuni:**", view=self)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Clan", custom_id="clan_button")
     async def cstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
         await interaction.response.edit_message(content="cstats", view=self)
 
 
-        # Define a simple View that gives us a confirmation menu
 class Confirm(disnake.ui.View):
     def __init__(self):
         super().__init__()
