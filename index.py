@@ -26,7 +26,7 @@ async def ping(inter):
     await inter.response.send_message('pong')
 
 @bot.slash_command(
-    name="buton", # Defaults to the function name
+    name="stats", # Defaults to the function name
     description="butoane",
     guild_ids=test_guilds,
     options=[
@@ -35,7 +35,7 @@ async def ping(inter):
         # Pass required=True to make it a required arg
     ]
 )
-async def buton(inter, nickname):
+async def stats(inter, nickname):
     await inter.response.defer()
 
     try:
@@ -50,6 +50,10 @@ async def buton(inter, nickname):
 
     if not panou.ruby.vstats(soup):
         disable_button(view.children[1])
+    if not panou.ruby.bstats(soup):
+        disable_button(view.children[2])
+    if not panou.ruby.fhstats(soup):
+        disable_button(view.children[3])
     
     await inter.edit_original_message(content=f"**Selecteaza o optiune pentru jucatorul `{nickname}`:**", view=view)
     # print(view)
