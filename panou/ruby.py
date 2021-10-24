@@ -65,9 +65,10 @@ def stats(soup):
             embed.set_thumbnail(url="https://i.imgur.com/jnTomOg.png")
 
         # Datele legate de player
+        f2 = soup.findAll('div', {'class': 'tab-pane'})
         data = [
             [td.text for td in tr.find_all('td')]
-            for table in psot for tr in table.find_all('tr')
+            for table in [f2[0]] for tr in table.find_all('tr')
         ]
 
         # Daca e banat bagam si de aia
@@ -201,11 +202,29 @@ def bstats(soup):
     # for i in f2:
     #     with open(f"skema{f2.index(i)}.txt", "w+", encoding='utf-8') as f:
     #         f.write(str(i))
+
     data = [
         [td.text for td in tr.find_all('td')]
         for table in [f2[5]] for tr in table.find_all('tr')
     ]
     return data[1:] # lista_properties
+
+def cstats(soup):
+    clan_name = get_clan_name(soup)
+    
+
+def get_clan_name(soup):
+    f2 = soup.findAll('div', {'class': 'tab-pane'}, {'id': 'properties'})
+    data = [
+        [td.text for td in tr.find_all('td')]
+        for table in [f2[0  ]] for tr in table.find_all('tr')
+    ]
+
+    for date in data:
+        if(date[0]) == "Clan":
+            return date[1]
+    
+    return False
 
 async def stats_debug(player):
     embed = discord.Embed(

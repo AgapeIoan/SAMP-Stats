@@ -5,6 +5,7 @@ import asyncio
 from disnake import ActionRow, Button, ButtonStyle, SelectMenu, SelectOption, Option, OptionType
 from disnake import emoji
 from disnake.ext import commands
+from functii.creier import get_nickname
 
 import panou.ruby
 import clase_menus
@@ -54,8 +55,10 @@ async def stats(inter, nickname):
         disable_button(view.children[2])
     if not panou.ruby.fhstats(soup):
         disable_button(view.children[3])
+    if not panou.ruby.get_clan_name(soup):
+        disable_button(view.children[4])
     
-    await inter.edit_original_message(content=f"**Selecteaza o optiune pentru jucatorul `{nickname}`:**", view=view)
+    await inter.edit_original_message(content=f"**Selecteaza o optiune pentru jucatorul `{get_nickname(soup)}`:**", view=view)
     # print(view)
 
     # @on_click.not_from_user(inter.author, cancel_others=True, reset_timeout=False)

@@ -40,7 +40,7 @@ def get_nickname(soup):
     nickname_ruby = f3[0].findAll('i', {'class': 'fa fa-circle text-danger'}) or f3[0].findAll('i', {'class': 'fa fa-circle text-success'})
     nickname_ruby = nickname_ruby[0].nextSibling.strip()
 
-    return nickname_ruby or f3[0].findAll('a', {'data-toggle': 'tooltip'})[0].text # or nickname_jade
+    return nickname_ruby or f3[0].findAll('a', {'data-toggle': 'tooltip'})[0].text.strip() # or nickname_jade
     # Puteam salva nickname_jade intr-o variabila si sa compar 2 variabile frumos la return insaaa
     # nickname_ruby va fi mereu gasit, nickname jade o sa dea IndexError si trebuie obligatoriu inca o conditie
     # sau un try except si ar fi fost mai spachetti cod-ul in caz ca mergeam pe ruta asta
