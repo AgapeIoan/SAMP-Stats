@@ -1,15 +1,14 @@
 import json
 import disnake
-from utils import default
-
-config = default.config()
 
 def disable_button(buton_fain):
     buton_fain.disabled = True
     buton_fain.style = disnake.ButtonStyle.gray
 
-def enable_buttons(butoane_faine):
-    for i in butoane_faine:
+def enable_buttons(self):
+    if len(self.children) > 5:
+        self.remove_item(self.children[5])
+    for i in self.children:
         if i.style != disnake.ButtonStyle.gray:
             i.disabled = False
 

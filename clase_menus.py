@@ -39,7 +39,7 @@ class Vehicles_Menu(disnake.ui.Select):
                     embed.color = 0x00ff00 if este_player_online(self.soup) else 0xff0000
 
             # TODO: In momentul in care alegem masina, sa se faca optiunea ca default ca sa apara in ui.Select
-            await interaction.response.edit_message(embed=embed)
+            await interaction.response.edit_message(embed=embed, content=None)
 
 class Faction_History(disnake.ui.Select):
     def __init__(self, soup: str):
@@ -68,7 +68,7 @@ class Faction_History(disnake.ui.Select):
                 if(i['date'][:10] in car_name):
                     embed = create_fh_embed(i, nickname=get_nickname(self.soup))
 
-            await interaction.response.edit_message(embed=embed)
+            await interaction.response.edit_message(embed=embed, content=None)
 
 
 # Define a simple View that gives us a counter button
@@ -79,15 +79,13 @@ class Main_Menu(disnake.ui.View):
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Player Stats", custom_id="stats_button")
     async def stats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        if len(self.children) > 5:
-            self.remove_item(self.children[5])
-        enable_buttons(self.children)
+        enable_buttons(self)
         button.disabled = True
-        await interaction.response.edit_message(embed=panou.ruby.stats(self.soup), view=self)
+        await interaction.response.edit_message(embed=panou.ruby.stats(self.soup), view=self, content=None)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Vehicles", custom_id="vehicles_button")
     async def vstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        enable_buttons(self.children)
+        enable_buttons(self)
         button.disabled = True
         self.add_item(Vehicles_Menu(self.soup))
         await interaction.response.edit_message(content="**Selecteaza o masina:**", view=self, embed=None)
@@ -98,14 +96,14 @@ class Main_Menu(disnake.ui.View):
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Faction History", custom_id="faction_button")
     async def fstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        enable_buttons(self.children)
+        enable_buttons(self)
         button.disabled = True
         self.add_item(Faction_History(self.soup))
-        await interaction.response.edit_message(content="**Lista factiuni:**", view=self)
+        await interaction.response.edit_message(content="**Lista factiuni:**", view=self, embed=None)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Clan", custom_id="clan_button")
     async def cstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        await interaction.response.edit_message(content="cstats", view=self)
+        await interaction.response.edit_message(content=panou.ruby.get_clan_name(self.soup), view=self)
 
 
 class Confirm(disnake.ui.View):
