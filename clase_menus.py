@@ -81,31 +81,32 @@ class Main_Menu(disnake.ui.View):
     async def stats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
         if len(self.children) > 5:
             self.remove_item(self.children[5])
-        enable_buttons(self.children)
+        enable_buttons(self)
         button.disabled = True
         await interaction.response.edit_message(embed=panou.ruby.stats(self.soup), view=self)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Vehicles", custom_id="vehicles_button")
     async def vstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        enable_buttons(self.children)
+        enable_buttons(self)
         button.disabled = True
         self.add_item(Vehicles_Menu(self.soup))
         await interaction.response.edit_message(content="**Selecteaza o masina:**", view=self, embed=None)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Properties", custom_id="properties_button")
     async def bstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
+        panou.ruby.bstats_analyzer(self.soup)
         await interaction.response.edit_message(content=panou.ruby.bstats(self.soup), view=self)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Faction History", custom_id="faction_button")
     async def fstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        enable_buttons(self.children)
+        enable_buttons(self)
         button.disabled = True
         self.add_item(Faction_History(self.soup))
-        await interaction.response.edit_message(content="**Lista factiuni:**", view=self)
+        await interaction.response.edit_message(content="**Lista factiuni:**", view=self, embed=None)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Clan", custom_id="clan_button")
     async def cstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        await interaction.response.edit_message(content="cstats", view=self)
+        await interaction.response.edit_message(content="cstats", view=self, embed=None)
 
 
 class Confirm(disnake.ui.View):

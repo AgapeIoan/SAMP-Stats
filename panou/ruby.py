@@ -31,12 +31,13 @@ def get_panel_data(player):
 def stats(soup):
     with requests.Session() as s:
         lista_valori_scrape = [
-            {'div': {'class': 'col-md-8'}},
             {'div': {'class': 'col-md-12 col-lg-12'}},
             {'div': {'class': 'alert bg-red'}}
         ]
 
-        psot, badges_raw, ban_status_raw = scrape_panou(soup, lista_valori_scrape)
+        f2 = soup.findAll('div', {'class': 'tab-pane'})
+
+        badges_raw, ban_status_raw = scrape_panou(soup, lista_valori_scrape)
 
         try:
             ban_string = ban_status_raw[0].findAll('h4')
@@ -67,7 +68,7 @@ def stats(soup):
         # Datele legate de player
         data = [
             [td.text for td in tr.find_all('td')]
-            for table in psot for tr in table.find_all('tr')
+            for table in [f2[0]] for tr in table.find_all('tr')
         ]
 
         # Daca e banat bagam si de aia
@@ -162,7 +163,7 @@ def fhstats(soup):
             else:
                 fp = re.search("with (.*) FP", faction_string).group()
 
-            print(fp)
+            # print(fp)
             
         except:
             continue
@@ -194,7 +195,53 @@ def fhstats(soup):
     # embed.set_footer(text="Ruby Nephrite | ruby.nephrite.ro:7777")
     
     return mare_fh
-        
+
+def bstats_analyzer(soup):
+    biz = bstats(soup)
+    if not biz:
+        return None
+        # Posibil scoatem asta ca nu lasam functia sa ruleze de la inceput daca nu avem biz
+    for i in biz:
+        print(i)
+        if i[1] == 'house []':
+            house = i
+            house_id = house[0]
+            house_name = house[2]
+            house_type = house[3][:house[3].find("Size")]
+            house[3] = house[3].replace(house_type, '')
+            if "Garage" in house[3]:
+                house_garage = house[3][house[3].find('Garage:'):]
+                house[3] = house[3].replace(house_garage, '')
+            else:
+                house_garage = "Garage: None"
+            house_size = house[3]
+        elif i[1] == 'business []':
+            bizz = i
+            bizz_id = bizz[0]
+            bizz_name = bizz[2]
+            bizz_price = bizz[3][:bizz[3].find("Type")]
+            bizz[3] = bizz[3].replace(bizz_price, '')
+                
+            bizz_fee = bizz[3][bizz[3].find('Fee:'):]
+            bizz[3] = bizz[3].replace(bizz_fee, '')
+            bizz_type = bizz[3]
+        elif i[1] == 'apartament []':
+            apartament = i
+            apartament_id = apartament[0]
+            apartament_name = apartament[2]
+            apartament_type = apartament[3][:apartament[3].find("Floor:")]
+            apartament[3] = apartament[3].replace(apartament_type, '')
+                
+            apartament_door = apartament[3][apartament[3].find('Door status:'):]
+            apartament[3] = apartament[3].replace(apartament_door, '')
+            apartament_floor = apartament[3]
+
+
+
+    print(house_id, house_name, house_size, house_type, house_garage)
+    print(bizz_id, bizz_name, bizz_fee, bizz_price, bizz_type)
+    print(apartament_name, apartament_id, apartament_type, apartament_door, apartament_floor)
+
 def bstats(soup):
     f2 = soup.findAll('div', {'class': 'tab-pane'}, {'id': 'properties'})
 
