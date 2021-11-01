@@ -1,3 +1,4 @@
+from functii.creier import get_nickname
 import json
 import disnake
 import asyncio
@@ -8,7 +9,7 @@ from disnake.ext import commands
 
 import panou.ruby
 import clase_menus
-from functii.discord import disable_button
+from functii.discord import disable_button, disable_not_working_buttons
 
 with open("config.json", "r") as f:
     config = json.load(f)
@@ -20,6 +21,8 @@ POZA_MASINA_SAMP = "https://i.imgur.com/KC9rlJd.png"
 bot = commands.Bot(command_prefix="!", test_guilds = [722442573137969174])
 # If 'test_guilds' param isn't specified, the commands are registered globally.
 # Global registration takes up to 1 hour.
+
+
 
 @bot.slash_command()
 async def ping(inter):
@@ -41,21 +44,14 @@ async def stats(inter, nickname):
     try:
         soup = panou.ruby.get_panel_data(nickname)
     except IndexError:
-        # TODO Sa isi dea seama bot-ul daca e vorba de panel picat, pagina blank, lipsa profil sau orice altceva se poate intampla
+        # TODO #3 Sa isi dea seama bot-ul daca e vorba de panel picat, pagina blank, lipsa profil sau orice altceva se poate intampla
         # si sa afiseze un mesaj de eroare corespunzator
-        await inter.edit_original_message(f"Jucatorul **{nickname}** nu a fost gasit. Verifica daca ai introdus corect nickname-ul!", ephemeral=True)
+        await inter.edit_original_message(f"Jucatorul **{nickname}** nu a fost gasit. Verifica daca ai introdus corect nickname-ul!")
         return
 
-    view = clase_menus.Main_Menu(soup)
-
-    if not panou.ruby.vstats(soup):
-        disable_button(view.children[1])
-    if not panou.ruby.bstats(soup):
-        disable_button(view.children[2])
-    if not panou.ruby.fhstats(soup):
-        disable_button(view.children[3])
+    view = disable_not_working_buttons(clase_menus.Main_Menu(soup), soup)
     
-    await inter.edit_original_message(content=f"**Selecteaza o optiune pentru jucatorul `{nickname}`:**", view=view)
+    await inter.edit_original_message(content=f"**Selecteaza o optiune pentru jucatorul `{get_nickname(soup)}`:**", view=view)
     # print(view)
 
     # @on_click.not_from_user(inter.author, cancel_others=True, reset_timeout=False)
@@ -78,6 +74,6 @@ async def on_ready():
     print("Hatz cu buna dimineata, a pornit botu")
     
 print("LOADED ZA COG, STARTING ZA BOT")
-# TODO Fac ceva event on_ready() sa anunte ca so logat botu
+# TODO #4 Fac ceva event on_ready() sa anunte ca so logat botu
 bot.run(BOT_TOKEN)
     

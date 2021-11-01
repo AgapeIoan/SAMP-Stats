@@ -68,7 +68,7 @@ class Admin(commands.Cog):
         r = requests.get("https://api.ipify.org")
         await ctx.send(str(r.text))
 
-    # TODO Fix command cuz e shot, nu mere ;-; 
+    # TODO #5 Fix exec command cuz e shot, nu mere ;-; 
     @commands.command(aliases=['exec'])
     @commands.check(permissions.is_owner)
     async def execute(self, ctx, *, text: str):

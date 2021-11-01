@@ -4,4 +4,4 @@ timeago==1.0.13
 requests
 bs4
 html5lib
-dislash.py
+disnake
