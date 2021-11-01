@@ -133,6 +133,38 @@ def create_car_embed(car_stats, nickname):
 
     return embed
 
+
+def create_biz_embed(biz_stats, nickname):
+    embed=disnake.Embed(color=0x00ff00)
+    formated_biz_stats = ''
+
+    # O sa parcurgem o singura data
+    print("BIZ_STATS", biz_stats)
+    for k, v in biz_stats.items():
+        # Putin ciudata treaba asta cu emoji, insa la cum e gandita, emoji ala il trag cand ma joc cu output-ul
+        # si dupa il scot din descriere sa fie totul ok
+
+        for i in v[1:]:
+            formated_biz_stats += i + '\n'
+
+    embed.add_field(name=v[0], value=formated_biz_stats, inline=False)
+    
+    # embed.set_thumbnail(url="https://i.imgur.com/KC9rlJd.png")
+    # Aici la thumbnail ori facem 3 imagini, mai exact pentru casa, biz si apartament, ori facem imagine cu fiecare biz in-game
+    # La poze in-game ar trebui 72 poze cu fiecare business
+    # Maxim 3 poze la case cred, desi o poza reprezentativa ar fi suficienta, ca nu sunt nebun sa fac 554 poze pentru fiecare casa din joc
+    # Sincer la case cred ca ar merge si locatia pe harta
+    # La apartamente e ez, o poza cu blocul de apartamente si ayaye
+    # TODO
+    # !!! Sincer, cred ca embed-ul ar trebui sa fie complementar. Multe detalii sunt deja afisate foarte frumos cum trebuie in lista de optiuni,
+    # in embed ar trebui sa fie chestii suplimentare si mult mai complexe. Poate poate o productie (ca la asta s-ar astepta sampistu), o locatie pe harta, o poza cu bizu, o glumita cu sanse random de aparitie acolo.
+
+
+    embed.set_footer(text=f"{nickname} | ruby.nephrite.ro")
+
+    return embed
+
+
 def format_car_data(car_data):
     formated_car_data = ''
 
@@ -158,6 +190,25 @@ def format_car_data(car_data):
     formated_car_data+=f"{car_data[1]} | {car_data[3]}"
 
     return car_data[0], formated_car_data
+
+def format_biz_data(biz_data):
+    emoji_list = {
+        "house": "🏠",
+        "business": "🏢",
+        "apartament": "🏨"
+    }
+
+    formated_biz_data = ''
+
+    for k, v in biz_data.items():
+        formated_biz_data = emoji_list.get(k)
+        # Putin ciudata treaba asta cu emoji, insa la cum e gandita, emoji ala il trag cand ma joc cu output-ul
+        # si dupa il scot din descriere sa fie totul ok
+
+        for i in v[1:]:
+            formated_biz_data += " | " + i
+
+        return v[0], formated_biz_data
 
 def format_faction_history_data(fh):
     menu_text = f"{fh['date'][:10]} | {fh['faction']}"

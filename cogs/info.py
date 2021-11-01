@@ -43,7 +43,7 @@ class Information(commands.Cog):
     @commands.command(aliases=['joinme', 'join', 'botinvite'])
     async def invite(self, ctx):
         """ Invita bot-ul pe serverul tau """
-        # TODO: Invite frumos in embed sau, daca prind in discord.py 2.0, cu buttons slash si alte nebunii.
+        # TODO: #6 Invite frumos in embed sau, daca prind in discord.py 2.0, cu buttons slash si alte nebunii.
         # Link invite sa fie intr-un hyperlink shit de arata frumos si trebe doar sa apesi pe el, se poate face treaba asta usor cu Embed shits. 
         n = random.randint(1, 100)
         if n > 70: # Sanse de 30% | TODO cand si daca o fi botul mai mare, scad sansa. Totusi, ar fi nevoie de asta doar daca dau baietii multe invites.
