@@ -52,21 +52,24 @@ async def stats(inter, nickname):
     view = disable_not_working_buttons(clase_menus.Main_Menu(soup), soup)
     
     await inter.edit_original_message(content=f"**Selecteaza o optiune pentru jucatorul `{get_nickname(soup)}`:**", view=view)
-    # print(view)
 
-    # @on_click.not_from_user(inter.author, cancel_others=True, reset_timeout=False)
-    # async def on_wrong_user(inter):
-    #     await inter.reply("You're not the author", ephemeral=True)
+@bot.slash_command(
+    name="clans", # Defaults to the function name
+    description="Afiseaza lista de clanuri",
+    guild_ids=test_guilds,
+    options=[
+        Option("param", "debug", OptionType.string, required=False)
+        # By default, Option is optional
+        # Pass required=True to make it a required arg
+    ]
+)
+async def clans(inter, param = None):
+    await inter.response.defer()
 
-    # @on_click.timeout
-    # async def on_timeout():
-    #     await msg.edit(content="Mesajul a fost inactiv pentru prea mult timp, astfel butoanele au fost dezactivate.", components=[lista_butoane_stats(True, True, True, True, True)])
-    #     await asyncio.sleep(180)
-    #     # TODO Ar fi bine sa verificam inainte de sleep daca picam in except-ul de mai jos, astfel economisim timp si resurse yeeee
-    #     try:
-    #         await msg.edit(content='', components=[])
-    #     except disnake.errors.HTTPException:
-    #         pass
+    view = clase_menus.Clans_Menu_View()
+
+    await inter.edit_original_message(content=f"**CLANS**", view=view)
+ 
 
 
 @bot.listen()

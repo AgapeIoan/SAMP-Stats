@@ -4,7 +4,7 @@ import re
 
 from bs4 import BeautifulSoup
 from functii.samp import vezi_asociere
-from functii.creier import scrape_panou, get_nickname, login_panou, este_player_online, get_server_provenienta, headers
+from functii.creier import scrape_panou, get_nickname, login_panou, este_player_online, get_server_provenienta, get_profile_data, headers
 
 def get_panel_data(player):
     with requests.Session() as s:
@@ -16,6 +16,7 @@ def get_panel_data(player):
         # la prima verificare a panel-ului sa imi salvez tot panel-ul undeva?
         # Imo cred ca ar fi mai bine sa merg pe prima varianta, cuz daca tot verific existenta player-ului,
         # automat o sa am tot panel-ul descarcat in memorie
+
         url = f'http://rubypanel.nephrite.ro/profile/{player}'
         r = s.get(url, headers=headers)
         soup = BeautifulSoup(r.content, features='html5lib')
@@ -261,10 +262,44 @@ def bstats(soup):
     ]
     return data[1:] # lista_properties
 
-async def stats_debug(player):
-    embed = discord.Embed(
-    title="nickDEBUG", description="Status: " + "DEBUGGING", color=0x00ff00)
-    embed.set_thumbnail(url="https://i.imgur.com/mZvN9jZ.png")
+def get_clan_name(soup):
+    data = get_profile_data(soup, 0)
+    if data[4][0] != 'Clan':
+        # Player nu are clan
+        return None
+    else:
+        clan_name = data[4][1]
+        clan_name = clan_name.split(',')
+        # clan_rank = clan_name[1]
+        clan_name = clan_name[0]
+        return clan_name
 
-async def vstats_debug(inter, player):
-    return [['Stretch (ID:128170)   Formerly ID: 47132 VIP text: ksn', '8997 kilometers', 'White', '1534 days', 'display location'], ['Comet (ID:14739)', '435 kilometers', 'No', '1507 days', 'display location'], ['NRG-500 (ID:19621)', '24400 kilometers', 'No', '1475 days', 'display location'], ['Bike (ID:19825)', '4 kilometers', 'No', '1474 days', 'display location'], ['Sultan (ID:25697)  VIP text: LiderAdv', '8853 kilometers', 'Green', '1439 days', 'display location'], ['Alpha (ID:29007)', '24 kilometers', 'No', '1418 days', 'display location'], ['Phoenix (ID:75826)  VIP text: Agency 510', '26 kilometers', 'No', '1104 days', 'display location'], ['Romero (ID:80068)  VIP text: Alexandrescu', '143 kilometers', 'No', '1070 days', 'display location'], ['Fortune (ID:166619)   Formerly ID: 50996', '415 kilometers', 'No', '1000 days', 'display location'], ['Premier (ID:103088)  VIP text: Taxi', '161 kilometers', 'No', '963 days', 'display location'], ['Stretch (ID:108589)  VIP text: TesterAdv', '299 kilometers', 'No', '908 days', 'display location'], ['Huntley (ID:123183)', '0 kilometers', 'No', '837 days', 'display location'], ['Bloodring Banger (ID:123944)', '746 kilometers', 'No', '832 days', 'display location'], ['Roadtrain (ID:187391)', '1271 kilometers', 'No', '563 days', 'display location'], ['Picador (ID:212281)  VIP text: SILV Rank 2', '11 kilometers', 'No', '519 days', 'display location'], ['Vortex (ID:225291)', '41 kilometers', 'No', '444 days', 'display location'], ['Huntley (ID:235951)', '0 kilometers', 'No', '389 days', 'display location'], ['Huntley (ID:273219)', '0 kilometers', 'No', '211 days', 'display location'], ['Buffalo (ID:287536)', '0 kilometers', 'No', '126 days', 'display location'], ['FCR-900 (ID:290093)', '0 kilometers', 'No', '95 days', 'display location'], ['ZR-350 (ID:290577)  VIP text: NULL', '0 kilometers', 'No', '92 days', 'display location'], ['Phoenix (ID:290596)', '0 kilometers', 'No', '92 days', 'display location'], ['Infernus (ID:295078)', '0 kilometers', 'No', '67 days', 'display location']]
+def get_clan_list():
+    with requests.Session() as s:
+        url = f'https://rubypanel.nephrite.ro/clan/list'
+        r = s.get(url, headers=headers)
+        soup = BeautifulSoup(r.content, features='html5lib')
+
+        f2 = soup.findAll('table', {'class': 'table table-condensed table-hover'})
+        data = [
+            [td.text for td in tr.find_all('td')]
+            for table in f2 for tr in table.find_all('tr')
+        ]
+        # for i in data[1:]:
+        #     clan_id, clan_name, clan_tag, clan_members, clan_expire = i
+
+        return data[1:]
+
+def get_clan_data(clan_id):
+    with requests.Session() as s:
+        login_panou(s)
+        url = 'https://rubypanel.nephrite.ro/clan/view/' + str(clan_id)
+        r = s.get(url, headers=headers)
+        soup = BeautifulSoup(r.content, features='html5lib')
+        #TODO Continuat comanda
+        # Fac sa acceseze pe id care il luam ez din lista clanuri, dupa fac functii pentru vazut membrii, masini, etc.
+        # Maybe fac sa vezi si logs clan?
+        # Sa fac drq si baza pentru parcurs pagini in Select Menus
+        # Sa se actualizeze cache clan de fiecare data cand folosesc /clans (o sa ajute la comanda /stats unde stim ca mereu clanul ala exista)
+        # Pentru /clans folosesc paramatru ca search, sa zica omul primele litere din clan sau clantag, si in lista o sa se returneze rezultate
+   

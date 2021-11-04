@@ -10,6 +10,24 @@ login_data = {
     "user_identifier": "***REMOVED***"
 }
 
+def get_profile_data(soup, f2_index: int):
+    # 0 | stats 
+    # 1 | clothes 
+    # 2 | missions 
+    # 3 | badges 
+    # 4 | cars 
+    # 5 | proprietes 
+    # 6 | referral 
+    # 7 | fh 
+    # 8, 9, 10 | semnatura forum
+    f2 = soup.findAll('div', {'class': 'tab-pane'}, {'id': 'properties'})
+    data = [
+        [td.text for td in tr.find_all('td')]
+        for table in [f2[f2_index]] for tr in table.find_all('tr')
+    ]
+
+    return data
+
 def login_panou(s):
     url = "https://rubypanel.nephrite.ro/login"
     r = s.get(url, headers=headers)
