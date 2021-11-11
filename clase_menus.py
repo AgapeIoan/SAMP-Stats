@@ -112,9 +112,9 @@ class Clans_Menu(disnake.ui.Select):
         ]
 
         self.clans = panou.ruby.get_clan_list()
-        numar_pagina = 1
+        self.numar_pagina = 1
         # print(self.clans[0:23])
-        for i in self.clans[:22]:
+        for i in self.clans[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
             clan_id, clan_name, clan_tag, clan_members, clan_expire = i
             options.append(disnake.SelectOption(label=f"[{clan_tag}] {clan_name}", description=f"ID: {clan_id} | {clan_members} members | expires in {clan_expire}"))
 
@@ -122,14 +122,28 @@ class Clans_Menu(disnake.ui.Select):
 
         super().__init__(placeholder='Alege clanul', min_values=1, max_values=1, options=options)
 
-    @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Player Stats", custom_id="stats_button")
-    async def stats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        await interaction.response.edit_message(embed=panou.ruby.stats(self.soup), view=self)
-
-
     async def callback(self, interaction: disnake.MessageInteraction):
-        clan_name = self.values[0]
-        print("Optiunea aleasa: ", clan_name)
+        await interaction.response.defer()
+        self.numar_pagina += 1
+        
+        clan_name_selectat = self.values[0]
+        for i in self.clans[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
+            clan_id, clan_name, clan_tag, _, _ = i
+            if f"[{clan_tag}] {clan_name}" == clan_name_selectat:
+                panou.ruby.get_clan_data(clan_id)
+                break
+        
+        options = [
+            disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️'),
+        ]
+        for i in self.clans[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
+            clan_id, clan_name, clan_tag, clan_members, clan_expire = i
+            options.append(disnake.SelectOption(label=f"[{clan_tag}] {clan_name}", description=f"ID: {clan_id} | {clan_members} members | expires in {clan_expire}"))
+        options.append(disnake.SelectOption(label="Inainte", description="Afiseaza urmatoarea pagina de masini", emoji="➡️"))
+        
+        super().__init__(placeholder='Alege clanul', min_values=1, max_values=1, options=options)
+
+        await interaction.edit_original_message(content="Optiunea aleasa: " + clan_name_selectat)
 
 class Clans_Menu_View(disnake.ui.View):
     def __init__(self):
