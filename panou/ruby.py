@@ -303,3 +303,11 @@ def get_clan_data(clan_id):
         # Sa se actualizeze cache clan de fiecare data cand folosesc /clans (o sa ajute la comanda /stats unde stim ca mereu clanul ala exista)
         # Pentru /clans folosesc paramatru ca search, sa zica omul primele litere din clan sau clantag, si in lista o sa se returneze rezultate
    
+        f2 = soup.findAll('div', {'class': 'col-xs-5'})
+        data = [
+            [td.text for td in tr.find_all('td')]
+            for table in f2 for tr in table.find_all('tr')
+        ]
+
+        for i in data:
+            print(i)
