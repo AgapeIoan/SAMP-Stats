@@ -1,4 +1,5 @@
 import disnake
+from disnake.ui import view
 from functii.creier import get_nickname
 import panou.ruby
 
@@ -39,16 +40,20 @@ class Properties_Menu(disnake.ui.Select):
             await interaction.response.edit_message(embed=embed)
 
 class Vehicles_Menu(disnake.ui.Select):
-    def __init__(self, soup: str):
+    def __init__(self, soup: str, numar_pagina: int, cars = None):
         self.soup = soup
+        self.numar_pagina = numar_pagina
+        if not cars:
+            self.cars = panou.ruby.vstats(soup)
+        else:
+            self.cars = cars
 
         options = [
             disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️'),
         ]
         # https://cdn.discordapp.com/emojis/897425271475560481.png?size=44
-        self.cars = panou.ruby.vstats(soup)
         # TODO #7 Buton de NEXT functional, care sa mearga prin masini
-        for i, contor in zip(self.cars, range(23)):
+        for i in self.cars[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
             aux = i.copy()
             car_name, car_specs = format_car_data(aux)
             # print(i)
@@ -56,7 +61,8 @@ class Vehicles_Menu(disnake.ui.Select):
             # Za name alternative: emoji="<:emoji:897425271475560481>"
             options.append(disnake.SelectOption(label=car_name, description=car_specs, emoji="🚗"))
         
-        options.append(disnake.SelectOption(label="Inainte", description="Afiseaza urmatoarea pagina de masini", emoji="➡️"))
+        if self.cars[(self.numar_pagina*23):]:
+            options.append(disnake.SelectOption(label="Inainte", description="Afiseaza urmatoarea pagina de masini", emoji="➡️"))
 
         super().__init__(placeholder='Alege masina', min_values=1, max_values=1, options=options)
 
@@ -64,7 +70,12 @@ class Vehicles_Menu(disnake.ui.Select):
         car_name = self.values[0]
 
         if car_name == "Inapoi":
-            await interaction.response.edit_message(content=f"**Selecteaza o optiune pentru jucatorul `{get_nickname(self.soup)}`:**", embed=None, view=disable_not_working_buttons(Main_Menu(self.soup), self.soup))
+            if self.numar_pagina == 1:
+                await interaction.response.edit_message(content=f"**Selecteaza o optiune pentru jucatorul `{get_nickname(self.soup)}`:**", embed=None, view=disable_not_working_buttons(Main_Menu(self.soup), self.soup))
+            else:
+                await interaction.response.edit_message(view=Vehicles_Menu_View(self.soup, self.numar_pagina - 1, self.cars))
+        elif car_name == "Inainte":
+            await interaction.response.edit_message(view=Vehicles_Menu_View(self.soup, self.numar_pagina + 1, self.cars))
         else:
             for i in self.cars:
                 if(car_name in i[0]):
@@ -104,15 +115,17 @@ class Faction_History(disnake.ui.Select):
             await interaction.response.edit_message(embed=embed)
 
 class Clans_Menu(disnake.ui.Select):
-    def __init__(self):
+    def __init__(self, numar_pagina):
         super().__init__()
+
+        print(self)
 
         options = [
             disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️'),
         ]
 
         self.clans = panou.ruby.get_clan_list()
-        self.numar_pagina = 1
+        self.numar_pagina = numar_pagina
         # print(self.clans[0:23])
         for i in self.clans[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
             clan_id, clan_name, clan_tag, clan_members, clan_expire = i
@@ -120,37 +133,41 @@ class Clans_Menu(disnake.ui.Select):
 
         options.append(disnake.SelectOption(label="Inainte", description="Afiseaza urmatoarea pagina de masini", emoji="➡️"))
 
-        super().__init__(placeholder='Alege clanul', min_values=1, max_values=1, options=options)
+        super().__init__(placeholder='Alege clanul | Pagina ' + str(numar_pagina), min_values=1, max_values=1, options=options)
 
     async def callback(self, interaction: disnake.MessageInteraction):
-        await interaction.response.defer()
-        self.numar_pagina += 1
+        # await interaction.response.defer()
         
         clan_name_selectat = self.values[0]
-        for i in self.clans[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
-            clan_id, clan_name, clan_tag, _, _ = i
-            if f"[{clan_tag}] {clan_name}" == clan_name_selectat:
-                panou.ruby.get_clan_data(clan_id)
-                break
-        
-        options = [
-            disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️'),
-        ]
-        for i in self.clans[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
-            clan_id, clan_name, clan_tag, clan_members, clan_expire = i
-            options.append(disnake.SelectOption(label=f"[{clan_tag}] {clan_name}", description=f"ID: {clan_id} | {clan_members} members | expires in {clan_expire}"))
-        options.append(disnake.SelectOption(label="Inainte", description="Afiseaza urmatoarea pagina de masini", emoji="➡️"))
-        
-        super().__init__(placeholder='Alege clanul', min_values=1, max_values=1, options=options)
 
-        await interaction.edit_original_message(content="Optiunea aleasa: " + clan_name_selectat)
+        if clan_name_selectat == "Inainte":
+            options = [
+                disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️'),
+            ]
+            self.options = options
+            
+            await interaction.response.edit_message(view=Clans_Menu_View(self.numar_pagina + 1))
+        else:
+            for i in self.clans[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
+                clan_id, clan_name, clan_tag, _, _ = i
+                if f"[{clan_tag}] {clan_name}" == clan_name_selectat:
+                    # panou.ruby.get_clan_data(clan_id)
+                    break
+
 
 class Clans_Menu_View(disnake.ui.View):
-    def __init__(self):
+    def __init__(self, nr_pagina):
         super().__init__()
 
         # Adds the dropdown to our view object.
-        self.add_item(Clans_Menu())
+        self.add_item(Clans_Menu(nr_pagina))
+
+class Vehicles_Menu_View(disnake.ui.View):
+    def __init__(self, soup: str, numar_pagina: int, cars = None):
+        super().__init__()
+
+        # Adds the dropdown to our view object.
+        self.add_item(Vehicles_Menu(soup, numar_pagina, cars))
 
 class Main_Menu(disnake.ui.View):
     def __init__(self, soup: str):
@@ -169,7 +186,7 @@ class Main_Menu(disnake.ui.View):
     async def vstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
         enable_buttons(self)
         button.disabled = True
-        self.add_item(Vehicles_Menu(self.soup))
+        self.add_item(Vehicles_Menu(soup=self.soup, numar_pagina=1))
         await interaction.response.edit_message(content="**Selecteaza o masina:**", view=self, embed=None)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Properties", custom_id="properties_button")
@@ -190,25 +207,3 @@ class Main_Menu(disnake.ui.View):
     async def cstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
         panou.ruby.get_clan_name(self.soup)
         await interaction.response.edit_message(content="cstats", view=self, embed=None)
-
-
-class Confirm(disnake.ui.View):
-    def __init__(self):
-        super().__init__()
-        self.value = None
-
-    # When the confirm button is pressed, set the inner value to `True` and
-    # stop the View from listening to more input.
-    # We also send the user an ephemeral message that we're confirming their choice.
-    @disnake.ui.button(label='Confirm', style=disnake.ButtonStyle.green)
-    async def confirm(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        await interaction.response.send_message('Confirming', ephemeral=True)
-        self.value = True
-        self.stop()
-
-    # This one is similar to the confirmation button except sets the inner value to `False`
-    @disnake.ui.button(label='Cancel', style=disnake.ButtonStyle.grey)
-    async def cancel(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        await interaction.response.send_message('Cancelling', ephemeral=True)
-        self.value = False
-        self.stop()

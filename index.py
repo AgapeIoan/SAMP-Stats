@@ -66,7 +66,7 @@ async def stats(inter, nickname):
 async def clans(inter, param = None):
     await inter.response.defer()
 
-    view = clase_menus.Clans_Menu_View()
+    view = clase_menus.Clans_Menu_View(nr_pagina=1)
 
     await inter.edit_original_message(content=f"**CLANS**", view=view)
  
