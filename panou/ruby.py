@@ -151,7 +151,7 @@ def fhstats(soup):
         if "was uninvited by" in faction_string:
             pattern = r"(.+?) was (.+?) from faction (.+?) \((.+?)\) after (.+?), (.+?)\. Reason: (.+?)\."
             name, uninvited_by, faction, rank, zile, fp, reason = re.search(pattern, faction_string).groups()
-            mare_fh.append([date[0].strip(), name, faction, uninvited_by, rank, zile, fp, reason])
+            mare_fh.append([date[0].strip(), name, faction, rank, zile, fp, uninvited_by, reason])
         elif "left faction" in faction_string:
             pattern = r"(.+?) left faction (.+?) \((.+?)\) after (.+?) using /quitgroup, (.+?)\."
             name, faction, rank, zile, fp = re.search(pattern, faction_string).groups()
