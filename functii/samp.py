@@ -233,7 +233,7 @@ def create_fh_embed(fh, nickname):
 
     menu_text = f"{fh[2]}"
     specs = f"Nickname: {fh[1]}\n"
-    # TODO Creat embed pe baza datelor din fh, exemplu am la functia de mai sus
+    # TODO #8 Creat embed pe baza datelor din fh, exemplu am la functia de mai sus
 
     embed.add_field(name=menu_text, value=specs, inline=False)
 
