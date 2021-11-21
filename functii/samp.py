@@ -211,29 +211,29 @@ def format_biz_data(biz_data):
         return v[0], formated_biz_data
 
 def format_faction_history_data(fh):
-    menu_text = f"{fh['date'][:10]} | {fh['faction']}"
+    menu_text = f"{fh[0][:10]} | {fh[2]}"
     specs = ''
-    specs = (f"Days: {fh['days']} | Rank: {fh['rank']} | Uninvited by: {fh['leader']}")
-
-    valoare_factiune_post_fp = f"Reason: {fh['reason']}"
-    specs += (" " + fh['fp'] + " | " + valoare_factiune_post_fp) if fh['fp'] else " | " + valoare_factiune_post_fp
+    print(fh)
+    fh[3] = fh[3][0].capitalize() + fh[3][1:]
+    if len(fh) == 4:
+        # Avem joined sau lider
+        specs = "Leader | " + fh[3] if "Promoted" in fh[3] else "Joined | " + fh[3]
+    elif len(fh) == 6:
+        # Avem left
+        specs = "/quitgroup " + fh[5] + " | " + fh[3] + " | " + fh[4]
+    else:
+        # Avem uninvited
+        fh[4] = fh[4][0].capitalize() + fh[4][1:]
+        specs = fh[6] + " | " + fh[3] + " | " + fh[4] + " | " + fh[5] + " | Reason: " + fh[7]
 
     return menu_text, specs
 
 def create_fh_embed(fh, nickname):
     embed=disnake.Embed(color=0x00ff00)
 
-    menu_text = f"{fh['faction']}"
-    specs = ''
-    specs = (f"Nickname: {fh['nickname']}\n" +
-            f"Days: {fh['days']}\n" +
-            f"Rank: {fh['rank']}\n" +
-            f"Uninvited by: {fh['leader']} ")
-
-    valoare_factiune_post_fp = (f"\nReason: {fh['reason']}\n" +
-                                f"Data: {fh['date']}\n")
-
-    specs += (fh['fp'] + valoare_factiune_post_fp) if fh['fp'] else valoare_factiune_post_fp
+    menu_text = f"{fh[2]}"
+    specs = f"Nickname: {fh[1]}\n"
+    # TODO Creat embed pe baza datelor din fh, exemplu am la functia de mai sus
 
     embed.add_field(name=menu_text, value=specs, inline=False)
 
