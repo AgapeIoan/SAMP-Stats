@@ -51,7 +51,7 @@ async def stats(inter, nickname):
 
     view = disable_not_working_buttons(clase_menus.Main_Menu(soup), soup)
     
-    await inter.edit_original_message(content=f"**Selecteaza o optiune pentru jucatorul `{get_nickname(soup)}`:**", view=view)
+    await inter.edit_original_message(content=f"**`debug` Selecteaza o optiune pentru jucatorul `{get_nickname(soup)}`:**", view=view)
 
 @bot.slash_command(
     name="clans", # Defaults to the function name

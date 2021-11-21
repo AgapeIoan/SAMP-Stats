@@ -1,10 +1,16 @@
 import discord
 import requests
 import re
+import json
 
 from bs4 import BeautifulSoup
 from functii.samp import vezi_asociere
 from functii.creier import scrape_panou, get_nickname, login_panou, este_player_online, get_server_provenienta, get_profile_data, headers
+
+# load json file
+def load_json(file_name):
+    with open(file_name, 'r') as f:
+        return json.load(f)
 
 def get_panel_data(player):
     with requests.Session() as s:
@@ -25,9 +31,6 @@ def get_panel_data(player):
             return None
         
         return soup
-
-
-
 
 def stats(soup):
     with requests.Session() as s:
@@ -126,9 +129,6 @@ def extract_cars(f2):
 def fhstats(soup):
     f2 = soup.findAll('ul', {'class': 'timeline timeline-inverse'})
 
-    # embed = discord.Embed(
-    #     title=get_nickname(soup), description="Status: " + "DEBUG", color=0x00ff00)
-
     # Datele legate de player
     data = [
         [td.text for td in tr.find_all('span')]
@@ -138,63 +138,36 @@ def fhstats(soup):
     for date in data:
         if len(date) == 1:
             data.remove(date)
-
-    # pattern = "(.+?) was uninvited by (.+?) (.+?) from faction (.+?) ((.+?)) after (.+?) days, with (.+?) FP. Reason: (.+?)."
-    # for date in data:
-    #     try:
-    #         found = re.search(pattern, date[1]).group(2)
-    #     except AttributeError:
-    #         found = ''
-    #     print(found)
-
     # AgapeIoan was uninvited by Admin Rares. from faction Taxi Los Santos (rank 7) after 200 days, without FP. Reason: Finalizare mandat lider.
+    # SindYcate left faction Los Aztecas (rank 1) after 6 days using /quitgroup, with 40 FP.
+    # speak has joined the group Las Venturas Police Department (invited by Storck)
+    # SindYcate is now the leader of faction Crips Gang (promoted by yani).
+
     mare_fh = []
 
     for date in data:
         faction_string = date[1]
-        try:
-            nickname = faction_string[0:faction_string.find(" was uninvited")]
-            lider = re.search("by(.*)from", faction_string).group()[3:-5]
-            factiune = re.search("faction(.*).rank", faction_string).group()[8:-6]
-            rank = re.search("rank.\d", faction_string).group()[-1:]
-            zile = re.search("after (\d+) days", faction_string).group()[6:-5]
-            reason = re.search("Reason: (.*)", faction_string).group()[7:-1].strip()
-            if "without FP" in faction_string or " 0 FP" in faction_string:
-                fp = False
-            else:
-                fp = re.search("with (.*) FP", faction_string).group()
 
-            # print(fp)
-            
-        except:
-            continue
+        if "was uninvited by" in faction_string:
+            pattern = r"(.+?) was (.+?) from faction (.+?) \((.+?)\) after (.+?), (.+?)\. Reason: (.+?)\."
+            name, uninvited_by, faction, rank, zile, fp, reason = re.search(pattern, faction_string).groups()
+            mare_fh.append([date[0].strip(), name, faction, uninvited_by, rank, zile, fp, reason])
+        elif "left faction" in faction_string:
+            pattern = r"(.+?) left faction (.+?) \((.+?)\) after (.+?) using /quitgroup, (.+?)\."
+            name, faction, rank, zile, fp = re.search(pattern, faction_string).groups()
+            mare_fh.append([date[0].strip(), name, faction, rank, zile, fp])
+        elif "is now the leader of faction" in faction_string:
+            pattern = r"(.+?) is now the leader of faction (.+?) \((.+?)\)."
+            name, faction, promoted_by = re.search(pattern, faction_string).groups()
+            mare_fh.append([date[0].strip(), name, faction, promoted_by])
+        elif "joined the group" in faction_string:
+            pattern = r"(.+?) joined the group (.+?) \((.+?)\)."
+            name, faction, invited_by = re.search(pattern, faction_string).groups()
+            mare_fh.append([date[0].strip(), name, faction, invited_by])
+        print(faction_string)
+        x = re.search(pattern, faction_string).groups()
+        print(x)
 
-        # titlu_factiune = f"{factiune} | {zile} days | {rank}"
-        # valoare_factiune = (f"Nickname: {nickname}\n" +
-        #                     f"Uninvited by: {lider} ")
-
-        # valoare_factiune_post_fp = (f"\nReason: {reason}\n" +
-        #                             f"Data: {date[0]}\n")
-
-        # valoare_factiune += (fp + valoare_factiune_post_fp) if fp else valoare_factiune_post_fp
-
-        dictionar = {
-            "faction": factiune,
-            "days": zile,
-            "rank": rank,
-            "nickname": nickname,
-            "leader": lider,
-            "reason": reason,
-            "date": date[0].strip(),
-            "fp": fp
-        }
-        mare_fh.append(dictionar)
-
-        # embed.add_field(name=titlu_factiune, value=valoare_factiune, inline=False)
-        
-
-    # embed.set_footer(text="Ruby Nephrite | ruby.nephrite.ro:7777")
-    
     return mare_fh
 
 def bstats_analyzer(soup):

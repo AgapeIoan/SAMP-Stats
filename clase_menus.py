@@ -43,16 +43,11 @@ class Vehicles_Menu(disnake.ui.Select):
     def __init__(self, soup: str, numar_pagina: int, cars = None):
         self.soup = soup
         self.numar_pagina = numar_pagina
-        if not cars:
-            self.cars = panou.ruby.vstats(soup)
-        else:
-            self.cars = cars
-
+        self.cars = panou.ruby.vstats(soup) if not cars else cars
         options = [
             disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️'),
         ]
         # https://cdn.discordapp.com/emojis/897425271475560481.png?size=44
-        # TODO #7 Buton de NEXT functional, care sa mearga prin masini
         for i in self.cars[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
             aux = i.copy()
             car_name, car_specs = format_car_data(aux)
@@ -60,7 +55,7 @@ class Vehicles_Menu(disnake.ui.Select):
             # print(car_name, car_specs)
             # Za name alternative: emoji="<:emoji:897425271475560481>"
             options.append(disnake.SelectOption(label=car_name, description=car_specs, emoji="🚗"))
-        
+
         if self.cars[(self.numar_pagina*23):]:
             options.append(disnake.SelectOption(label="Inainte", description="Afiseaza urmatoarea pagina de masini", emoji="➡️"))
 
@@ -86,19 +81,21 @@ class Vehicles_Menu(disnake.ui.Select):
             await interaction.response.edit_message(embed=embed)
 
 class Faction_History(disnake.ui.Select):
-    def __init__(self, soup: str):
+    def __init__(self, soup: str, numar_pagina: int, fh = None):
         self.soup = soup
+        self.fh = panou.ruby.fhstats(soup) if not fh else fh
+        self.numar_pagina = numar_pagina
 
         options = [
             disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️'),
         ]
-        self.fh = panou.ruby.fhstats(soup)
-        for i, contor in zip(self.fh, range(23)):
+        for i in self.fh[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
             aux = i.copy()
             fh_name, fh_specs = format_faction_history_data(aux)
             options.append(disnake.SelectOption(label=fh_name, description=fh_specs, emoji="👮"))
-        
-        options.append(disnake.SelectOption(label="Inainte", description="Afiseaza urmatoarea pagina de factiuni", emoji="➡️"))
+
+        if self.fh[(self.numar_pagina*23):]:
+            options.append(disnake.SelectOption(label="Inainte", description="Afiseaza urmatoarea pagina de factiuni", emoji="➡️"))
 
         super().__init__(placeholder='Faction History', min_values=1, max_values=1, options=options)
 
@@ -106,13 +103,18 @@ class Faction_History(disnake.ui.Select):
         fh_name = self.values[0]
 
         if fh_name == "Inapoi":
-            await interaction.response.edit_message(content=f"**Selecteaza o optiune pentru jucatorul `{get_nickname(self.soup)}`:**", embed=None, view=disable_not_working_buttons(Main_Menu(self.soup), self.soup))
+            if self.numar_pagina == 1:
+                await interaction.response.edit_message(content=f"**Selecteaza o optiune pentru jucatorul `{get_nickname(self.soup)}`:**", embed=None, view=disable_not_working_buttons(Main_Menu(self.soup), self.soup))
+            else:
+                await interaction.response.edit_message(view=Faction_History_View(self.soup, self.numar_pagina - 1, self.fh))
+        elif fh_name == "Inainte":
+            await interaction.response.edit_message(view=Faction_History_View(self.soup, self.numar_pagina + 1, self.fh))
         else:
             for i in self.fh:
                 if(i['date'][:10] in fh_name):
                     embed = create_fh_embed(i, nickname=get_nickname(self.soup))
 
-            await interaction.response.edit_message(embed=embed)
+            await interaction.response.edit_message(content="debug", embed=embed) #TODO Remove debug when done
 
 class Clans_Menu(disnake.ui.Select):
     def __init__(self, numar_pagina):
@@ -169,6 +171,13 @@ class Vehicles_Menu_View(disnake.ui.View):
         # Adds the dropdown to our view object.
         self.add_item(Vehicles_Menu(soup, numar_pagina, cars))
 
+class Faction_History_View(disnake.ui.View):
+    def __init__(self, soup: str, numar_pagina: int, fh = None):
+        super().__init__()
+
+        # Adds the dropdown to our view object.
+        self.add_item(Faction_History(soup, numar_pagina, fh))
+
 class Main_Menu(disnake.ui.View):
     def __init__(self, soup: str):
         super().__init__()
@@ -200,7 +209,7 @@ class Main_Menu(disnake.ui.View):
     async def fstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
         enable_buttons(self)
         button.disabled = True
-        self.add_item(Faction_History(self.soup))
+        self.add_item(Faction_History(soup=self.soup, numar_pagina=1))
         await interaction.response.edit_message(content="**Lista factiuni:**", view=self, embed=None)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Clan", custom_id="clan_button")
