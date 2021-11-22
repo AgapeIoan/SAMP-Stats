@@ -51,8 +51,12 @@ class Vehicles_Menu(disnake.ui.Select):
         for i in self.cars[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
             aux = i.copy()
             car_name, car_specs = format_car_data(aux)
-            # print(i)
-            # print(car_name, car_specs)
+            if len(car_specs) > 95:
+                # In caz de EMS sau ceva descriere lunga idk, edge cases mai pe scurt
+                car_specs = car_specs[:95] + "..."
+            
+            # TODO: #9 Fix EMS edge cases https://prnt.sc/20hc3uf
+
             # Za name alternative: emoji="<:emoji:897425271475560481>"
             options.append(disnake.SelectOption(label=car_name, description=car_specs, emoji="🚗"))
 
@@ -111,8 +115,10 @@ class Faction_History(disnake.ui.Select):
             await interaction.response.edit_message(view=Faction_History_View(self.soup, self.numar_pagina + 1, self.fh))
         else:
             for i in self.fh:
-                if(i['date'][:10] in fh_name):
+                print(i)
+                if(i[0][:10] in fh_name):
                     embed = create_fh_embed(i, nickname=get_nickname(self.soup))
+                    embed.color = 0x00ff00 if este_player_online(self.soup) else 0xff0000
 
             await interaction.response.edit_message(content="debug", embed=embed) #TODO Remove debug when done
 
