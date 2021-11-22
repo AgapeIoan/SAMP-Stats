@@ -164,9 +164,9 @@ def fhstats(soup):
             pattern = r"(.+?) joined the group (.+?) \((.+?)\)."
             name, faction, invited_by = re.search(pattern, faction_string).groups()
             mare_fh.append([date[0].strip(), name, faction, invited_by])
-        print(faction_string)
+        # print(faction_string)
         x = re.search(pattern, faction_string).groups()
-        print(x)
+        # print(x)
 
     return mare_fh
 

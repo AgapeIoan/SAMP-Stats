@@ -2,6 +2,7 @@ import json
 import disnake
 
 from bs4 import BeautifulSoup
+from disnake.channel import _guild_channel_factory
 
 headers = {
     "user-agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0 | https://discord.gg/bmfRfePXm7"
@@ -213,7 +214,7 @@ def format_biz_data(biz_data):
 def format_faction_history_data(fh):
     menu_text = f"{fh[0][:10]} | {fh[2]}"
     specs = ''
-    print(fh)
+    # print(fh)
     fh[3] = fh[3][0].capitalize() + fh[3][1:]
     if len(fh) == 4:
         # Avem joined sau lider
@@ -223,7 +224,7 @@ def format_faction_history_data(fh):
         specs = "/quitgroup " + fh[5] + " | " + fh[3] + " | " + fh[4]
     else:
         # Avem uninvited
-        fh[4] = fh[4][0].capitalize() + fh[4][1:]
+        fh[6] = fh[6][0].capitalize() + fh[6][1:]
         specs = fh[6] + " | " + fh[3] + " | " + fh[4] + " | " + fh[5] + " | Reason: " + fh[7]
 
     return menu_text, specs
@@ -234,6 +235,20 @@ def create_fh_embed(fh, nickname):
     menu_text = f"{fh[2]}"
     specs = f"Nickname: {fh[1]}\n"
     # TODO #8 Creat embed pe baza datelor din fh, exemplu am la functia de mai sus
+
+    fh[3] = fh[3][0].capitalize() + fh[3][1:]
+    if len(fh) == 4:
+        # Avem joined sau lider
+        specs = "Leader\n" + fh[3] if "Promoted" in fh[3] else "Joined\n" + fh[3]
+    elif len(fh) == 6:
+        # Avem left
+        specs = "/quitgroup " + fh[5] + "\n" + fh[3] + "\n" + fh[4]
+    else:
+        # Avem uninvited
+        fh[6] = fh[6][0].capitalize() + fh[6][1:]
+        specs = fh[6] + "\n" + fh[3] + "\n" + fh[4] + "\n" + fh[5] + "\nReason: " + fh[7]
+
+    specs += '\n\n' + fh[0]
 
     embed.add_field(name=menu_text, value=specs, inline=False)
 
