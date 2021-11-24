@@ -12,6 +12,10 @@ def load_json(file_name):
     with open(file_name, 'r') as f:
         return json.load(f)
 
+def dump_json(file_name, data):
+    with open(file_name, 'w') as f:
+        json.dump(data, f, indent=4)
+
 def get_panel_data(player):
     with requests.Session() as s:
         
@@ -258,10 +262,13 @@ def get_clan_list():
             [td.text for td in tr.find_all('td')]
             for table in f2 for tr in table.find_all('tr')
         ]
-        # for i in data[1:]:
-        #     clan_id, clan_name, clan_tag, clan_members, clan_expire = i
+        clan_dict = {}
+        for i in data[1:]:
+            clan_id, clan_name, clan_tag, clan_members, clan_expire = i
+            clan_dict[clan_id] = [clan_name, clan_tag, clan_members, clan_expire]
 
-        return data[1:]
+        dump_json('storage/clan_list.json', clan_dict)
+        return clan_dict
 
 def get_clan_data(clan_id):
     with requests.Session() as s:
@@ -272,7 +279,7 @@ def get_clan_data(clan_id):
         #TODO Continuat comanda
         # Fac sa acceseze pe id care il luam ez din lista clanuri, dupa fac functii pentru vazut membrii, masini, etc.
         # Maybe fac sa vezi si logs clan?
-        # Sa fac drq si baza pentru parcurs pagini in Select Menus
+        # Sa fac drq si baza pentru parcurs pagini in Select Menus  |   EDIT: Doneee
         # Sa se actualizeze cache clan de fiecare data cand folosesc /clans (o sa ajute la comanda /stats unde stim ca mereu clanul ala exista)
         # Pentru /clans folosesc paramatru ca search, sa zica omul primele litere din clan sau clantag, si in lista o sa se returneze rezultate
    
