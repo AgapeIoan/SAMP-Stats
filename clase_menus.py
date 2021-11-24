@@ -136,6 +136,7 @@ class Clans_Menu(disnake.ui.Select):
         self.numar_pagina = numar_pagina
         # print(self.clans[0:23])
         for i in self.clans[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
+            # TODO Rewrite this for dictionary usage instead of list
             clan_id, clan_name, clan_tag, clan_members, clan_expire = i
             options.append(disnake.SelectOption(label=f"[{clan_tag}] {clan_name}", description=f"ID: {clan_id} | {clan_members} members | expires in {clan_expire}"))
 
@@ -220,5 +221,5 @@ class Main_Menu(disnake.ui.View):
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Clan", custom_id="clan_button")
     async def cstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        panou.ruby.get_clan_name(self.soup)
-        await interaction.response.edit_message(content="cstats", view=self, embed=None)
+        clan_name = panou.ruby.get_clan_name(self.soup)
+        await interaction.response.edit_message(content="Clan: " + clan_name, view=self, embed=None)
