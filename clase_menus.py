@@ -123,38 +123,29 @@ class Faction_History(disnake.ui.Select):
             await interaction.response.edit_message(content="debug", embed=embed) #TODO Remove debug when done
 
 class Clans_Menu(disnake.ui.Select):
-    def __init__(self, numar_pagina):
+    def __init__(self, numar_pagina, clans = None):
         super().__init__()
 
-        print(self)
-
-        options = [
-            disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️'),
-        ]
-
-        self.clans = panou.ruby.get_clan_list()
+        options = [disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️')] if numar_pagina > 1 else []
+        self.clans = panou.ruby.get_clan_list() if not clans else clans
         self.numar_pagina = numar_pagina
-        # print(self.clans[0:23])
-        for i in self.clans[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
+
+        for i in list(self.clans.items())[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
             # TODO Rewrite this for dictionary usage instead of list
-            clan_id, clan_name, clan_tag, clan_members, clan_expire = i
+            k, v = i
+            clan_name, clan_tag, clan_members, clan_expire = v
+            clan_id = k
             options.append(disnake.SelectOption(label=f"[{clan_tag}] {clan_name}", description=f"ID: {clan_id} | {clan_members} members | expires in {clan_expire}"))
 
         options.append(disnake.SelectOption(label="Inainte", description="Afiseaza urmatoarea pagina de masini", emoji="➡️"))
 
         super().__init__(placeholder='Alege clanul | Pagina ' + str(numar_pagina), min_values=1, max_values=1, options=options)
 
-    async def callback(self, interaction: disnake.MessageInteraction):
-        # await interaction.response.defer()
-        
+    async def callback(self, interaction: disnake.MessageInteraction):        
         clan_name_selectat = self.values[0]
-
-        if clan_name_selectat == "Inainte":
-            options = [
-                disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️'),
-            ]
-            self.options = options
-            
+        if clan_name_selectat == "Inapoi":
+            await interaction.response.edit_message(view=Clans_Menu_View(self.numar_pagina - 1))
+        elif clan_name_selectat == "Inainte":
             await interaction.response.edit_message(view=Clans_Menu_View(self.numar_pagina + 1))
         else:
             for i in self.clans[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
