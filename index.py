@@ -72,7 +72,6 @@ async def clans(inter, param = None):
     await inter.edit_original_message(content=f"**CLANS**", view=view)
  
 
-
 @bot.listen()
 async def on_ready():
     print_debug("Ne-am conectat cu succes!")
@@ -80,8 +79,7 @@ async def on_ready():
     print_debug(f"Servers: {len(bot.guilds)}")
     print_debug(f"Latency: {bot.latency}")
     print_debug(f"Status: {bot.status}")
-    
+
 print_debug(f"Ne logam...")
-# TODO #4 Fac ceva event on_ready() sa anunte ca so logat botu
+
 bot.run(BOT_TOKEN)
-    
