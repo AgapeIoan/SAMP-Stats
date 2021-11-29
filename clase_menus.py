@@ -48,6 +48,7 @@ class Vehicles_Menu(disnake.ui.Select):
             disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️'),
         ]
         # https://cdn.discordapp.com/emojis/897425271475560481.png?size=44
+        # https://cdn.discordapp.com/emojis/913364393385934869.png?size=96
         for i in self.cars[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
             aux = i.copy()
             car_name, car_specs = format_car_data(aux)
@@ -58,7 +59,7 @@ class Vehicles_Menu(disnake.ui.Select):
             # TODO: #9 Fix EMS edge cases https://prnt.sc/20hc3uf
 
             # Za name alternative: emoji="<:emoji:897425271475560481>"
-            options.append(disnake.SelectOption(label=car_name, description=car_specs, emoji="🚗"))
+            options.append(disnake.SelectOption(label=car_name, description=car_specs,  emoji="<:emoji:913364393385934869>"))
 
         if self.cars[(self.numar_pagina*23):]:
             options.append(disnake.SelectOption(label="Inainte", description="Afiseaza urmatoarea pagina de masini", emoji="➡️"))
