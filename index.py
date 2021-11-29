@@ -10,6 +10,7 @@ from disnake.ext import commands
 import panou.ruby
 import clase_menus
 from functii.discord import disable_button, disable_not_working_buttons
+from functii.debug import print_debug
 
 with open("config.json", "r") as f:
     config = json.load(f)
@@ -71,12 +72,14 @@ async def clans(inter, param = None):
     await inter.edit_original_message(content=f"**CLANS**", view=view)
  
 
-
 @bot.listen()
 async def on_ready():
-    print("Hatz cu buna dimineata, a pornit botu")
-    
-print("LOADED ZA COG, STARTING ZA BOT")
-# TODO #4 Fac ceva event on_ready() sa anunte ca so logat botu
+    print_debug("Ne-am conectat cu succes!")
+    print_debug(f"{bot.user}")
+    print_debug(f"Servers: {len(bot.guilds)}")
+    print_debug(f"Latency: {bot.latency}")
+    print_debug(f"Status: {bot.status}")
+
+print_debug(f"Ne logam...")
+
 bot.run(BOT_TOKEN)
-    
