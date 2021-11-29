@@ -1,5 +1,6 @@
 import json
 import disnake
+import datetime
 
 from bs4 import BeautifulSoup
 from disnake.channel import _guild_channel_factory
@@ -234,7 +235,7 @@ def create_fh_embed(fh, nickname):
 
     menu_text = f"{fh[2]}"
     specs = f"Nickname: {fh[1]}\n"
-    # TODO #8 Creat embed pe baza datelor din fh, exemplu am la functia de mai sus
+    # TODO: Fiecare factiune sa aiba cate o poza gen logo, hyperlink spre forum maybe?
 
     fh[3] = fh[3][0].capitalize() + fh[3][1:]
     if len(fh) == 4:
@@ -245,13 +246,11 @@ def create_fh_embed(fh, nickname):
         specs = "/quitgroup " + fh[5] + "\n" + fh[3] + "\n" + fh[4]
     else:
         # Avem uninvited
-        fh[6] = fh[6][0].capitalize() + fh[6][1:]
-        specs = fh[6] + "\n" + fh[3] + "\n" + fh[4] + "\n" + fh[5] + "\nReason: " + fh[7]
-
-    specs += '\n\n' + fh[0]
+        fh[6] = fh[6][0].capitalize() + fh[6][1:] + " " + fh[5]
+        specs = fh[6] + "\n" + fh[3] + "\n" + fh[4] + "\nReason: " + fh[7]
 
     embed.add_field(name=menu_text, value=specs, inline=False)
 
-    embed.set_footer(text=f"{nickname} | ruby.nephrite.ro")
+    embed.set_footer(text=f"{nickname} | ruby.nephrite.ro  •  {fh[0]}")
 
     return embed
