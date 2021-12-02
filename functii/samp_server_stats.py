@@ -1,3 +1,4 @@
+import json
 from samp_client.client import SampClient
 
 def get_server_data(server_address):
@@ -26,5 +27,11 @@ def format_server_data(server_data):
 
 if __name__ == '__main__':
     # Debug
-    x, y = format_server_data(get_server_data(input("Server address: ")))
-    print(x, y)
+    with open('storage\\servers_dns.json', 'r') as f:
+        servers_dns = json.load(f)
+    
+    for server in servers_dns:
+        print(server)
+        hostname, string_to_return = format_server_data(get_server_data(server))
+        print(hostname)
+        print(string_to_return)
