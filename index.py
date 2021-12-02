@@ -6,6 +6,7 @@ import asyncio
 from disnake import ActionRow, Button, ButtonStyle, SelectMenu, SelectOption, Option, OptionType
 from disnake import emoji
 from disnake.ext import commands
+from functii.samp_server_stats import format_server_data, get_server_data
 
 import panou.ruby
 import clase_menus
@@ -70,6 +71,27 @@ async def clans(inter, param = None):
     view = clase_menus.Clans_Menu_View(nr_pagina=1)
 
     await inter.edit_original_message(content=f"**CLANS**", view=view)
+ 
+@bot.slash_command(
+    name="raportu", # Defaults to the function name
+    description="Afiseaza lista de servere samp",
+    guild_ids=test_guilds,
+    options=[
+        Option("server", "Adresa server", OptionType.string, required=True)
+        # By default, Option is optional
+        # Pass required=True to make it a required arg
+    ]
+)
+async def raportu(inter, server = None):
+    await inter.response.defer()
+
+    hostname, data = format_server_data(get_server_data(server))
+    if not hostname:
+        await inter.edit_original_message(content = f"Serverul **{server}** nu a fost gasit. Verifica daca ai introdus corect adresa serverului!")
+        return
+
+    embed = disnake.Embed(title=hostname, description=data, color=0x00ff00)
+    await inter.edit_original_message(embed=embed)
  
 
 @bot.listen()
