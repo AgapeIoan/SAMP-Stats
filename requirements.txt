@@ -5,3 +5,4 @@ requests
 bs4
 html5lib
 disnake
+samp_client
