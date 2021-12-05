@@ -149,10 +149,12 @@ class Clans_Menu(disnake.ui.Select):
         elif clan_name_selectat == "Inainte":
             await interaction.response.edit_message(view=Clans_Menu_View(self.numar_pagina + 1))
         else:
-            for i in self.clans[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
-                clan_id, clan_name, clan_tag, _, _ = i
+            for i in list(self.clans.items())[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
+                k, v = i
+                clan_name, clan_tag, clan_members, clan_expire = v
+                clan_id = k
                 if f"[{clan_tag}] {clan_name}" == clan_name_selectat:
-                    # panou.ruby.get_clan_data(clan_id)
+                    panou.ruby.get_clan_data(clan_id)z
                     break
 
 

@@ -241,12 +241,12 @@ def get_clan_name(soup):
     if data[4][0] != 'Clan':
         # Player nu are clan
         return None
-    else:
-        clan_name = data[4][1]
-        clan_name = clan_name.split(',')
-        # clan_rank = clan_name[1]
-        clan_name = clan_name[0]
-        return clan_name
+        
+    clan_name = data[4][1]
+    clan_name = clan_name.split(',')
+    # clan_rank = clan_name[1]
+    clan_name = clan_name[0]
+    return clan_name
 
 def get_clan_list():
     with requests.Session() as s:
