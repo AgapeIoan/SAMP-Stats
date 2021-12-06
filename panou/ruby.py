@@ -2,10 +2,14 @@ import discord
 import requests
 import re
 import json
+import os
+import time
 
 from bs4 import BeautifulSoup
+from debug import creation_date
 from functii.samp import vezi_asociere
-from functii.creier import scrape_panou, get_nickname, login_panou, este_player_online, get_server_provenienta, get_profile_data, headers
+from functii.creier import scrape_panou, get_nickname, login_panou, este_player_online, get_server_provenienta, get_profile_data, creation_date, headers
+from functii.debug import print_debug
 
 # load json file
 def load_json(file_name):
@@ -249,6 +253,12 @@ def get_clan_name(soup):
     return clan_name
 
 def get_clan_list():
+    unix_creation = creation_date("storage/clan_list.json")
+    if time.time() - unix_creation < 30400: # Juma de zi aprox
+        with open("storage/clan_list.json", "r", encoding='utf-8') as f:
+            clan_dict = json.load(f)
+        return clan_dict
+
     with requests.Session() as s:
         url = f'https://rubypanel.nephrite.ro/clan/list'
         r = s.get(url, headers=headers)
@@ -267,24 +277,46 @@ def get_clan_list():
         dump_json('storage/clan_list.json', clan_dict)
         return clan_dict
 
-def get_clan_data(clan_id):
+def get_clan_id_by_name(clan_name):
+    clan_dict = get_clan_list()
+    for i in clan_dict:
+        if clan_dict[i][0] == clan_name:
+            return i
+    return None
+
+def get_clan_data_by_id(clan_id, pozitie):
+    cols = {
+        "left": {'class': 'col-xs-3'},
+        "middle": {'class': 'col-xs-5'},
+        "right": {'class': 'col-xs-4'}
+    }
+
+    if pozitie not in cols.keys():
+        raise ValueError(f"Pozitie invalida: {pozitie}")
+
     with requests.Session() as s:
         login_panou(s)
         url = 'https://rubypanel.nephrite.ro/clan/view/' + str(clan_id)
         r = s.get(url, headers=headers)
         soup = BeautifulSoup(r.content, features='html5lib')
-        #TODO Continuat comanda
+        # TODO Continuat comanda
         # Fac sa acceseze pe id care il luam ez din lista clanuri, dupa fac functii pentru vazut membrii, masini, etc.
         # Maybe fac sa vezi si logs clan?
         # Sa fac drq si baza pentru parcurs pagini in Select Menus  |   EDIT: Doneee
         # Sa se actualizeze cache clan de fiecare data cand folosesc /clans (o sa ajute la comanda /stats unde stim ca mereu clanul ala exista)
         # Pentru /clans folosesc paramatru ca search, sa zica omul primele litere din clan sau clantag, si in lista o sa se returneze rezultate
-   
-        f2 = soup.findAll('div', {'class': 'col-xs-5'})
+
+        f2 = soup.findAll('div', cols[pozitie])
         data = [
             [td.text for td in tr.find_all('td')]
             for table in f2 for tr in table.find_all('tr')
         ]
 
-        for i in data:
-            print(i)
+        return data
+
+def get_player_clan_data(data, nickname_original):
+    for i in data[1:]:
+        # ['7', ' Nickname', '$12,569,002', '937', '00:00', '']
+        rank, nickname, cash, days, time, _ = i
+        if nickname == nickname_original:
+            return [rank, nickname, cash, days, time]
