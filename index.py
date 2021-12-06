@@ -120,6 +120,7 @@ async def on_ready():
     print_debug(f"Servers: {len(bot.guilds)}")
     print_debug(f"Latency: {bot.latency}")
     print_debug(f"Status: {bot.status}")
+    print_debug(f"")
 
 print_debug(f"Ne logam...")
 

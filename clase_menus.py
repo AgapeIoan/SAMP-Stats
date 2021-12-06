@@ -1,6 +1,8 @@
 import disnake
+from disnake import player
 from disnake.ui import view
 from functii.creier import get_nickname
+from functii.debug import print_debug
 import panou.ruby
 
 from functii.samp import create_car_embed, create_fh_embed, format_car_data, format_faction_history_data, format_biz_data, create_biz_embed
@@ -142,7 +144,8 @@ class Clans_Menu(disnake.ui.Select):
 
         super().__init__(placeholder='Alege clanul | Pagina ' + str(numar_pagina), min_values=1, max_values=1, options=options)
 
-    async def callback(self, interaction: disnake.MessageInteraction):        
+    async def callback(self, interaction: disnake.MessageInteraction):
+        await interaction.response.defer()
         clan_name_selectat = self.values[0]
         if clan_name_selectat == "Inapoi":
             await interaction.response.edit_message(view=Clans_Menu_View(self.numar_pagina - 1))
@@ -154,7 +157,11 @@ class Clans_Menu(disnake.ui.Select):
                 clan_name, clan_tag, clan_members, clan_expire = v
                 clan_id = k
                 if f"[{clan_tag}] {clan_name}" == clan_name_selectat:
-                    panou.ruby.get_clan_data(clan_id)z
+                    print_debug('procesam')
+                    # TODO #10 Scrapping cum trebuie pentru left si right, "panou.ruby.get_clan_data_by_id(clan_id, 'left/right')"
+                    panou.ruby.get_clan_data_by_id(clan_id, 'middle')
+                    print_debug('procesat')
+                    await interaction.edit_original_message(content = f"done")
                     break
 
 
@@ -216,4 +223,7 @@ class Main_Menu(disnake.ui.View):
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Clan", custom_id="clan_button")
     async def cstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
         clan_name = panou.ruby.get_clan_name(self.soup)
-        await interaction.response.edit_message(content="Clan: " + clan_name, view=self, embed=None)
+        data = panou.ruby.get_clan_data_by_id(panou.ruby.get_clan_id_by_name(clan_name), 'middle')
+        player_stats = panou.ruby.get_player_clan_data(data, get_nickname(self.soup))
+        # TODO #11 Defer la raspuns ca dureaza sa caute clan data
+        await interaction.response.edit_message(content=str(player_stats) + " | " + clan_name, view=self, embed=None)
