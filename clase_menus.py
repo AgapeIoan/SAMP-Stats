@@ -197,6 +197,9 @@ class Main_Menu(disnake.ui.View):
             self.remove_item(self.children[5])
         enable_buttons(self)
         button.disabled = True
+        # TODO: Ceva puscat pe aici, functia de mai jos se executa dar ceva e naspa la response
+        # https://prnt.sc/22a405v
+        # Posibil sa fie de la enviroment, gonna test pe pc
         await interaction.response.edit_message(embed=panou.ruby.stats(self.soup), view=self)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Vehicles", custom_id="vehicles_button")
@@ -222,8 +225,22 @@ class Main_Menu(disnake.ui.View):
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Clan", custom_id="clan_button")
     async def cstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
+        await interaction.response.defer()
+        if len(self.children) > 5:
+            self.remove_item(self.children[5])
+        enable_buttons(self)
+        button.disabled = True
+
         clan_name = panou.ruby.get_clan_name(self.soup)
         data = panou.ruby.get_clan_data_by_id(panou.ruby.get_clan_id_by_name(clan_name), 'middle')
         player_stats = panou.ruby.get_player_clan_data(data, get_nickname(self.soup))
+        # player_stats = ['7', 'Nickname', '$12,569,002', '937', '00:00', '']
         # TODO #11 Defer la raspuns ca dureaza sa caute clan data
-        await interaction.response.edit_message(content=str(player_stats) + " | " + clan_name, view=self, embed=None)
+
+        embed = disnake.Embed(title=f"Clan: {clan_name}", description=f"**{player_stats[1]}**", color=0x00ff00)
+        embed.add_field(name="Rank", value=player_stats[0], inline=True)
+        embed.add_field(name="Bani seif", value=player_stats[2], inline=True)
+        embed.add_field(name="Zile", value=player_stats[3], inline=True)
+        embed.add_field(name="Ore last 7", value=player_stats[4], inline=True)
+
+        await interaction.edit_original_message(content='', embed=embed, view=self)

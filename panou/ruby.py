@@ -317,6 +317,6 @@ def get_clan_data_by_id(clan_id, pozitie):
 def get_player_clan_data(data, nickname_original):
     for i in data[1:]:
         # ['7', ' Nickname', '$12,569,002', '937', '00:00', '']
-        rank, nickname, cash, days, time, _ = i
-        if nickname == nickname_original:
-            return [rank, nickname, cash, days, time]
+        rank, nickname, cash, days, time_data, _ = i
+        if nickname.strip() == nickname_original:
+            return [rank, nickname_original, cash, days, time_data]
