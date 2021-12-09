@@ -1,3 +1,4 @@
+import datetime
 import discord
 import disnake
 import requests
@@ -156,6 +157,7 @@ def fhstats(soup):
 
     for date in data:
         faction_string = date[1]
+        print(date)
 
         if "was uninvited by" in faction_string:
             pattern = r"(.+?) was (.+?) from faction (.+?) \((.+?)\) after (.+?), (.+?)\. Reason: (.+?)\."
@@ -170,7 +172,7 @@ def fhstats(soup):
             name, faction, promoted_by = re.search(pattern, faction_string).groups()
             mare_fh.append([date[0].strip(), name, faction, promoted_by])
         elif "joined the group" in faction_string:
-            pattern = r"(.+?) joined the group (.+?) \((.+?)\)."
+            pattern = r"(.+?) has joined the group (.+?) \((.+?)\)"
             name, faction, invited_by = re.search(pattern, faction_string).groups()
             mare_fh.append([date[0].strip(), name, faction, invited_by])
 
