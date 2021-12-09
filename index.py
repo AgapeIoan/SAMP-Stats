@@ -32,7 +32,7 @@ async def ping(inter):
 
 @bot.slash_command(
     name="stats", # Defaults to the function name
-    description="butoane",
+    description="Afiseaza statisticile jucatorului specificat",
     guild_ids=test_guilds,
     options=[
         Option("nickname", "Introdu nickname-ul", OptionType.string, required=True)
@@ -48,7 +48,7 @@ async def stats(inter, nickname):
     except IndexError:
         # TODO #3 Sa isi dea seama bot-ul daca e vorba de panel picat, pagina blank, lipsa profil sau orice altceva se poate intampla
         # si sa afiseze un mesaj de eroare corespunzator
-        await inter.edit_original_message(f"Jucatorul **{nickname}** nu a fost gasit. Verifica daca ai introdus corect nickname-ul!")
+        await inter.edit_original_message(content=f"Jucatorul **{nickname}** nu a fost gasit. Verifica daca ai introdus corect nickname-ul!")
         return
 
     view = disable_not_working_buttons(clase_menus.Main_Menu(soup), soup)
