@@ -128,7 +128,8 @@ def create_car_embed(car_stats, nickname):
         # Avem neon
         formated_car_stats+=f"Neon: {car_stats[2]}"
 
-    embed.set_thumbnail(url="https://i.imgur.com/KC9rlJd.png")
+    # TODO #12 Facut poza cu masina frumix pentru toate masinile sau ceva similar
+    # embed.set_thumbnail(url="https://i.imgur.com/KC9rlJd.png")
     embed.add_field(name=car_stats[0], value=formated_car_stats, inline=False)
 
     embed.set_footer(text=f"{nickname} | ruby.nephrite.ro")
@@ -157,7 +158,7 @@ def create_biz_embed(biz_stats, nickname):
     # Maxim 3 poze la case cred, desi o poza reprezentativa ar fi suficienta, ca nu sunt nebun sa fac 554 poze pentru fiecare casa din joc
     # Sincer la case cred ca ar merge si locatia pe harta
     # La apartamente e ez, o poza cu blocul de apartamente si ayaye
-    # TODO
+    # TODO #14
     # !!! Sincer, cred ca embed-ul ar trebui sa fie complementar. Multe detalii sunt deja afisate foarte frumos cum trebuie in lista de optiuni,
     # in embed ar trebui sa fie chestii suplimentare si mult mai complexe. Poate poate o productie (ca la asta s-ar astepta sampistu), o locatie pe harta, o poza cu bizu, o glumita cu sanse random de aparitie acolo.
 
