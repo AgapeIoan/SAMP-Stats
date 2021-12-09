@@ -1,4 +1,5 @@
 import discord
+import disnake
 import requests
 import re
 import json
@@ -70,7 +71,7 @@ def stats(soup):
         culoare_player_online = 0x00ff00 if este_player_online(soup) else 0xff0000
         server_de_provenienta = get_server_provenienta(soup)
 
-        embed = discord.Embed(
+        embed = disnake.Embed(
             title=nickname_player, description="Status: " + player_online, color=culoare_player_online)
         if server_de_provenienta == "ruby":
             embed.set_thumbnail(url="https://i.imgur.com/mZvN9jZ.png")

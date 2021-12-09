@@ -53,24 +53,24 @@ async def stats(inter, nickname):
 
     view = disable_not_working_buttons(clase_menus.Main_Menu(soup), soup)
     
-    await inter.edit_original_message(content=f"**`debug` Selecteaza o optiune pentru jucatorul `{get_nickname(soup)}`:**", view=view)
+    await inter.edit_original_message(content=f"**Selecteaza o optiune pentru jucatorul `{get_nickname(soup)}`:**", view=view)
 
-@bot.slash_command(
-    name="clans", # Defaults to the function name
-    description="Afiseaza lista de clanuri",
-    guild_ids=test_guilds,
-    options=[
-        Option("param", "debug", OptionType.string, required=False)
-        # By default, Option is optional
-        # Pass required=True to make it a required arg
-    ]
-)
-async def clans(inter, param = None):
-    await inter.response.defer()
+# @bot.slash_command(
+#     name="clans", # Defaults to the function name
+#     description="Afiseaza lista de clanuri",
+#     guild_ids=test_guilds,
+#     options=[
+#         Option("param", "debug", OptionType.string, required=False)
+#         # By default, Option is optional
+#         # Pass required=True to make it a required arg
+#     ]
+# )
+# async def clans(inter, param = None):
+#     await inter.response.defer()
 
-    view = clase_menus.Clans_Menu_View(nr_pagina=1)
+#     view = clase_menus.Clans_Menu_View(nr_pagina=1)
 
-    await inter.edit_original_message(content=f"**CLANS**", view=view)
+#     await inter.edit_original_message(content=f"**CLANS**", view=view)
  
 @bot.slash_command(
     name="raportu", # Defaults to the function name
