@@ -61,7 +61,9 @@ class Vehicles_Menu(disnake.ui.Select):
             # TODO: #9 Fix EMS edge cases https://prnt.sc/20hc3uf
 
             # Za name alternative: emoji="<:emoji:897425271475560481>"
-            options.append(disnake.SelectOption(label=car_name, description=car_specs,  emoji="<:emoji:913364393385934869>"))
+            # options.append(disnake.SelectOption(label=car_name, description=car_specs, emoji="<:emoji:913364393385934869>"))
+            options.append(disnake.SelectOption(label=car_name, description=car_specs, emoji="🚗"))
+
 
         if self.cars[(self.numar_pagina*23):]:
             options.append(disnake.SelectOption(label="Inainte", description="Afiseaza urmatoarea pagina de masini", emoji="➡️"))
@@ -99,7 +101,8 @@ class Faction_History(disnake.ui.Select):
         for i in self.fh[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
             aux = i.copy()
             fh_name, fh_specs = format_faction_history_data(aux)
-            options.append(disnake.SelectOption(label=fh_name, description=fh_specs, emoji="👮"))
+            options.append(disnake.SelectOption(label=fh_name, description=fh_specs))
+            # TODO #13 Emojis pentru fiecare factiune in parte
 
         if self.fh[(self.numar_pagina*23):]:
             options.append(disnake.SelectOption(label="Inainte", description="Afiseaza urmatoarea pagina de factiuni", emoji="➡️"))
@@ -237,10 +240,14 @@ class Main_Menu(disnake.ui.View):
         # player_stats = ['7', 'Nickname', '$12,569,002', '937', '00:00', '']
         # TODO #11 Defer la raspuns ca dureaza sa caute clan data
 
-        embed = disnake.Embed(title=f"Clan: {clan_name}", description=f"**{player_stats[1]}**", color=0x00ff00)
-        embed.add_field(name="Rank", value=player_stats[0], inline=True)
-        embed.add_field(name="Bani seif", value=player_stats[2], inline=True)
-        embed.add_field(name="Zile", value=player_stats[3], inline=True)
-        embed.add_field(name="Ore last 7", value=player_stats[4], inline=True)
+        embed = disnake.Embed(title=f"{clan_name}", color=0x00ff00)
+        value_to_send = (f"Rank: {player_stats[0]}\n" \
+                        f"Bani seif: {player_stats[2]}\n" \
+                        f"Zile: {player_stats[3]}\n" \
+                        f"Ore last 7: {player_stats[4]}\n")
+
+        embed.add_field(name="Clan stats", value=value_to_send)
+        embed.set_footer(text=f"{player_stats[1]} | ruby.nephrite.ro")
+        embed.color = 0x00ff00 if este_player_online(self.soup) else 0xff0000
 
         await interaction.edit_original_message(content='', embed=embed, view=self)
