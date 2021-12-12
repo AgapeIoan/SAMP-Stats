@@ -28,6 +28,7 @@ bot = commands.Bot(command_prefix="!", test_guilds = [722442573137969174])
 
 @bot.slash_command()
 async def ping(inter):
+    # TODO #15 Pana si comanda de ping e buguita lmao https://prnt.sc/22krwti
     await inter.response.send_message('pong')
 
 @bot.slash_command(
@@ -123,5 +124,8 @@ async def on_ready():
     print_debug(f"")
 
 print_debug(f"Ne logam...")
+# load cog
+bot.load_extension("cogs.events")
+print_debug(f"Cog-ul events a fost incarcat!")
 
 bot.run(BOT_TOKEN)
