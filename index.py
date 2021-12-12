@@ -2,6 +2,7 @@ from functii.creier import get_nickname
 import json
 import disnake
 import asyncio
+import os
 
 from disnake import ActionRow, Button, ButtonStyle, SelectMenu, SelectOption, Option, OptionType
 from disnake import emoji
@@ -125,7 +126,11 @@ async def on_ready():
 
 print_debug(f"Ne logam...")
 # load cog
-bot.load_extension("cogs.events")
-print_debug(f"Cog-ul events a fost incarcat!")
+for file in os.listdir("cogs"):
+    if file.endswith(".py"):
+        name = file[:-3]
+        bot.load_extension(f"cogs.{name}")
+        print_debug(f"Incarcat cogs.{name}!")
+
 
 bot.run(BOT_TOKEN)
