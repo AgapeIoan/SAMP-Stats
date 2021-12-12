@@ -101,10 +101,12 @@ class Faction_History(disnake.ui.Select):
             disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️'),
         ]
         faction_emojis = panou.ruby.load_json("storage/faction_emojis.json")
+        print(faction_emojis)
         for i in self.fh[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
             aux = i.copy()
             fh_name, fh_specs = format_faction_history_data(aux)
             emoji = faction_emojis[fh_name[fh_name.find("|")+2:]]
+            print(emoji)
             options.append(disnake.SelectOption(label=fh_name, description=fh_specs, emoji=emoji))
             # TODO #13 Emojis pentru fiecare factiune in parte
 
@@ -202,6 +204,47 @@ class Main_Menu(disnake.ui.View):
         self.soup = soup
         self.clan_embed = None
 
+
+
+    # Timeout and error handling.
+    async def on_timeout(self):
+        if len(self.children) > 5:
+            if self.children[5].options[-1].label == "Inainte":
+                self.children[5].options.pop(-1)
+            
+            if self.children[5].options[0].label == "Inapoi": 
+                self.children[5].options[0] = disnake.SelectOption(
+                        label="Butoanele au fost dezactivate datorita inactivitatii!", 
+                        description="Acestea nu mai pot fi selectate in acest mesaj.", 
+                        emoji="🔒"
+                    )
+        for i in self.children[:5]:
+            # i.style = disnake.ButtonStyle.red
+            i.disabled = True
+
+        # make sure to update the message with the new buttons
+        await self.message.edit(content="🔒 Butoanele au fost dezactivate datorita inactivitatii!", view=self)
+        try:
+            await asyncio.sleep(3)
+            await self.message.edit(content="")
+        except disnake.HTTPException:
+            pass
+
+    async def interaction_check(self, interaction):
+        # print_debug(f"{interaction.author.id} != {self.original_author.id}")
+        # TODO Se intampla ceva dubiosenie aici, 
+        # pana nu se executa print_debug-ul din ruby.py, partea cu printat-ul de fh, pot apasa pe orice buton,
+        # insa dupa se reseteaza string-ul la main menu si dupa intra si conditia de mai jos la nevoie
+        # De asemenea, nu se executa butoanele cum trebuie pana nu se incarca treaba specificata mai sus. 
+        # Optiunile nu au emojis, nu primesc output din terminal de la views
+        
+        if interaction.author.id == self.original_author.id:
+            await interaction.response.send_message("**❗ Nu poti folosi comanda deoarece nu esti autorul acesteia!**", ephemeral=True)
+        else:
+            return True
+
+
+
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Player Stats", custom_id="stats_button")
     async def stats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
         if len(self.children) > 5:
@@ -259,34 +302,3 @@ class Main_Menu(disnake.ui.View):
             self.clan_embed = embed
 
         await interaction.edit_original_message(content="**Statistici clan:**", embed=self.clan_embed, view=self)
-        self.embed = True
-
-
-    # Timeout and error handling.
-    async def on_timeout(self):
-        if len(self.children) > 5:
-            if self.children[5].options[-1].label == "Inainte":
-                self.children[5].options.pop(-1)
-            
-            if self.children[5].options[0].label == "Inapoi": 
-                self.children[5].options[0] = disnake.SelectOption(
-                        label="Butoanele au fost dezactivate datorita inactivitatii!", 
-                        description="Acestea nu mai pot fi selectate in acest mesaj.", 
-                        emoji="🔒"
-                    )
-        for i in self.children[:5]:
-            # i.style = disnake.ButtonStyle.red
-            i.disabled = True
-
-        # make sure to update the message with the new buttons
-        await self.message.edit(content="🔒 Butoanele au fost dezactivate datorita inactivitatii!", view=self)
-        try:
-            await asyncio.sleep(3)
-            await self.message.edit(content="")
-        except disnake.HTTPException:
-            pass
-
-    async def interaction_check(self, interaction):
-        # print_debug(f"{interaction.author.id} != {self.original_author.id}")
-        if interaction.author.id != self.message.author.id:
-            await interaction.response.send_message("**❗ Nu poti folosi comanda deoarece nu esti autorul acesteia!**", ephemeral=True)
