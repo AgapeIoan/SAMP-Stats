@@ -232,12 +232,12 @@ class Main_Menu(disnake.ui.View):
 
     async def interaction_check(self, interaction):
         # print_debug(f"{interaction.author.id} != {self.original_author.id}")
-        # TODO Se intampla ceva dubiosenie aici, 
+        # TODO #18 Se intampla ceva dubiosenie aici, 
         # pana nu se executa print_debug-ul din ruby.py, partea cu printat-ul de fh, pot apasa pe orice buton,
         # insa dupa se reseteaza string-ul la main menu si dupa intra si conditia de mai jos la nevoie
         # De asemenea, nu se executa butoanele cum trebuie pana nu se incarca treaba specificata mai sus. 
         # Optiunile nu au emojis, nu primesc output din terminal de la views
-        
+
         if interaction.author.id == self.original_author.id:
             await interaction.response.send_message("**❗ Nu poti folosi comanda deoarece nu esti autorul acesteia!**", ephemeral=True)
         else:
