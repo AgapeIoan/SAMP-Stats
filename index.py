@@ -43,7 +43,11 @@ async def ping(inter):
     ]
 )
 async def stats(inter, nickname):
-    await inter.response.defer()
+    try:
+        await inter.response.defer()
+    except disnake.errors.NotFound:
+        print_debug("DEFER ERROR ?!?!")
+        # TODO #16 Bug mult prea dubios la response.defer()
 
     try:
         soup = panou.ruby.get_panel_data(nickname)
@@ -55,7 +59,7 @@ async def stats(inter, nickname):
 
     view = disable_not_working_buttons(clase_menus.Main_Menu(soup), soup)
     
-    await inter.edit_original_message(content=f"**Selecteaza o optiune pentru jucatorul `{get_nickname(soup)}`:**", view=view)
+    view.message = await inter.edit_original_message(content=f"**Selecteaza o optiune pentru jucatorul `{get_nickname(soup)}`:**", view=view)
 
 # @bot.slash_command(
 #     name="clans", # Defaults to the function name

@@ -1,4 +1,6 @@
 import disnake
+import asyncio
+
 from disnake import player
 from disnake.ui import view
 from functii.creier import get_nickname
@@ -126,7 +128,7 @@ class Faction_History(disnake.ui.Select):
                     embed = create_fh_embed(i, nickname=get_nickname(self.soup))
                     embed.color = 0x00ff00 if este_player_online(self.soup) else 0xff0000
 
-            await interaction.response.edit_message(content="debug", embed=embed) #TODO Remove debug when done
+            await interaction.response.edit_message(content="**Statistici factiune:**", embed=embed)
 
 class Clans_Menu(disnake.ui.Select):
     def __init__(self, numar_pagina, clans = None):
@@ -190,9 +192,38 @@ class Faction_History_View(disnake.ui.View):
         self.add_item(Faction_History(soup, numar_pagina, fh))
 
 class Main_Menu(disnake.ui.View):
+    message: disnake.Message
+
     def __init__(self, soup: str):
-        super().__init__()
+        super().__init__(timeout=5.0)
         self.soup = soup
+        self.clan_embed = None
+    
+    async def on_timeout(self):
+        if len(self.children) > 5:
+            if self.children[5].options[0].label == "Inapoi":
+                self.children[5].options[0].label = "Butoanele au fost dezactivate datorita inactivitatii!"
+                self.children[5].options[0].description = "Acestea nu mai pot fi selectate in acest mesaj."
+            else:
+                # Add a new option at the beggining of the list
+                self.children[5].options.insert(0, disnake.SelectOption(label="Butoanele au fost dezactivate datorita inactivitatii!", description="Acestea nu mai pot fi selectate in acest mesaj."))
+            
+            if self.children[5].options[-1].label == "Inainte":
+                self.children[5].options.pop(-1)
+            
+
+        for i in self.children[:5]:
+            # i.style = disnake.ButtonStyle.red
+            i.disabled = True
+
+        # make sure to update the message with the new buttons
+        await self.message.edit(content="Butoanele au fost dezactivate datorita inactivitatii!", view=self)
+        try:
+            await asyncio.sleep(3)
+            await self.message.edit(content="")
+        except disnake.HTTPException:
+            pass
+
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Player Stats", custom_id="stats_button")
     async def stats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
@@ -200,7 +231,7 @@ class Main_Menu(disnake.ui.View):
             self.remove_item(self.children[5])
         enable_buttons(self)
         button.disabled = True
-        await interaction.response.edit_message(embed=panou.ruby.stats(self.soup), view=self)
+        await interaction.response.edit_message(content="**Statistici jucator:**", embed=panou.ruby.stats(self.soup), view=self)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Vehicles", custom_id="vehicles_button")
     async def vstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
@@ -231,20 +262,25 @@ class Main_Menu(disnake.ui.View):
         enable_buttons(self)
         button.disabled = True
 
-        clan_name = panou.ruby.get_clan_name(self.soup)
-        data = panou.ruby.get_clan_data_by_id(panou.ruby.get_clan_id_by_name(clan_name), 'middle')
-        player_stats = panou.ruby.get_player_clan_data(data, get_nickname(self.soup))
-        # player_stats = ['7', 'Nickname', '$12,569,002', '937', '00:00', '']
-        # TODO #11 Defer la raspuns ca dureaza sa caute clan data
+        if not self.clan_embed:
+            clan_name = panou.ruby.get_clan_name(self.soup)
+            clan_tag = panou.ruby.get_clan_tag_by_name(clan_name)
+            data = panou.ruby.get_clan_data_by_id(panou.ruby.get_clan_id_by_name(clan_name), 'middle')
+            player_stats = panou.ruby.get_player_clan_data(data, get_nickname(self.soup))
+            # player_stats = ['7', 'Nickname', '$12,569,002', '937', '00:00', '']
+            # TODO #11 Defer la raspuns ca dureaza sa caute clan data
 
-        embed = disnake.Embed(title=f"{clan_name}", color=0x00ff00)
-        value_to_send = (f"Rank: {player_stats[0]}\n" \
-                        f"Bani seif: {player_stats[2]}\n" \
-                        f"Zile: {player_stats[3]}\n" \
-                        f"Ore last 7: {player_stats[4]}\n")
+            embed = disnake.Embed(title=f"[{clan_tag}] {clan_name}", color=0x00ff00)
+            value_to_send = (f"Rank: {player_stats[0]}\n" \
+                            f"Bani seif: {player_stats[2]}\n" \
+                            f"Zile: {player_stats[3]}\n" \
+                            f"Ore last 7: {player_stats[4]}\n")
 
-        embed.add_field(name="Clan stats", value=value_to_send)
-        embed.set_footer(text=f"{player_stats[1]} | ruby.nephrite.ro")
-        embed.color = 0x00ff00 if este_player_online(self.soup) else 0xff0000
+            embed.add_field(name="Clan stats", value=value_to_send)
+            embed.set_footer(text=f"{player_stats[1]} | ruby.nephrite.ro")
+            embed.color = 0x00ff00 if este_player_online(self.soup) else 0xff0000
 
-        await interaction.edit_original_message(content='', embed=embed, view=self)
+            self.clan_embed = embed
+
+        await interaction.edit_original_message(content="**Statistici clan:**", embed=self.clan_embed, view=self)
+        self.embed = True

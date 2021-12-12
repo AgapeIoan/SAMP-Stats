@@ -157,7 +157,7 @@ def fhstats(soup):
 
     for date in data:
         faction_string = date[1]
-        print(date)
+        print_debug(date)
 
         if "was uninvited by" in faction_string:
             pattern = r"(.+?) was (.+?) from faction (.+?) \((.+?)\) after (.+?), (.+?)\. Reason: (.+?)\."
@@ -187,7 +187,7 @@ def bstats_analyzer(soup):
     bizes_data = []
 
     for i in biz:
-        print(i)
+        print_debug(i)
         if i[1] == 'house []':
             house = i
             house_id = house[0]
@@ -228,7 +228,7 @@ def bstats_analyzer(soup):
             bizes_data.append({apartament[1][:-3]: [apartament_name, "ID " + apartament_id, apartament_type, apartament_door, apartament_floor]})
 
     for i in bizes_data:
-        print(i)
+        print_debug(i)
     return bizes_data
 
 def bstats(soup):
@@ -285,6 +285,13 @@ def get_clan_id_by_name(clan_name):
     for i in clan_dict:
         if clan_dict[i][0] == clan_name:
             return i
+    return None
+
+def get_clan_tag_by_name(clan_name):
+    clan_dict = get_clan_list()
+    for i in clan_dict:
+        if clan_dict[i][0] == clan_name:
+            return clan_dict[i][1]
     return None
 
 def get_clan_data_by_id(clan_id, pozitie):
