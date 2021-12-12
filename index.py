@@ -58,6 +58,7 @@ async def stats(inter, nickname):
         return
 
     view = disable_not_working_buttons(clase_menus.Main_Menu(soup), soup)
+    view.original_author = inter.author
     
     view.message = await inter.edit_original_message(content=f"**Selecteaza o optiune pentru jucatorul `{get_nickname(soup)}`:**", view=view)
 
