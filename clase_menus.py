@@ -200,9 +200,6 @@ class Main_Menu(disnake.ui.View):
             self.remove_item(self.children[5])
         enable_buttons(self)
         button.disabled = True
-        # TODO: Ceva puscat pe aici, functia de mai jos se executa dar ceva e naspa la response
-        # https://prnt.sc/22a405v
-        # Posibil sa fie de la enviroment, gonna test pe pc
         await interaction.response.edit_message(embed=panou.ruby.stats(self.soup), view=self)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Vehicles", custom_id="vehicles_button")
