@@ -83,45 +83,46 @@ async def stats(inter, nickname):
 
 #     await inter.edit_original_message(content=f"**CLANS**", view=view)
  
-@bot.slash_command(
-    name="raportu", # Defaults to the function name
-    description="Afiseaza lista de servere samp",
-    guild_ids=test_guilds,
-    options=[
-        Option("server", "Specifica adresa server", OptionType.string, required=False)
-        # By default, Option is optional
-        # Pass required=True to make it a required arg
-    ]
-)
-async def raportu(inter, server = None):
-    await inter.response.defer()
+# # TODO #19 Fix comanda raportu
+# @bot.slash_command(
+#     name="raportu", # Defaults to the function name
+#     description="Afiseaza lista de servere samp",
+#     guild_ids=test_guilds,
+#     options=[
+#         Option("server", "Specifica adresa server", OptionType.string, required=False)
+#         # By default, Option is optional
+#         # Pass required=True to make it a required arg
+#     ]
+# )
+# async def raportu(inter, server = None):
+#     await inter.response.defer()
 
-    embed = disnake.Embed(title="SAMP Servers", color=0x00ff00)
-    with open("storage\\servers_dns.json", "r") as f:
-        servers = json.load(f)
+#     embed = disnake.Embed(title="SAMP Servers", color=0x00ff00)
+#     with open("storage\\servers_dns.json", "r") as f:
+#         servers = json.load(f)
 
-    if server:
-        for i in servers:
-            if server in i: # Vedem daca avem keyword matching
-                server = i
-                break
+#     if server:
+#         for i in servers:
+#             if server in i: # Vedem daca avem keyword matching
+#                 server = i
+#                 break
 
-        if server.find(".") == -1: # Nu avem ".", adica nu este corect specificat server-ul
-            await inter.edit_original_message(content = f"Serverul **{server}** nu a fost gasit. Verifica daca ai introdus corect adresa sau numele serverului!")
-            return
-        hostname, data = format_server_data(get_server_data(server))
-        if not hostname:
-            await inter.edit_original_message(content = f"Serverul **{server}** nu a fost gasit. Verifica daca ai introdus corect adresa sau numele serverului!")
-            return
-        embed.add_field(name=hostname, value=data)
-    else:
-        for server in servers:
-            hostname, data = format_server_data(get_server_data(server))
-            if not hostname:
-                continue
-            embed.add_field(name=hostname, value=data)
+#         if server.find(".") == -1: # Nu avem ".", adica nu este corect specificat server-ul
+#             await inter.edit_original_message(content = f"Serverul **{server}** nu a fost gasit. Verifica daca ai introdus corect adresa sau numele serverului!")
+#             return
+#         hostname, data = format_server_data(get_server_data(server))
+#         if not hostname:
+#             await inter.edit_original_message(content = f"Serverul **{server}** nu a fost gasit. Verifica daca ai introdus corect adresa sau numele serverului!")
+#             return
+#         embed.add_field(name=hostname, value=data)
+#     else:
+#         for server in servers:
+#             hostname, data = format_server_data(get_server_data(server))
+#             if not hostname:
+#                 continue
+#             embed.add_field(name=hostname, value=data)
     
-    await inter.edit_original_message(embed=embed)
+#     await inter.edit_original_message(embed=embed)
  
 
 @bot.listen()
