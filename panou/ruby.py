@@ -152,23 +152,24 @@ def fhstats(soup):
     # SindYcate left faction Los Aztecas (rank 1) after 6 days using /quitgroup, with 40 FP.
     # speak has joined the group Las Venturas Police Department (invited by Storck)
     # SindYcate is now the leader of faction Crips Gang (promoted by yani).
+    # Awake was uninvited by Coco from faction Hitman Agency (rank 5) after 125 days, with 0 FP. Reason: Cerere de demisie
 
     mare_fh = []
 
     for date in data:
         faction_string = date[1]
-        print_debug(date)
+        # print_debug(date)
 
         if "was uninvited by" in faction_string:
-            pattern = r"(.+?) was (.+?) from faction (.+?) \((.+?)\) after (.+?), (.+?)\. Reason: (.+?)\."
+            pattern = r"(.+?) was (.+?) from faction (.+?) \((.+?)\) after (.+?), (.+?)\. Reason: (.*)"
             name, uninvited_by, faction, rank, zile, fp, reason = re.search(pattern, faction_string).groups()
             mare_fh.append([date[0].strip(), name, faction, rank, zile, fp, uninvited_by, reason])
         elif "left faction" in faction_string:
-            pattern = r"(.+?) left faction (.+?) \((.+?)\) after (.+?) using /quitgroup, (.+?)\."
+            pattern = r"(.+?) left faction (.+?) \((.+?)\) after (.+?) using /quitgroup, (.*)"
             name, faction, rank, zile, fp = re.search(pattern, faction_string).groups()
             mare_fh.append([date[0].strip(), name, faction, rank, zile, fp])
         elif "is now the leader of faction" in faction_string:
-            pattern = r"(.+?) is now the leader of faction (.+?) \((.+?)\)."
+            pattern = r"(.+?) is now the leader of faction (.+?) \((.+?)\)"
             name, faction, promoted_by = re.search(pattern, faction_string).groups()
             mare_fh.append([date[0].strip(), name, faction, promoted_by])
         elif "joined the group" in faction_string:
@@ -187,7 +188,7 @@ def bstats_analyzer(soup):
     bizes_data = []
 
     for i in biz:
-        print_debug(i)
+        # print_debug(i)
         if i[1] == 'house []':
             house = i
             house_id = house[0]
@@ -227,8 +228,8 @@ def bstats_analyzer(soup):
 
             bizes_data.append({apartament[1][:-3]: [apartament_name, "ID " + apartament_id, apartament_type, apartament_door, apartament_floor]})
 
-    for i in bizes_data:
-        print_debug(i)
+    # for i in bizes_data:
+    #     print_debug(i)
     return bizes_data
 
 def bstats(soup):

@@ -10,7 +10,9 @@ from disnake.ext import commands
 from functii.samp_server_stats import format_server_data, get_server_data
 
 import panou.ruby
-import clase_menus
+import main_menu
+import clans_menu
+
 from functii.discord import disable_button, disable_not_working_buttons
 from functii.debug import print_debug
 
@@ -46,7 +48,7 @@ async def stats(inter, nickname):
     try:
         await inter.response.defer()
     except disnake.errors.NotFound:
-        print_debug("DEFER ERROR ?!?!")
+        print_debug("DEFER ERROR !!")
         # TODO #16 Bug mult prea dubios la response.defer()
 
     try:
@@ -57,7 +59,7 @@ async def stats(inter, nickname):
         await inter.edit_original_message(content=f"Jucatorul **{nickname}** nu a fost gasit. Verifica daca ai introdus corect nickname-ul!")
         return
 
-    view = disable_not_working_buttons(clase_menus.Main_Menu(soup), soup)
+    view = disable_not_working_buttons(main_menu.Main_Menu(soup), soup)
     view.original_author = inter.author
     
     view.message = await inter.edit_original_message(content=f"**Selecteaza o optiune pentru jucatorul `{get_nickname(soup)}`:**", view=view)
