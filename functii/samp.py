@@ -231,8 +231,10 @@ def format_faction_history_data(fh):
 
     return menu_text, specs
 
-def create_fh_embed(fh, nickname):
+def create_fh_embed(fh_original, nickname):
     embed=disnake.Embed(color=0x00ff00)
+
+    fh = fh_original.copy()
 
     menu_text = f"{fh[2]}"
     specs = f"Nickname: {fh[1]}\n"
