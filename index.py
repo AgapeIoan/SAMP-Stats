@@ -29,10 +29,12 @@ bot = commands.Bot(command_prefix="!", test_guilds = [722442573137969174])
 
 
 
-@bot.slash_command()
+@bot.slash_command(
+    name="ping",
+    description="Pings the bot.",
+)
 async def ping(inter):
-    # TODO #15 Pana si comanda de ping e buguita lmao https://prnt.sc/22krwti
-    await inter.response.send_message('pong')
+    await inter.response.send_message(f'**Pong!**\n🏓 {round(bot.latency * 1000)}ms')
 
 @bot.slash_command(
     name="stats", # Defaults to the function name
