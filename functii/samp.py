@@ -129,7 +129,7 @@ def create_car_embed(car_stats, nickname):
         formated_car_stats+=f"Neon: {car_stats[2]}"
 
     # TODO #12 Facut poza cu masina frumix pentru toate masinile sau ceva similar
-    # embed.set_thumbnail(url="https://i.imgur.com/KC9rlJd.png")
+    embed.set_thumbnail(file=disnake.File("storage\\vehicle_big_images\\400.jpg"))
     embed.add_field(name=car_stats[0], value=formated_car_stats, inline=False)
 
     embed.set_footer(text=f"{nickname} | ruby.nephrite.ro")
