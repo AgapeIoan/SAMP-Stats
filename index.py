@@ -19,11 +19,11 @@ from functii.debug import print_debug
 with open("config.json", "r") as f:
     config = json.load(f)
 
-test_guilds = [722442573137969174]
+test_guilds = [722442573137969174, 921316017584631829]
 BOT_TOKEN = config["BOT_TOKEN"]
 POZA_MASINA_SAMP = "https://i.imgur.com/KC9rlJd.png"
 
-bot = commands.Bot(command_prefix="!", test_guilds = [722442573137969174])
+bot = commands.Bot(command_prefix="!", test_guilds = [722442573137969174, 921316017584631829])
 # If 'test_guilds' param isn't specified, the commands are registered globally.
 # Global registration takes up to 1 hour.
 
@@ -35,6 +35,19 @@ bot = commands.Bot(command_prefix="!", test_guilds = [722442573137969174])
 )
 async def ping(inter):
     await inter.response.send_message(f'**Pong!**\n🏓 {round(bot.latency * 1000)}ms')
+
+@bot.slash_command(
+    name="file",
+    description="testez",
+)
+async def file(inter):
+    await inter.response.send_message(f'**Pong!**\n🏓 {round(bot.latency * 1000)}ms')
+    with open("storage/vehicle_big_images/vehicles.json", "r") as f:
+        data = json.load(f)
+    
+    for k,v in data.items():
+        print_debug(f"{k} = {v}")
+        await inter.send(content=k + " | " + v, file=disnake.File(fp=open(f"storage/vehicle_big_images/{k}.jpg", "rb"), filename=v + ".jpg"))
 
 @bot.slash_command(
     name="stats", # Defaults to the function name
