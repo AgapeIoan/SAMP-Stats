@@ -36,18 +36,6 @@ bot = commands.Bot(command_prefix="!", test_guilds = [722442573137969174, 921316
 async def ping(inter):
     await inter.response.send_message(f'**Pong!**\n🏓 {round(bot.latency * 1000)}ms')
 
-@bot.slash_command(
-    name="file",
-    description="testez",
-)
-async def file(inter):
-    await inter.response.send_message(f'**Pong!**\n🏓 {round(bot.latency * 1000)}ms')
-    with open("storage/vehicle_big_images/vehicles.json", "r") as f:
-        data = json.load(f)
-    
-    for k,v in data.items():
-        print_debug(f"{k} = {v}")
-        await inter.send(content=k + " | " + v, file=disnake.File(fp=open(f"storage/vehicle_big_images/{k}.jpg", "rb"), filename=v + ".jpg"))
 
 @bot.slash_command(
     name="stats", # Defaults to the function name
@@ -63,10 +51,11 @@ async def stats(inter, nickname):
     try:
         await inter.response.defer()
     except disnake.errors.NotFound:
-        print_debug("DEFER ERROR !!")
+        print_debug("DEFER ERROR !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         # TODO #16 Bug mult prea dubios la response.defer()
 
     try:
+        print_debug(f"Getting za data for {nickname}")
         soup = panou.ruby.get_panel_data(nickname)
     except IndexError:
         # TODO #3 Sa isi dea seama bot-ul daca e vorba de panel picat, pagina blank, lipsa profil sau orice altceva se poate intampla

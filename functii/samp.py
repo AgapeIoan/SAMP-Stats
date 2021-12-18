@@ -1,3 +1,4 @@
+from functii.debug import print_debug
 import json
 import disnake
 import datetime
@@ -102,6 +103,17 @@ def vezi_asociere(player, ctx):
             player = str(player)
     return player
 
+def get_car_image_link(car_name):
+    # car_name = "Picador (ID:212281)"
+    car_name = car_name[:car_name.find('(ID:')]
+    car_name = car_name.strip()
+
+    with open("storage/vehicles_urls.json") as f:
+        data = json.load(f)
+    for car in data:
+        if car_name.lower() == car.lower():
+            return data[car]
+
 def create_car_embed(car_stats, nickname):
     embed=disnake.Embed(color=0x00ff00)
 
@@ -128,14 +140,13 @@ def create_car_embed(car_stats, nickname):
         # Avem neon
         formated_car_stats+=f"Neon: {car_stats[2]}"
 
-    # TODO #12 Facut poza cu masina frumix pentru toate masinile sau ceva similar
-        embed.set_thumbnail(url="https://i.imgur.com/E66ry21.jpg")
+    image = get_car_image_link(car_stats[0])
+    embed.set_thumbnail(url=image)
     embed.add_field(name=car_stats[0], value=formated_car_stats, inline=False)
 
     embed.set_footer(text=f"{nickname} | ruby.nephrite.ro")
 
     return embed
-
 
 def create_biz_embed(biz_stats, nickname):
     embed=disnake.Embed(color=0x00ff00)
