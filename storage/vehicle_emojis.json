@@ -1,0 +1,21 @@
+{
+    "airplanes": "✈️",
+    "helicopters": "🚁",
+    "boats": "🛥️",
+    "bikes": "🚲",
+    "motorbikes": "🏍️",
+    "2_door_and_compact_cars": "🚗",
+    "4_door_and_luxury_cars": "🏎️",
+    "civil_service": "🚌",
+    "government_vehicles": "🚓",
+    "heavy_and_utility_trucks": "🚚",
+    "light_trucks_and_vans": "🛻",
+    "suvs_and_vagons": "🚙",
+    "trailers": "🔧",
+    "trains_and_railroad_cars": "🚆",
+    "recreational": "🚗",
+    "rc_vehicles": "🤖",
+    "lowriders": "🚗",
+    "muscle_cars": "🏎️",
+    "street_racers": "🏎️"
+}

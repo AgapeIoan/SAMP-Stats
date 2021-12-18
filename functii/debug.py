@@ -20,3 +20,9 @@ def chunks(s, n):
     
 def print_debug(output):
     print(f"{datetime.datetime.now()} | {output}")
+
+async def send_error_message_to_error_channel(bot, message):
+    # get channel by guild id and channel id
+    channel = bot.get_guild(921316017584631829).get_channel(921764407535603753)
+    # send message to channel
+    await channel.send(f"[{datetime.datetime.now()}] " + message)

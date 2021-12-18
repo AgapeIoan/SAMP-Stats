@@ -3,7 +3,7 @@ import asyncio
 import stats_views
 import panou.ruby
 
-from functii.discord import enable_buttons
+from functii.discord import disable_all_buttons, enable_buttons
 from functii.creier import este_player_online, get_nickname
 from functii.debug import print_debug
 
@@ -35,7 +35,7 @@ class Main_Menu(disnake.ui.View):
         # make sure to update the message with the new buttons
         await self.message.edit(content="**🔒 Butoanele au fost dezactivate datorita inactivitatii!**", view=self)
         try:
-            await asyncio.sleep(3)
+            await asyncio.sleep(15)
             await self.message.edit(content="")
         except disnake.HTTPException:
             pass
@@ -45,11 +45,11 @@ class Main_Menu(disnake.ui.View):
         # print_debug(f"{interaction.author.id} != {self.original_author.id}")
         # print_debug(interaction.author.id != self.original_author.id)
 
-        if interaction.author.id != self.original_author.id:
-            await interaction.response.send_message("**❗ Nu poti folosi comanda deoarece nu esti autorul acesteia!**", ephemeral=True)
-            return False
-        else:
+        if interaction.author.id == self.original_author.id:
             return True
+
+        await interaction.response.send_message("**❗ Nu poti folosi comanda deoarece nu esti autorul acesteia!**", ephemeral=True)
+        return False
 
 
 
@@ -87,10 +87,11 @@ class Main_Menu(disnake.ui.View):
         await interaction.response.defer()
         if len(self.children) > 5:
             self.remove_item(self.children[5])
-        enable_buttons(self)
-        button.disabled = True
 
         if not self.clan_embed:
+            disable_all_buttons(self)
+            await interaction.edit_original_message(content="**Caut datele cerute...**", view=self)
+
             clan_name = panou.ruby.get_clan_name(self.soup)
             clan_tag = panou.ruby.get_clan_tag_by_name(clan_name)
             data = panou.ruby.get_clan_data_by_id(panou.ruby.get_clan_id_by_name(clan_name), 'middle')
@@ -109,4 +110,6 @@ class Main_Menu(disnake.ui.View):
 
             self.clan_embed = embed
 
+        enable_buttons(self)
+        button.disabled = True
         await interaction.edit_original_message(content="**Statistici clan:**", embed=self.clan_embed, view=self)
