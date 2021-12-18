@@ -113,6 +113,7 @@ def get_car_image_link(car_name):
     for car in data:
         if car_name.lower() == car.lower():
             return data[car]
+    return None
 
 def create_car_embed(car_stats, nickname):
     embed=disnake.Embed(color=0x00ff00)
@@ -141,6 +142,8 @@ def create_car_embed(car_stats, nickname):
         formated_car_stats+=f"Neon: {car_stats[2]}"
 
     image = get_car_image_link(car_stats[0])
+    if not image:
+        image = "https://cdn.discordapp.com/attachments/921323525359407115/921748251684798514/POZA_EROARE_SAMP.png"
     embed.set_thumbnail(url=image)
     embed.add_field(name=car_stats[0], value=formated_car_stats, inline=False)
 
