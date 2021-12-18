@@ -115,6 +115,23 @@ def get_car_image_link(car_name):
             return data[car]
     return None
 
+def get_car_category(car_name):
+    car_name = car_name[:car_name.find('(ID:')]
+    car_name = car_name.strip()
+    # print_debug(car_name)
+
+    with open("storage/vehicle_categories.json") as f:
+        data = json.load(f)
+    for k, v in data.items():
+        if car_name in v:
+            return k
+    return None
+
+def get_car_emoji_by_category(category):
+    with open("storage/vehicle_emojis.json", encoding='utf-8') as f:
+        data = json.load(f)
+    return data[category]
+
 def create_car_embed(car_stats, nickname):
     embed=disnake.Embed(color=0x00ff00)
 
@@ -156,7 +173,7 @@ def create_biz_embed(biz_stats, nickname):
     formated_biz_stats = ''
 
     # O sa parcurgem o singura data
-    print("BIZ_STATS", biz_stats)
+    # print("BIZ_STATS", biz_stats)
     for k, v in biz_stats.items():
         # Putin ciudata treaba asta cu emoji, insa la cum e gandita, emoji ala il trag cand ma joc cu output-ul
         # si dupa il scot din descriere sa fie totul ok
@@ -189,7 +206,7 @@ def format_car_data(car_data):
     if "VIP text:" in car_data[0]:
         # De exemplu, din "Picador (ID:212281)  VIP text: SILV Rank 2"
         # o sa extragem doar "VIP text: SILV Rank 2"
-        vip_text = car_data[0][car_data[0].find("VIP text: "):]
+        vip_text = car_data[0][car_data[0].find("VIP text:"):]
         formated_car_data+=vip_text+' | '
         car_data[0] = car_data[0].replace(vip_text, '').strip()
 

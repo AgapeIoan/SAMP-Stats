@@ -2,10 +2,10 @@ import disnake
 import main_menu
 
 from functii.creier import get_nickname
-from functii.debug import print_debug
+from functii.debug import print_debug, send_error_message_to_error_channel
 import panou.ruby
 
-from functii.samp import create_car_embed, create_fh_embed, format_car_data, format_faction_history_data, format_biz_data, create_biz_embed
+from functii.samp import create_car_embed, create_fh_embed, format_car_data, format_faction_history_data, format_biz_data, create_biz_embed, get_car_category, get_car_emoji_by_category
 from functii.discord import disable_not_working_buttons
 from functii.creier import este_player_online
 
@@ -32,7 +32,7 @@ class Properties_Menu(disnake.ui.Select):
         if biz_name == "Inapoi":
             await interaction.response.edit_message(content=f"**Selecteaza o optiune pentru jucatorul `{get_nickname(self.soup)}`:**", embed=None, view=disable_not_working_buttons(main_menu.Main_Menu(self.soup), self.soup))
         else:
-            print("SELF = ", self.bizes)
+            # print("SELF = ", self.bizes)
             for i in self.bizes:
                 for k, v in i.items():
                     if(v[0] == biz_name):
@@ -62,7 +62,14 @@ class Vehicles_Menu(disnake.ui.Select):
 
             # Za name alternative: emoji="<:emoji:897425271475560481>"
             # options.append(disnake.SelectOption(label=car_name, description=car_specs, emoji="<:emoji:913364393385934869>"))
-            options.append(disnake.SelectOption(label=car_name, description=car_specs, emoji="🚗"))
+            categorie = get_car_category(car_name)
+            if not categorie:
+                car_emoji = "❗"
+                # TODO #20 Sa pasez bot object din main_menu.py in functia de mai jos pentru debugging reasons
+                # send_error_message_to_error_channel(bot, f"Caracteristica `{car_name}` nu a fost gasita in baza de date.\n\n{car_specs}")
+            else:
+                car_emoji = get_car_emoji_by_category(categorie)
+            options.append(disnake.SelectOption(label=car_name, description=car_specs, emoji=car_emoji))
 
 
         if self.cars[(self.numar_pagina*23):]:
@@ -122,7 +129,7 @@ class Faction_History(disnake.ui.Select):
             await interaction.response.edit_message(view=Faction_History_View(self.soup, self.numar_pagina + 1, self.fh))
         else:
             for i in self.fh:
-                print(i)
+                # print(i)
                 if(i[0][:10] in fh_name):
                     embed = create_fh_embed(i, nickname=get_nickname(self.soup))
                     embed.color = 0x00ff00 if este_player_online(self.soup) else 0xff0000
