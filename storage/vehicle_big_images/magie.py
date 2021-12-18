@@ -7,7 +7,7 @@ from imgurpython import ImgurClient
 # link = "https://rubypanel.nephrite.ro/images/vehicles/Vehicle_400.jpg"
 
 def dump_to_json(dict):
-    with open("vehicles.json", "w") as f:
+    with open("../vehicles.json", "w") as f:
         json.dump(dict, f, indent=4)
 
 def not_main():
