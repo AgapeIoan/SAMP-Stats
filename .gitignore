@@ -99,3 +99,7 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# logs
+storage/logs/
+storage/clan_list.json
