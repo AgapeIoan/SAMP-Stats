@@ -6,3 +6,7 @@ bs4
 html5lib
 disnake
 samp_client
+grequests
+beautifulsoup4
+aiohttp
+gevent
