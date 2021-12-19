@@ -1,5 +1,7 @@
 import datetime
 
+DEBUG = True
+
 def salvam_codul_sursa(cod_intreg):  # merge doar cu atacul in panou efectuat corect
     skemaaa = open('logs ruby/html_debug' + str(datetime.datetime.utcnow()) +
                    '.txt', 'w+', encoding="utf-8")
@@ -19,6 +21,10 @@ def chunks(s, n):
         yield s[start:start + n]
     
 def print_debug(output):
+    if DEBUG:
+        print(f"{datetime.datetime.now()} | {output}")
+
+def print_log(output):
     print(f"{datetime.datetime.now()} | {output}")
 
 async def send_error_message_to_error_channel(bot, message):

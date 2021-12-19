@@ -9,7 +9,7 @@ from disnake import guild
 
 from disnake.ext import commands
 
-from functii.debug import print_debug
+from functii.debug import print_debug, print_log
 
 class Events(commands.Cog):
     def __init__(self, bot):
@@ -43,7 +43,7 @@ class Events(commands.Cog):
         }
 
         # someone used a command
-        print_debug(f"{inter.author} | Guild: {str(inter.guild)} | Channel: {str(inter.channel)} | /{str(inter.data.name)} {str(inter.options)}")
+        print_log(f"{inter.author} | Guild: {str(inter.guild)} | Channel: {str(inter.channel)} | /{str(inter.data.name)} {str(inter.options)}")
 
         # log data to unique file
         za_time = str(datetime.datetime.now()).replace(":", "-")
