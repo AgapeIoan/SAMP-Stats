@@ -1,49 +1,50 @@
 import datetime
 import discord
 import disnake
-import requests
 import re
 import json
 import os
 import time
+import grequests
 
 from bs4 import BeautifulSoup
 from debug import creation_date
 from functii.samp import vezi_asociere
-from functii.creier import scrape_panou, get_nickname, login_panou, este_player_online, get_server_provenienta, get_profile_data, creation_date, headers
+from functii.creier import scrape_panou, get_nickname, login_panou, este_player_online, get_server_provenienta, \
+    get_profile_data, creation_date, headers
 from functii.debug import print_debug
+
 
 # load json file
 def load_json(file_name):
     with open(file_name, 'r', encoding='utf-8') as f:
         return json.load(f)
 
+
 def dump_json(file_name, data):
     with open(file_name, 'w') as f:
         json.dump(data, f, indent=4)
 
-def get_panel_data(player):
-    with requests.Session() as s:
-        
-        # TODO Ceva sa trag tot panel-ul si sa il salvez in memorie.
-        # O sa verific daca player-ul exista INAINTE de a afisa butoanele
-        
-        # O sa am panel intr-un format ce o sa fie prelucrat in parte de vstats, stats, etc, FARA CONEXIUNE LA PANEL? SAU
-        # la prima verificare a panel-ului sa imi salvez tot panel-ul undeva?
-        # Imo cred ca ar fi mai bine sa merg pe prima varianta, cuz daca tot verific existenta player-ului,
-        # automat o sa am tot panel-ul descarcat in memorie
 
+async def get_panel_data(player):
+    with grequests.Session() as s:
+        if player.lower() != "managera5":
+            login_panou(s)
         url = f'http://rubypanel.nephrite.ro/profile/{player}'
+        print_debug("Requesting: " + url)
         r = s.get(url, headers=headers)
+        print_debug("Response: " + str(r.status_code))
         soup = BeautifulSoup(r.content, features='html5lib')
+        print_debug("Got soup.")
 
         if not get_nickname(soup):
             return None
-        
+
         return soup
 
-def stats(soup):
-    with requests.Session() as s:
+
+async def stats(soup):
+    with grequests.Session() as s:
         lista_valori_scrape = [
             {'div': {'class': 'col-md-12 col-lg-12'}},
             {'div': {'class': 'alert bg-red'}}
@@ -95,7 +96,7 @@ def stats(soup):
             embed.add_field(name="Banned", value=de_trm_ban)
 
         # Bagam badges sa fie treaba buna
-        badges_de_trimis = '' # Stiu ca puteam sa join() dar lasa asa
+        badges_de_trimis = ''  # Stiu ca puteam sa join() dar lasa asa
         data_badges = badges_raw[0].findAll('i')
         for badge in data_badges:
             badges_de_trimis += str(badge.nextSibling).title() + '\n'
@@ -105,36 +106,37 @@ def stats(soup):
         for date in data:
             embed.add_field(name=date[0], value=date[1])
 
-
         embed.set_footer(text="Ruby Nephrite | ruby.nephrite.ro:7777")
-        print("STATS DATA WAS RETURNED")
         return embed
+
 
 def vstats(soup):
     return extract_cars(soup.findAll('div', {'class': 'col-md-8'}))
 
+
 def extract_cars(f2):
     # Functie de returneaza lista cu masinile jucatorului specificat
-        data = [
-            [td.text for td in tr.find_all('td')]
-            for table in f2 for tr in table.find_all('tr')
-        ]
+    data = [
+        [td.text for td in tr.find_all('td')]
+        for table in f2 for tr in table.find_all('tr')
+    ]
 
-        lista_de_trimis = []
-            
-        for aux in data:
-            if len(aux) == 8:
-                # Aparent fiecare lista de masini are lungimea exacta de 8 elemente
-                aux_list = []
-                for aux_2 in aux:
-                    aux_2 = aux_2.strip()
-                    if aux_2:
-                        aux_list.append(aux_2)
-                lista_de_trimis.append(aux_list)
+    lista_de_trimis = []
 
-        # for i in lista_de_trimis:
-        #     print(i)
-        return lista_de_trimis
+    for aux in data:
+        if len(aux) == 8:
+            # Aparent fiecare lista de masini are lungimea exacta de 8 elemente
+            aux_list = []
+            for aux_2 in aux:
+                aux_2 = aux_2.strip()
+                if aux_2:
+                    aux_list.append(aux_2)
+            lista_de_trimis.append(aux_list)
+
+    # for i in lista_de_trimis:
+    #     print(i)
+    return lista_de_trimis
+
 
 def fhstats(soup):
     f2 = soup.findAll('ul', {'class': 'timeline timeline-inverse'})
@@ -178,6 +180,7 @@ def fhstats(soup):
             mare_fh.append([date[0].strip(), name, faction, invited_by])
 
     return mare_fh
+
 
 def bstats_analyzer(soup):
     biz = bstats(soup)
@@ -226,11 +229,13 @@ def bstats_analyzer(soup):
             apartament[3] = apartament[3].replace(apartament_door, '')
             apartament_floor = apartament[3]
 
-            bizes_data.append({apartament[1][:-3]: [apartament_name, "ID " + apartament_id, apartament_type, apartament_door, apartament_floor]})
+            bizes_data.append({apartament[1][:-3]: [apartament_name, "ID " + apartament_id, apartament_type,
+                                                    apartament_door, apartament_floor]})
 
     # for i in bizes_data:
     #     print_debug(i)
     return bizes_data
+
 
 def bstats(soup):
     f2 = soup.findAll('div', {'class': 'tab-pane'}, {'id': 'properties'})
@@ -242,28 +247,33 @@ def bstats(soup):
         [td.text for td in tr.find_all('td')]
         for table in [f2[5]] for tr in table.find_all('tr')
     ]
-    return data[1:] # lista_properties
+    return data[1:]  # lista_properties
+
 
 def get_clan_name(soup):
     data = get_profile_data(soup, 0)
     if data[4][0] != 'Clan':
         # Player nu are clan
         return None
-        
+
     clan_name = data[4][1]
     clan_name = clan_name.split(',')
     # clan_rank = clan_name[1]
     clan_name = clan_name[0]
     return clan_name
 
-def get_clan_list():
-    unix_creation = creation_date("storage/clan_list.json")
-    if time.time() - unix_creation < 30400: # Juma de zi aprox
+
+async def get_clan_list():
+    print_debug("Getting clan list...")
+
+    unix_modification = os.path.getmtime("storage/clan_list.json")
+    if time.time() - unix_modification < 30400:  # Juma de zi aprox
         with open("storage/clan_list.json", "r", encoding='utf-8') as f:
             clan_dict = json.load(f)
+        print_debug("Clan list loaded from file.")
         return clan_dict
 
-    with requests.Session() as s:
+    with grequests.Session() as s:
         url = f'https://rubypanel.nephrite.ro/clan/list'
         r = s.get(url, headers=headers)
         soup = BeautifulSoup(r.content, features='html5lib')
@@ -279,23 +289,31 @@ def get_clan_list():
             clan_dict[clan_id] = [clan_name, clan_tag, clan_members, clan_expire]
 
         dump_json('storage/clan_list.json', clan_dict)
+        print_debug("Clan list loaded from web.")
         return clan_dict
 
-def get_clan_id_by_name(clan_name):
-    clan_dict = get_clan_list()
+
+async def get_clan_id_by_name(clan_name):
+    # TODO #21: Se poate folosi mai putin functia asta, anume
+    # cand se face scrape-ul pentru get_clan_name, putem obtine href cu clan_url si astfel nu mai este nevoie sa facem
+    # skeme cu get_clan_list()-ul
+    clan_dict = await get_clan_list()
     for i in clan_dict:
         if clan_dict[i][0] == clan_name:
             return i
     return None
 
-def get_clan_tag_by_name(clan_name):
-    clan_dict = get_clan_list()
+
+async def get_clan_tag_by_name(clan_name):
+    clan_dict = await get_clan_list()
     for i in clan_dict:
         if clan_dict[i][0] == clan_name:
             return clan_dict[i][1]
     return None
 
-def get_clan_data_by_id(clan_id, pozitie):
+
+async def get_clan_data_by_id(clan_id, pozitie):
+    print_debug(f"Getting clan data for clan {clan_id}...")
     cols = {
         "left": {'class': 'col-xs-3'},
         "middle": {'class': 'col-xs-5'},
@@ -305,9 +323,12 @@ def get_clan_data_by_id(clan_id, pozitie):
     if pozitie not in cols.keys():
         raise ValueError(f"Pozitie invalida: {pozitie}")
 
-    with requests.Session() as s:
+    with grequests.Session() as s:
+        print_debug("Logging in...")
         login_panou(s)
+        print_debug("Logged in.")
         url = 'https://rubypanel.nephrite.ro/clan/view/' + str(clan_id)
+        print_debug(f"Getting clan data from {url}...")
         r = s.get(url, headers=headers)
         soup = BeautifulSoup(r.content, features='html5lib')
         # TODO Continuat comanda
@@ -323,9 +344,11 @@ def get_clan_data_by_id(clan_id, pozitie):
             for table in f2 for tr in table.find_all('tr')
         ]
 
+        print_debug(f"Clan data loaded.")
         return data
 
-def get_player_clan_data(data, nickname_original):
+
+async def get_player_clan_data(data, nickname_original):
     for i in data[1:]:
         # ['7', ' Nickname', '$12,569,002', '937', '00:00', '']
         rank, nickname, cash, days, time_data, _ = i
