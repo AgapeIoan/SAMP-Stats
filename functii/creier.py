@@ -1,9 +1,16 @@
 import platform
 import os
+import pickle
+import datetime
+import time
 from bs4 import BeautifulSoup
 
+from functii.debug import print_debug
+
 headers = {
-    "user-agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0 | https://discord.gg/bmfRfePXm7"
+    # "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0 | https://discord.gg/bmfRfePXm7"
+    "user-agent": "Mozilla/5.0 (https://discord.gg/bmfRfePXm7; CPU SAMP_Stats_Rewrite d.py_2.0 ) "
+                  "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/618076658678628383 Safari/537.36 "
 }
 login_data = {
     "_token": "",
@@ -47,14 +54,33 @@ def get_profile_data(soup, f2_index: int):
 
     return data
 
-def login_panou(s):
-    url = "https://rubypanel.nephrite.ro/login"
-    r = s.get(url, headers=headers)
-    soup = BeautifulSoup(r.content, features='html5lib')
-    login_data['_token'] = soup.find('input', attrs={'name': '_token'})['value']
-    r = s.post(url, data=login_data, headers=headers)
 
-    return r
+def dump_session_to_file(session, filename):
+    with open(filename, 'wb') as f:
+        pickle.dump(session.cookies, f)
+
+
+def load_session_from_file(session, filename):
+    with open(filename, 'rb') as f:
+        session.cookies.update(pickle.load(f))
+
+
+def login_panou(s):
+    unix_modification = os.path.getmtime("session.pkl")
+    if time.time() - unix_modification > 250000: # ~3 days
+        print_debug("Session expired, logging in again")
+        url = "https://rubypanel.nephrite.ro/login"
+        r = s.get(url, headers=headers)
+        soup = BeautifulSoup(r.content, features='html5lib')
+        login_data['_token'] = soup.find('input', attrs={'name': '_token'})['value']
+        r = s.post(url, data=login_data, headers=headers)
+        dump_session_to_file(s, "session.pkl")
+        return r
+    else:
+        print_debug("Session still valid. No need to login.")
+        load_session_from_file(s, "session.pkl")
+        return "1337" # Normal ar fi trebuit sa primim 200, asa ca nu primim nimic punem si noi ceva sa fie acolo
+
 
 def scrape_panou(soup, datas):
     scrapped = []
