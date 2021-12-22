@@ -65,7 +65,7 @@ def load_session_from_file(session, filename):
         session.cookies.update(pickle.load(f))
 
 
-def login_panou(s):
+async def login_panou(s):
     unix_modification = os.path.getmtime("session.pkl")
     if time.time() - unix_modification > 250000: # ~3 days
         print_debug("Session expired, logging in again")

@@ -1,3 +1,5 @@
+from grequests import async as grequests_async
+
 import datetime
 import discord
 import disnake
@@ -6,6 +8,7 @@ import json
 import os
 import time
 import grequests
+import gevent
 
 from bs4 import BeautifulSoup
 from debug import creation_date
@@ -27,21 +30,25 @@ def dump_json(file_name, data):
 
 
 async def get_panel_data(player):
+    def do_smth(response, *args, **kwargs):
+        url = response.url
+        print_debug("Response: " + str(response))
+        response.soup = BeautifulSoup(response.content, features='html5lib')
+        print_debug("Got soup.")
+        
+
     with grequests.Session() as s:
         if player.lower() != "managera5":
-            login_panou(s)
-        url = f'http://rubypanel.nephrite.ro/profile/{player}'
-        print_debug("Requesting: " + url)
-        r = s.get(url, headers=headers)
-        print_debug("Response: " + str(r.status_code))
-        soup = BeautifulSoup(r.content, features='html5lib')
-        print_debug("Got soup.")
+            await login_panou(s)
+        urls = [f'https://rubypanel.nephrite.ro/profile/{player}']
+        print_debug("Requesting: " + urls[0])
+        rs = (async_grequests.get(u, headers = headers, hooks = {'response': do_smth}) for u in urls)
+        rs = async_grequests.map(rs, size = 10)
 
-        if not get_nickname(soup):
+        print_debug("Got rs.")
+        if not get_nickname(rs[0].soup):
             return None
-
-        return soup
-
+        return rs[0].soup
 
 async def stats(soup):
     with grequests.Session() as s:
@@ -325,7 +332,7 @@ async def get_clan_data_by_id(clan_id, pozitie):
 
     with grequests.Session() as s:
         print_debug("Logging in...")
-        login_panou(s)
+        await login_panou(s)
         print_debug("Logged in.")
         url = 'https://rubypanel.nephrite.ro/clan/view/' + str(clan_id)
         print_debug(f"Getting clan data from {url}...")
