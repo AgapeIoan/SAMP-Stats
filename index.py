@@ -5,6 +5,7 @@ from gevent import monkey as curious_george
 curious_george.patch_all(thread=False, select=False)
 
 import disnake
+import asyncio
 from disnake import Option, OptionType
 from disnake.ext import commands
 
@@ -34,6 +35,17 @@ async def ping(inter):
     za_ping = round(bot.latency * 1000)
     await inter.response.send_message(f'**Pong!**\n🏓 {za_ping} ms')
     await send_error_message_to_error_channel(bot, f"{inter.author.name}#{inter.author.discriminator} pinged the bot \w " + str(za_ping) + "ms.")
+
+
+@bot.slash_command(
+    name="test1",
+    description="test",
+)
+async def test1(inter):
+    await inter.response.defer()
+    await asyncio.sleep(10)
+    x = 10
+    await inter.edit_original_message(content=f"test{x}")
 
 
 @bot.slash_command(
