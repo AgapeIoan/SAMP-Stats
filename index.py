@@ -36,18 +36,6 @@ async def ping(inter):
     await inter.response.send_message(f'**Pong!**\n🏓 {za_ping} ms')
     await send_error_message_to_error_channel(bot, f"{inter.author.name}#{inter.author.discriminator} pinged the bot \w " + str(za_ping) + "ms.")
 
-
-@bot.slash_command(
-    name="test1",
-    description="test",
-)
-async def test1(inter):
-    await inter.response.defer()
-    await asyncio.sleep(10)
-    x = 10
-    await inter.edit_original_message(content=f"test{x}")
-
-
 @bot.slash_command(
     name="stats",  # Defaults to the function name
     description="Afiseaza statisticile jucatorului specificat",
