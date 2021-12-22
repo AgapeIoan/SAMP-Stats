@@ -1,14 +1,9 @@
-from grequests import async as grequests_async
-
-import datetime
-import discord
 import disnake
 import re
 import json
 import os
 import time
-import grequests
-import gevent
+import aiohttp
 
 from bs4 import BeautifulSoup
 from debug import creation_date
@@ -30,91 +25,89 @@ def dump_json(file_name, data):
 
 
 async def get_panel_data(player):
-    def do_smth(response, *args, **kwargs):
-        url = response.url
-        print_debug("Response: " + str(response))
-        response.soup = BeautifulSoup(response.content, features='html5lib')
-        print_debug("Got soup.")
-        
-
-    with grequests.Session() as s:
+    async with aiohttp.ClientSession(headers=headers) as session:
         if player.lower() != "managera5":
-            await login_panou(s)
-        urls = [f'https://rubypanel.nephrite.ro/profile/{player}']
-        print_debug("Requesting: " + urls[0])
-        rs = (async_grequests.get(u, headers = headers, hooks = {'response': do_smth}) for u in urls)
-        rs = async_grequests.map(rs, size = 10)
+            await login_panou(session)
+        url = f'https://rubypanel.nephrite.ro/profile/{player}'
+        print_debug("Requesting: " + url)
+        # Async request
+        async with session.get(url) as response:
+            # Parse html
+            soup = BeautifulSoup(await response.text(), 'html.parser')
+        print_debug("Done.")
 
-        print_debug("Got rs.")
-        if not get_nickname(rs[0].soup):
+        if not get_nickname(soup):
             return None
-        return rs[0].soup
+
+        for cookie in session.cookie_jar:
+            print(cookie)
+
+        return soup
 
 async def stats(soup):
-    with grequests.Session() as s:
-        lista_valori_scrape = [
-            {'div': {'class': 'col-md-12 col-lg-12'}},
-            {'div': {'class': 'alert bg-red'}}
-        ]
+    lista_valori_scrape = [
+        {'div': {'class': 'col-md-12 col-lg-12'}},
+        {'div': {'class': 'alert bg-red'}}
+    ]
 
-        f2 = soup.findAll('div', {'class': 'tab-pane'})
+    f2 = soup.findAll('div', {'class': 'tab-pane'})
 
-        badges_raw, ban_status_raw = scrape_panou(soup, lista_valori_scrape)
+    badges_raw, ban_status_raw = scrape_panou(soup, lista_valori_scrape)
 
-        try:
-            ban_string = ban_status_raw[0].findAll('h4')
-            # TODO De infrumusetat urm secventa de linii de cod cand n-am cf
-            detrmban = ban_string[0].nextSibling
-            motiv_string_lista = []
-            for _ in range(5):
-                motiv_string_lista.append(detrmban)
-                detrmban = detrmban.nextSibling
-        except IndexError:
-            motiv_string_lista = []
+    try:
+        ban_string = ban_status_raw[0].findAll('h4')
+        # TODO De infrumusetat urm secventa de linii de cod cand n-am cf
+        detrmban = ban_string[0].nextSibling
+        motiv_string_lista = []
+        for _ in range(5):
+            motiv_string_lista.append(detrmban)
+            detrmban = detrmban.nextSibling
+    except IndexError:
+        motiv_string_lista = []
 
-        # nickname_player, player_online, server_de_provenienta = este_player_online(
-        #     str(user_name_panou), player)
+    # nickname_player, player_online, server_de_provenienta = este_player_online(
+    #     str(user_name_panou), player)
 
-        nickname_player = get_nickname(soup)
-        player_online = "online" if este_player_online(soup) else "offline"
-        culoare_player_online = 0x00ff00 if este_player_online(soup) else 0xff0000
-        server_de_provenienta = get_server_provenienta(soup)
+    nickname_player = get_nickname(soup)
+    player_online = "online" if este_player_online(soup) else "offline"
+    culoare_player_online = 0x00ff00 if este_player_online(soup) else 0xff0000
+    server_de_provenienta = get_server_provenienta(soup)
 
-        embed = disnake.Embed(
-            title=nickname_player, description="Status: " + player_online, color=culoare_player_online)
-        if server_de_provenienta == "ruby":
-            embed.set_thumbnail(url="https://i.imgur.com/mZvN9jZ.png")
-        else:
-            embed.set_thumbnail(url="https://i.imgur.com/jnTomOg.png")
+    embed = disnake.Embed(
+        title=nickname_player, description="Status: " + player_online, color=culoare_player_online)
+    if server_de_provenienta == "ruby":
+        embed.set_thumbnail(url="https://i.imgur.com/mZvN9jZ.png")
+    else:
+        embed.set_thumbnail(url="https://i.imgur.com/jnTomOg.png")
 
-        # Datele legate de player
-        data = [
-            [td.text for td in tr.find_all('td')]
-            for table in [f2[0]] for tr in table.find_all('tr')
-        ]
+    # Datele legate de player
+    data = [
+        [td.text for td in tr.find_all('td')]
+        for table in [f2[0]] for tr in table.find_all('tr')
+    ]
 
-        # Daca e banat bagam si de aia
-        if motiv_string_lista:
-            autor_ban = str(motiv_string_lista[1])[str(motiv_string_lista[1]).find(r'>') + 1:-4]
-            lungime_ban = str(motiv_string_lista[2])[4:-10]  # Nu e lungime, e defapt data cand so dat dar ayaye
-            motiv_ban = str(motiv_string_lista[3])[3:-4]
-            expira_ban = str(motiv_string_lista[4])[str(motiv_string_lista[4]).find("expire") + 6:]
-            de_trm_ban = f"By {autor_ban}\nOn {lungime_ban}\nReason: {motiv_ban}\nExpire {expira_ban}"
-            embed.add_field(name="Banned", value=de_trm_ban)
+    # Daca e banat bagam si de aia
+    if motiv_string_lista:
+        autor_ban = str(motiv_string_lista[1])[str(motiv_string_lista[1]).find(r'>') + 1:-4]
+        lungime_ban = str(motiv_string_lista[2])[4:-10]  # Nu e lungime, e defapt data cand so dat dar ayaye
+        motiv_ban = str(motiv_string_lista[3])[3:-4]
+        expira_ban = str(motiv_string_lista[4])[str(motiv_string_lista[4]).find("expire") + 6:]
+        de_trm_ban = f"By {autor_ban}\nOn {lungime_ban}\nReason: {motiv_ban}\nExpire {expira_ban}"
+        embed.add_field(name="Banned", value=de_trm_ban)
 
-        # Bagam badges sa fie treaba buna
-        badges_de_trimis = ''  # Stiu ca puteam sa join() dar lasa asa
-        data_badges = badges_raw[0].findAll('i')
-        for badge in data_badges:
-            badges_de_trimis += str(badge.nextSibling).title() + '\n'
-        if data_badges:
-            embed.add_field(name="Badges", value=badges_de_trimis)
-        # Amu bagam datele playerului
-        for date in data:
-            embed.add_field(name=date[0], value=date[1])
+    # Bagam badges sa fie treaba buna
+    badges_de_trimis = ''  # Stiu ca puteam sa join() dar lasa asa
+    data_badges = badges_raw[0].findAll('i')
+    for badge in data_badges:
+        badges_de_trimis += str(badge.nextSibling).title() + '\n'
+    if data_badges:
+        embed.add_field(name="Badges", value=badges_de_trimis)
+    # Amu bagam datele playerului
+    for date in data:
+        embed.add_field(name=date[0], value=date[1])
 
-        embed.set_footer(text="Ruby Nephrite | ruby.nephrite.ro:7777")
-        return embed
+    embed.set_footer(text="Ruby Nephrite | ruby.nephrite.ro:7777")
+    return embed
 
 
 def vstats(soup):
@@ -280,10 +273,10 @@ async def get_clan_list():
         print_debug("Clan list loaded from file.")
         return clan_dict
 
-    with grequests.Session() as s:
+    async with aiohttp.ClientSession(headers=headers) as session:
         url = f'https://rubypanel.nephrite.ro/clan/list'
-        r = s.get(url, headers=headers)
-        soup = BeautifulSoup(r.content, features='html5lib')
+        async with session.get(url) as response:
+            soup = BeautifulSoup(await response.text(), 'html.parser')
 
         f2 = soup.findAll('table', {'class': 'table table-condensed table-hover'})
         data = [
@@ -330,14 +323,14 @@ async def get_clan_data_by_id(clan_id, pozitie):
     if pozitie not in cols.keys():
         raise ValueError(f"Pozitie invalida: {pozitie}")
 
-    with grequests.Session() as s:
+    async with aiohttp.ClientSession(headers=headers) as session:
         print_debug("Logging in...")
-        await login_panou(s)
+        await login_panou(session)
         print_debug("Logged in.")
         url = 'https://rubypanel.nephrite.ro/clan/view/' + str(clan_id)
         print_debug(f"Getting clan data from {url}...")
-        r = s.get(url, headers=headers)
-        soup = BeautifulSoup(r.content, features='html5lib')
+        async with session.get(url) as response:
+            soup = BeautifulSoup(await response.text(), 'html.parser')
         # TODO Continuat comanda
         # Fac sa acceseze pe id care il luam ez din lista clanuri, dupa fac functii pentru vazut membrii, masini, etc.
         # Maybe fac sa vezi si logs clan?

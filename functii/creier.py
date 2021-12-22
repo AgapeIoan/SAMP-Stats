@@ -1,7 +1,6 @@
 import platform
 import os
 import pickle
-import datetime
 import time
 from bs4 import BeautifulSoup
 
@@ -62,7 +61,8 @@ def dump_session_to_file(session, filename):
 
 def load_session_from_file(session, filename):
     with open(filename, 'rb') as f:
-        session.cookies.update(pickle.load(f))
+        cookies = pickle.load(f)
+    session.cookie_jar.update_cookies(cookies) # ONLY AIOHTTP, NOT REQUESTS
 
 
 async def login_panou(s):
