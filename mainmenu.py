@@ -37,7 +37,7 @@ class MainMenu(disnake.ui.View):
         # make sure to update the message with the new buttons
         await self.message.edit(content="**🔒 Butoanele au fost dezactivate datorita inactivitatii!**", view=self)
         try:
-            await asyncio.sleep(15)
+            await asyncio.sleep(60)
             await self.message.edit(content="")
         except disnake.HTTPException:
             pass
