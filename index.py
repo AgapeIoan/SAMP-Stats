@@ -1,9 +1,6 @@
 import json
 import os
 
-from gevent import monkey as curious_george
-curious_george.patch_all(thread=False, select=False)
-
 import disnake
 import asyncio
 from disnake import Option, OptionType

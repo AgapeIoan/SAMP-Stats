@@ -102,10 +102,10 @@ class VehiclesMenu(disnake.ui.Select):
                     view=za_view)
             else:
                 await interaction.response.edit_message(
-                    view=VehiclesMenuView(self.soup, self.numar_pagina - 1, self.cars))
+                    view=VehiclesMenuView(self.soup, self.numar_pagina - 1, self.cars, self.original_author, self.message))
         elif car_name == "Inainte":
             await interaction.response.edit_message(
-                view=VehiclesMenuView(self.soup, self.numar_pagina + 1, self.cars))
+                view=VehiclesMenuView(self.soup, self.numar_pagina + 1, self.cars, self.original_author, self.message))
         else:
             for i in self.cars:
                 if (car_name in i[0]):
@@ -156,10 +156,10 @@ class FactionHistory(disnake.ui.Select):
                     view=za_view)
             else:
                 await interaction.response.edit_message(
-                    view=FactionHistoryView(self.soup, self.numar_pagina - 1, self.fh))
+                    view=FactionHistoryView(self.soup, self.numar_pagina - 1, self.fh, self.original_author, self.message))
         elif fh_name == "Inainte":
             await interaction.response.edit_message(
-                view=FactionHistoryView(self.soup, self.numar_pagina + 1, self.fh))
+                view=FactionHistoryView(self.soup, self.numar_pagina + 1, self.fh, self.original_author, self.message))
         else:
             for i in self.fh:
                 # print(i)
