@@ -1,3 +1,4 @@
+from functii.debug import print_debug
 import disnake
 
 import mainmenu
@@ -10,8 +11,13 @@ from functii.samp import create_car_embed, create_fh_embed, format_car_data, for
 
 
 class PropertiesMenu(disnake.ui.Select):
-    def __init__(self, soup: str):
+    message: disnake.Message
+    original_author: disnake.User
+
+    def __init__(self, soup: str, original_author = None, message = None):
         self.soup = soup
+        self.original_author = original_author
+        self.message = message
 
         options = [
             disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️'),
@@ -30,9 +36,12 @@ class PropertiesMenu(disnake.ui.Select):
         biz_name = self.values[0]
 
         if biz_name == "Inapoi":
+            za_view = await disable_not_working_buttons(mainmenu.MainMenu(self.soup), self.soup)
+            za_view.original_author = self.original_author
+            za_view.message = self.message
             await interaction.response.edit_message(
                 content=f"**Selecteaza o optiune pentru jucatorul `{get_nickname(self.soup)}`:**", embed=None,
-                view=disable_not_working_buttons(mainmenu.MainMenu(self.soup), self.soup))
+                view=za_view)
         else:
             # print("SELF = ", self.bizes)
             for i in self.bizes:
@@ -45,7 +54,12 @@ class PropertiesMenu(disnake.ui.Select):
 
 
 class VehiclesMenu(disnake.ui.Select):
-    def __init__(self, soup: str, numar_pagina: int, cars=None):
+    message: disnake.Message
+    original_author: disnake.User
+
+    def __init__(self, soup: str, numar_pagina: int, cars=None, original_author=None, message=None):
+        self.original_author = original_author
+        self.message = message
         self.soup = soup
         self.numar_pagina = numar_pagina
         self.cars = panou.ruby.vstats(soup) if not cars else cars
@@ -66,12 +80,7 @@ class VehiclesMenu(disnake.ui.Select):
             # Za name alternative: emoji="<:emoji:897425271475560481>"
             # options.append(disnake.SelectOption(label=car_name, description=car_specs, emoji="<:emoji:913364393385934869>"))
             categorie = get_car_category(car_name)
-            if not categorie:
-                car_emoji = "❗"
-                # TODO #20 Sa pasez bot object din mainmenu.py in functia de mai jos pentru debugging reasons
-                # send_error_message_to_error_channel(bot, f"Caracteristica `{car_name}` nu a fost gasita in baza de date.\n\n{car_specs}")
-            else:
-                car_emoji = get_car_emoji_by_category(categorie)
+            car_emoji = "❗" if not categorie else get_car_emoji_by_category(categorie)
             options.append(disnake.SelectOption(label=car_name, description=car_specs, emoji=car_emoji))
 
         if self.cars[(self.numar_pagina * 23):]:
@@ -85,9 +94,12 @@ class VehiclesMenu(disnake.ui.Select):
 
         if car_name == "Inapoi":
             if self.numar_pagina == 1:
+                za_view = await disable_not_working_buttons(mainmenu.MainMenu(self.soup), self.soup)
+                za_view.original_author = self.original_author
+                za_view.message = self.message
                 await interaction.response.edit_message(
                     content=f"**Selecteaza o optiune pentru jucatorul `{get_nickname(self.soup)}`:**", embed=None,
-                    view=disable_not_working_buttons(mainmenu.MainMenu(self.soup), self.soup))
+                    view=za_view)
             else:
                 await interaction.response.edit_message(
                     view=VehiclesMenuView(self.soup, self.numar_pagina - 1, self.cars))
@@ -105,7 +117,12 @@ class VehiclesMenu(disnake.ui.Select):
 
 
 class FactionHistory(disnake.ui.Select):
-    def __init__(self, soup: str, numar_pagina: int, fh=None):
+    message: disnake.Message
+    original_author: disnake.User
+
+    def __init__(self, soup: str, numar_pagina: int, fh=None, original_author=None, message=None):
+        self.original_author = original_author
+        self.message = message
         self.soup = soup
         self.fh = panou.ruby.fhstats(soup) if not fh else fh
         self.numar_pagina = numar_pagina
@@ -131,9 +148,12 @@ class FactionHistory(disnake.ui.Select):
 
         if fh_name == "Inapoi":
             if self.numar_pagina == 1:
+                za_view = await disable_not_working_buttons(mainmenu.MainMenu(self.soup), self.soup)
+                za_view.original_author = self.original_author
+                za_view.message = self.message
                 await interaction.response.edit_message(
                     content=f"**Selecteaza o optiune pentru jucatorul `{get_nickname(self.soup)}`:**", embed=None,
-                    view=disable_not_working_buttons(mainmenu.MainMenu(self.soup), self.soup))
+                    view=za_view)
             else:
                 await interaction.response.edit_message(
                     view=FactionHistoryView(self.soup, self.numar_pagina - 1, self.fh))
@@ -151,16 +171,26 @@ class FactionHistory(disnake.ui.Select):
 
 
 class VehiclesMenuView(disnake.ui.View):
-    def __init__(self, soup: str, numar_pagina: int, cars=None):
+    def __init__(self, soup: str, numar_pagina: int, cars=None, original_author=None, message=None):
         super().__init__()
 
-        # Adds the dropdown to our view object.
         self.add_item(VehiclesMenu(soup, numar_pagina, cars))
+        self.children[0].original_author = original_author
+        self.children[0].message = message
 
 
 class FactionHistoryView(disnake.ui.View):
-    def __init__(self, soup: str, numar_pagina: int, fh=None):
+    def __init__(self, soup: str, numar_pagina: int, fh=None, original_author=None, message=None):
         super().__init__()
 
-        # Adds the dropdown to our view object.
         self.add_item(FactionHistory(soup, numar_pagina, fh))
+        self.children[0].original_author = original_author
+        self.children[0].message = message
+
+class PropertiesMenuView(disnake.ui.View):
+    def __init__(self, soup: str, original_author=None, message=None):
+        super().__init__()
+
+        self.add_item(PropertiesMenu(soup))
+        self.children[0].original_author = original_author
+        self.children[0].message = message

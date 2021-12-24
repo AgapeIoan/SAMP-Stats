@@ -39,8 +39,8 @@ async def get_panel_data(player):
         if not get_nickname(soup):
             return None
 
-        for cookie in session.cookie_jar:
-            print(cookie)
+        # for cookie in session.cookie_jar:
+        #     print(cookie)
 
         return soup
 
@@ -343,14 +343,23 @@ async def get_clan_data_by_id(clan_id, pozitie):
             [td.text for td in tr.find_all('td')]
             for table in f2 for tr in table.find_all('tr')
         ]
+        # TODO Sa facem treaba de mai jos doar in cazul 'middle'
+        hrefs = [a.get('href') for a in soup.find_all('a')]
+        nicknames = []
+        for href in hrefs:
+            # Get NICKNAME from the string below
+            # https://rubypanel.nephrite.ro/profile/NICKNAME
+            if "https://rubypanel.nephrite.ro/profile/" in href:
+                nickname = href[38:]
+                nicknames.append(nickname)
 
         print_debug(f"Clan data loaded.")
-        return data
+        return data, nicknames
 
 
-async def get_player_clan_data(data, nickname_original):
-    for i in data[1:]:
+async def get_player_clan_data(data, nickname_original, nicknames):
+    data.pop(0)
+    for i in nicknames:
         # ['7', ' Nickname', '$12,569,002', '937', '00:00', '']
-        rank, nickname, cash, days, time_data, _ = i
-        if nickname.strip() == nickname_original:
-            return [rank, nickname_original, cash, days, time_data]
+        if i == nickname_original:
+            return data[nicknames.index(i)]
