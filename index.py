@@ -15,13 +15,12 @@ from functii.discord import disable_not_working_buttons
 with open("config.json", "r") as f:
     config = json.load(f)
 
-test_guilds = [722442573137969174, 921316017584631829]
 BOT_TOKEN = config["BOT_TOKEN"]
 
 # If 'test_guilds' param isn't specified, the commands are registered globally.
 # Global registration takes up to 1 hour.
 
-bot = commands.Bot(command_prefix="!", test_guilds=[722442573137969174, 921316017584631829])
+bot = commands.Bot(command_prefix=">")
 
 
 @bot.slash_command(
@@ -36,7 +35,6 @@ async def ping(inter):
 @bot.slash_command(
     name="stats",  # Defaults to the function name
     description="Afiseaza statisticile jucatorului specificat",
-    guild_ids=test_guilds,
     options=[
         Option("nickname", "Introdu nickname-ul", OptionType.string, required=True)
         # By default, Option is optional
