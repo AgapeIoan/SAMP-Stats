@@ -25,14 +25,19 @@ class Events(commands.Cog):
         data = {
             "author": str(inter.author),
             "author_id": int(inter.author.id),
-            "channel": str(inter.channel),
-            "channel_id": int(inter.channel_id),
             "filled_options": inter.filled_options,
-            "guild": str(inter.guild),
-            "guild_id": int(inter.guild_id),
             "options": inter.options,
             "permissions": int(inter.permissions.value),
+            "channel": str(inter.channel),
+            "guild": str(inter.guild),
         }
+        try:
+            data["channel_id"] = int(inter.channel_id)
+            data["guild_id"] = int(inter.guild_id)
+        except:
+            data["channel_id"] = None
+            data["guild_id"] = None
+
 
         # log data to unique file
         za_time = str(datetime.datetime.now()).replace(":", "-")
@@ -64,14 +69,19 @@ class Events(commands.Cog):
         data = {
             "author": str(inter.author),
             "author_id": int(inter.author.id),
-            "channel": str(inter.channel),
-            "channel_id": int(inter.channel_id),
             "filled_options": inter.filled_options,
-            "guild": str(inter.guild),
-            "guild_id": int(inter.guild_id),
             "options": inter.options,
             "permissions": int(inter.permissions.value),
+            "channel": str(inter.channel),
+            "guild": str(inter.guild),
         }
+        try:
+            data["channel_id"] = int(inter.channel_id)
+            data["guild_id"] = int(inter.guild_id)
+        except:
+            data["channel_id"] = None
+            data["guild_id"] = None
+
 
         # someone used a command
         print_log(f"{inter.author} | Guild: {str(inter.guild)} | Channel: {str(inter.channel)} | /{str(inter.data.name)} {str(inter.options)}")
