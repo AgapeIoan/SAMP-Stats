@@ -64,24 +64,22 @@ class MainMenu(disnake.ui.View):
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Vehicles", custom_id="vehicles_button")
     async def vstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        await enable_buttons(self)
-        button.disabled = True
-        self.add_item(stats_views.VehiclesMenu(soup=self.soup, numar_pagina=1))
-        await interaction.response.edit_message(content="**Selecteaza o masina:**", view=self, embed=None)
+        # await enable_buttons(self)
+        # button.disabled = True
+        view = stats_views.VehiclesMenuView(soup=self.soup, numar_pagina=1, original_author=self.original_author, message=self.message)
+        await interaction.response.edit_message(content="**Selecteaza o masina:**", view=view, embed=None)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Properties", custom_id="properties_button")
     async def bstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        await enable_buttons(self)
-        button.disabled = True
-        self.add_item(stats_views.PropertiesMenu(self.soup))
-        await interaction.response.edit_message(content="**Lista proprietati:**", view=self, embed=None)
+        view = stats_views.PropertiesMenuView(self.soup, self.original_author, self.message)
+        view.original_author = self.original_author
+        view.message = self.message
+        await interaction.response.edit_message(content="**Lista proprietati:**", view=view, embed=None)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Faction History", custom_id="faction_button")
     async def fstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        await enable_buttons(self)
-        button.disabled = True
-        self.add_item(stats_views.FactionHistory(soup=self.soup, numar_pagina=1))
-        await interaction.response.edit_message(content="**Lista factiuni:**", view=self, embed=None)
+        view = stats_views.FactionHistoryView(soup=self.soup, numar_pagina=1, original_author=self.original_author, message=self.message)
+        await interaction.response.edit_message(content="**Lista factiuni:**", view=view, embed=None)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Clan", custom_id="clan_button")
     async def cstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
@@ -95,8 +93,8 @@ class MainMenu(disnake.ui.View):
 
             clan_name = panou.ruby.get_clan_name(self.soup)
             clan_tag = await panou.ruby.get_clan_tag_by_name(clan_name)
-            data = await panou.ruby.get_clan_data_by_id(await panou.ruby.get_clan_id_by_name(clan_name), 'middle')
-            player_stats = await panou.ruby.get_player_clan_data(data, get_nickname(self.soup))
+            data, nicknames = await panou.ruby.get_clan_data_by_id(await panou.ruby.get_clan_id_by_name(clan_name), 'middle')
+            player_stats = await panou.ruby.get_player_clan_data(data, get_nickname(self.soup), nicknames)
             print_debug(player_stats)
             # player_stats = ['7', 'Nickname', '$12,569,002', '937', '00:00', '']
 

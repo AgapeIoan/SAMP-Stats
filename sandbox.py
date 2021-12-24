@@ -87,9 +87,6 @@ def get_clan_data_by_id(s, clan_id, pozitie):
 
 if __name__ == '__main__':
     with requests.Session() as s:
-        load_from_file(s, 'session.pkl')
-        print_debug("Loaded from file!")
-        print_debug("Getting data...")
-        get_panel_data(s, '***REMOVED***')
-        print_debug("Got data!")
+        login_panou(s)
+        dump_to_file(s, 'session.pkl')
 
