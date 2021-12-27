@@ -15,7 +15,7 @@ class MainMenu(disnake.ui.View):
 
     def __init__(self, soup: str):
         # TODO #26 Maybe maybe dam reset la timeout la fiecare interactiune (apasare de buton, dropdown si ce o mai fi)
-        super().__init__(timeout=180.0)
+        super().__init__(timeout=600.0)
         self.soup = soup
         self.clan_embed = None
 
