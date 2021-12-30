@@ -6,7 +6,7 @@ import panou.ruby
 import stats_views
 from functii.creier import este_player_online, get_nickname
 from functii.discord import disable_all_buttons, enable_buttons
-from functii.debug import print_debug
+from functii.debug import print_debug, send_error_message_to_error_channel
 
 
 class MainMenu(disnake.ui.View):
@@ -60,6 +60,7 @@ class MainMenu(disnake.ui.View):
             self.remove_item(self.children[5])
         await enable_buttons(self)
         button.disabled = True
+        send_error_message_to_error_channel(self.bot, "test")
         await interaction.response.edit_message(content="**Statistici jucator:**",
                                                 embed=await panou.ruby.stats(self.soup), view=self)
 
