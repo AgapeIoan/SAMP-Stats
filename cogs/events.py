@@ -8,6 +8,7 @@ import json
 from disnake import guild
 
 from disnake.ext import commands
+import custom_errors
 
 from functii.debug import print_debug, print_log
 
@@ -17,7 +18,9 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_slash_command_error(self, inter, error):
-        print_log(f'{error}')
+        if isinstance(error, custom_errors.CommandErrorReport):
+            print_debug(f"CommandErrorReport: {error.string_to_send}")
+        print_log(f'za error {error}')
         # log the error to unique file
         with open(r'storage/logs/on_slash_command_error/errors.log', 'a') as f:
             f.write(f'{datetime.datetime.now()} - {error}\n')
@@ -97,7 +100,12 @@ class Events(commands.Cog):
         with open(log_file_path, "w") as f:
             json.dump(data, f, indent=4)
             
-        
+    @commands.Cog.listener()
+    async def on_command_error(self, error, ctx):
+        if isinstance(error, CommandErrorReport):
+            print_debug(f"{error}")
+  
+    
 
 def setup(bot):
     bot.add_cog(Events(bot))
