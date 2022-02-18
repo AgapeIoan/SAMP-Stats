@@ -1,4 +1,4 @@
-from functii.debug import print_debug
+from functii.debug import print_debug, send_error_message_to_error_channel
 import disnake
 
 import mainmenu
@@ -8,7 +8,7 @@ from functii.creier import get_nickname
 from functii.discord import disable_not_working_buttons
 from functii.samp import create_car_embed, create_fh_embed, format_car_data, format_faction_history_data, \
     format_biz_data, create_biz_embed, get_car_category, get_car_emoji_by_category
-
+from custom_errors import CommandErrorReport
 
 class PropertiesMenu(disnake.ui.Select):
     message: disnake.Message
@@ -80,8 +80,18 @@ class VehiclesMenu(disnake.ui.Select):
             # Za name alternative: emoji="<:emoji:897425271475560481>"
             # options.append(disnake.SelectOption(label=car_name, description=car_specs, emoji="<:emoji:913364393385934869>"))
             categorie = get_car_category(car_name)
-            car_emoji = "❗" if not categorie else get_car_emoji_by_category(categorie)
+            # car_emoji = "❗" if not categorie else get_car_emoji_by_category(categorie)
+            if not categorie:
+                car_emoji = "❗"
+                # Raise custom error for on_command_error event
+                raise CommandErrorReport(f"Caracteristica `{car_name}` nu are categorie asociata",
+                                         f"Caracteristica `{car_name}` nu are categorie asociata")
+            else:
+                car_emoji = get_car_emoji_by_category(categorie)
             options.append(disnake.SelectOption(label=car_name, description=car_specs, emoji=car_emoji))
+
+        # TODO De pasat erori in callback pentru a putea folosi await-ul
+        # await send_error_message_to_error_channel(self.bot, "VehiclesMenu: " + str(self.cars))
 
         if self.cars[(self.numar_pagina * 23):]:
             options.append(
@@ -177,6 +187,7 @@ class VehiclesMenuView(disnake.ui.View):
         self.add_item(VehiclesMenu(soup, numar_pagina, cars))
         self.children[0].original_author = original_author
         self.children[0].message = message
+        self.children[0].bot = self.bot
 
 
 class FactionHistoryView(disnake.ui.View):
