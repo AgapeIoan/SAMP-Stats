@@ -2,6 +2,8 @@ import platform
 import os
 import pickle
 import time
+import requests
+from aiohttp.client import request
 from bs4 import BeautifulSoup
 
 from functii.debug import print_debug
@@ -13,7 +15,7 @@ headers = {
 }
 login_data = {
     "_token": "",
-    "login_username": "ManagerA5",
+    "login_username": "samp_stats",
     "login_password": "Apaplata69",
     "user_identifier": "ae5936028cf47a3b819a0cd109a0d7ed"
 }
@@ -36,14 +38,14 @@ def creation_date(path_to_file):
             return stat.st_mtime
 
 def get_profile_data(soup, f2_index: int):
-    # 0 | stats 
-    # 1 | clothes 
-    # 2 | missions 
-    # 3 | badges 
-    # 4 | cars 
-    # 5 | proprietes 
-    # 6 | referral 
-    # 7 | fh 
+    # 0 | stats
+    # 1 | clothes
+    # 2 | missions
+    # 3 | badges
+    # 4 | cars
+    # 5 | proprietes
+    # 6 | referral
+    # 7 | fh
     # 8, 9, 10 | semnatura forum
     f2 = soup.findAll('div', {'class': 'tab-pane'}, {'id': 'properties'})
     data = [
@@ -65,20 +67,23 @@ def load_session_from_file(session, filename):
     session.cookie_jar.update_cookies(cookies) # ONLY AIOHTTP, NOT REQUESTS
 
 
-async def login_panou(s):
+async def login_panou(session):
     unix_modification = os.path.getmtime("session.pkl")
     if time.time() - unix_modification > 250000: # ~3 days
-        print_debug("Session expired, logging in again")
-        url = "https://rubypanel.nephrite.ro/login"
-        r = s.get(url, headers=headers)
-        soup = BeautifulSoup(r.content, features='html5lib')
-        login_data['_token'] = soup.find('input', attrs={'name': '_token'})['value']
-        r = s.post(url, data=login_data, headers=headers)
-        dump_session_to_file(s, "session.pkl")
-        return r
+        with requests.Session() as s:
+            url = "https://rubypanel.nephrite.ro/login"
+            r = s.get(url, headers=headers)
+            soup = BeautifulSoup(r.content, features='html5lib')
+            login_data['_token'] = soup.find('input', attrs={'name': '_token'})['value']
+            print_debug(f"Logging in...")
+            print_debug(f"Login data: {login_data}")
+            print_debug(f"Headers: {headers}")
+            r = s.post(url, data=login_data, headers=headers)
+            dump_session_to_file(s, "session.pkl")
+            load_session_from_file(session, "session.pkl")
     else:
         print_debug("Session still valid. No need to login.")
-        load_session_from_file(s, "session.pkl")
+        load_session_from_file(session, "session.pkl")
         return "1337" # Normal ar fi trebuit sa primim 200, asa ca nu primim nimic punem si noi ceva sa fie acolo
 
 
