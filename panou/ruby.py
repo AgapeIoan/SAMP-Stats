@@ -8,7 +8,6 @@ import aiohttp
 from bs4 import BeautifulSoup
 from disnake import embeds
 from disnake.utils import get
-from debug import creation_date
 from functii.samp import vezi_asociere
 from functii.creier import scrape_panou, get_nickname, login_panou, este_player_online, get_server_provenienta, \
     get_profile_data, creation_date, headers
