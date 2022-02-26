@@ -6,6 +6,8 @@ import time
 import aiohttp
 
 from bs4 import BeautifulSoup
+from disnake import embeds
+from disnake.utils import get
 from debug import creation_date
 from functii.samp import vezi_asociere
 from functii.creier import scrape_panou, get_nickname, login_panou, este_player_online, get_server_provenienta, \
@@ -23,6 +25,8 @@ def dump_json(file_name, data):
     with open(file_name, 'w') as f:
         json.dump(data, f, indent=4)
 
+
+FACTION_NAMES = load_json('storage/factiuni.json')
 
 async def get_panel_data(player):
     async with aiohttp.ClientSession(headers=headers) as session:
@@ -43,6 +47,98 @@ async def get_panel_data(player):
         #     print(cookie)
 
         return soup
+
+async def get_faction_name(soup):
+    f2 = soup.findAll('div', {'class': 'tab-pane'})
+    data = [
+        [td.text for td in tr.find_all('td')]
+        for table in [f2[0]] for tr in table.find_all('tr')
+    ]
+
+    return data[0][1]
+
+async def fstats(soup):
+    faction = await get_faction_name(soup)
+    print_debug(f"Faction: {faction}")
+    for i in FACTION_NAMES['factiune']:
+        print_debug(f"Faction: {i}")
+        if i.lower() in faction.lower():
+            faction = i
+            faction_index = FACTION_NAMES['factiune'].index(i)
+            break
+    
+    if faction_index == 0:
+        print_debug("Faction: Civilian")
+        return None
+
+    # https://rubypanel.nephrite.ro/faction/members/1
+
+    url = f'https://rubypanel.nephrite.ro/faction/members/{faction_index}'
+    print_debug("Requesting: " + url)
+    async with aiohttp.ClientSession(headers=headers) as session:
+        async with session.get(url) as response:
+            soup2 = BeautifulSoup(await response.text(), 'html.parser')
+        print_debug("Done.")
+
+    f2 = soup2.findAll('div', {'class': 'col-md-12'})
+    data = [
+        [td.text for td in tr.find_all('td')]
+        for table in [f2[0]] for tr in table.find_all('tr')
+    ]
+
+    for date in data[1:]:
+        # ['\n  Seek3r \n', '5\n', '0/3', '48 zile', '2022-02-22 23:40:47',
+        #  '\n\n\nore jucate: 07:26/07:00licente de condus suspendate: 5/5jucatori arestati/ucisi: 30/30 \n',
+        #  'pe data de 26/02/2022 in jurul orelor 20:00-20:30', ' ']
+
+        # zunake 5 0/3 66 zile 2022-02-25 22:18:21 ore jucate: 00:00/07:00materiale depozitate: 0/150000ucideri: 948 / decese: 398 pe data de 04/03/2022 in jurul orelor 23:00-23:30
+
+        nickname = date[0].replace('\n', '').strip()
+        rank = date[1].replace('\n', '').strip()
+        fw = date[2].replace('\n', '').strip()
+        days = date[3].replace('\n', '').strip()
+        last_online = date[4].replace('\n', '').strip()
+        raport = date[5].replace('\n', '').strip()
+        reset = date[6].replace('\n', '').strip()
+
+        raport_formated = []
+        aux = ''
+        i=0
+        while i < len(raport):
+            if not raport[i].isdigit():
+                aux += raport[i]
+                i+=1
+            else:
+                try:
+                    while raport[i].isdigit() or raport[i] == ':' or raport[i] == '/':
+                        aux += raport[i]
+                        i+=1
+                except IndexError:
+                    pass
+                raport_formated.append(aux.replace(' / ', ''))
+                aux = ''
+
+
+        if nickname == get_nickname(soup):
+            print(nickname, rank, fw, days, last_online, raport_formated, reset)
+            culoare_player_online = 0x00ff00 if este_player_online(soup) else 0xff0000
+            to_send = f"Rank: **{rank}**\nFW: **{fw}**\nMembru de: **{days}**"
+            # to_send += f"\nLast online: {last_online}"
+            for i in raport_formated:
+                i = i.capitalize().replace(': ', ': **') + "**"
+                to_send += f"\n{i}"
+
+            if reset.find("pe data de") != -1:
+                reset = reset.replace("pe data de", "pe data de **")
+            else:
+                reset =  "**" + reset
+            reset = reset.replace("in jurul orelor", "** in jurul orelor **") + "**"
+
+            to_send += f"\n\nPrimeste reset {reset}"
+            embed = disnake.Embed(title=faction, description=to_send, color=culoare_player_online)
+
+            embed.set_footer(text=f"{nickname} | ruby.nephrite.ro")
+            return embed
 
 async def stats(soup):
     lista_valori_scrape = [
@@ -106,7 +202,7 @@ async def stats(soup):
     for date in data:
         embed.add_field(name=date[0], value=date[1])
 
-    embed.set_footer(text="Ruby Nephrite | ruby.nephrite.ro:7777")
+    embed.set_footer(text=f"{nickname_player} | ruby.nephrite.ro")
     return embed
 
 

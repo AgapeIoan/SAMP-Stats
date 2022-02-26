@@ -95,6 +95,9 @@ class VehiclesMenu(disnake.ui.Select):
         if car_name == "Inapoi":
             if self.numar_pagina == 1:
                 za_view = await disable_not_working_buttons(mainmenu.MainMenu(self.soup), self.soup)
+                # TODO #36 Vezi ca odata ce iti faci un view nou, iti resetezi toate variabilele din view-ul vechi
+                # astfel, ramai fara self.embeds. Ori faci sa le cari cu tine, ori inveti cum sa iti pastrezi view-ul vechi.
+                # Vezi tu, te descurci, esti copil mare.
                 za_view.original_author = self.original_author
                 za_view.message = self.message
                 await interaction.response.edit_message(

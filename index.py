@@ -22,7 +22,6 @@ BOT_TOKEN = config["BOT_TOKEN"]
 
 bot = commands.Bot(command_prefix=">")
 
-
 @bot.slash_command(
     name="ping",
     description="Pings the bot.",
