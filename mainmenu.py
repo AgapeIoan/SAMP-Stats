@@ -18,10 +18,11 @@ class MainMenu(disnake.ui.View):
         super().__init__(timeout=180.0)
         self.soup = soup
         self.clan_embed = None
+        self.faction_embed = None
 
     # Timeout and error handling.
     async def on_timeout(self):
-        if len(self.children) > 5:
+        if len(self.children) > 6:
             if self.children[5].options[-1].label == "Inainte":
                 self.children[5].options.pop(-1)
 
@@ -56,8 +57,8 @@ class MainMenu(disnake.ui.View):
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Player Stats", custom_id="stats_button")
     async def stats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        if len(self.children) > 5:
-            self.remove_item(self.children[5])
+        if len(self.children) > 6:
+            self.remove_item(self.children[6])
         await enable_buttons(self)
         button.disabled = True
         await interaction.response.edit_message(content="**Statistici jucator:**",
@@ -78,15 +79,26 @@ class MainMenu(disnake.ui.View):
         await interaction.response.edit_message(content="**Lista proprietati:**", view=view, embed=None)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Faction History", custom_id="faction_button")
-    async def fstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
+    async def fhstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
         view = stats_views.FactionHistoryView(soup=self.soup, numar_pagina=1, original_author=self.original_author, message=self.message)
         await interaction.response.edit_message(content="**Lista factiuni:**", view=view, embed=None)
+
+    @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Faction Stats", custom_id="faction_stats_button")
+    async def fstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
+        if len(self.children) > 6:
+            self.remove_item(self.children[6])
+        await enable_buttons(self)
+        button.disabled = True
+        if not self.faction_embed:
+            self.faction_embed = await panou.ruby.fstats(self.soup)
+        await interaction.response.edit_message(content="**Raport factiune:**",
+                                                embed=self.faction_embed, view=self)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Clan", custom_id="clan_button")
     async def cstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
         await interaction.response.defer()
-        if len(self.children) > 5:
-            self.remove_item(self.children[5])
+        if len(self.children) > 6:
+            self.remove_item(self.children[6])
 
         if not self.clan_embed:
             await disable_all_buttons(self)
