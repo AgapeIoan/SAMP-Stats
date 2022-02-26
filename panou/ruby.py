@@ -65,7 +65,7 @@ async def fstats(soup):
             faction = i
             faction_index = FACTION_NAMES['factiune'].index(i)
             break
-    
+
     if faction_index == 0:
         print_debug("Faction: Civilian")
         return None
