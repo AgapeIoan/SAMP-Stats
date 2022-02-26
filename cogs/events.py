@@ -99,13 +99,13 @@ class Events(commands.Cog):
         # dump data to json file
         with open(log_file_path, "w") as f:
             json.dump(data, f, indent=4)
-            
+
     @commands.Cog.listener()
     async def on_command_error(self, error, ctx):
         if isinstance(error, CommandErrorReport):
             print_debug(f"{error}")
-  
-    
+
+
 
 def setup(bot):
     bot.add_cog(Events(bot))

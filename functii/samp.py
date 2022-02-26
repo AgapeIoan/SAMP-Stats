@@ -182,7 +182,7 @@ def create_biz_embed(biz_stats, nickname):
             formated_biz_stats += i + '\n'
 
     embed.add_field(name=v[0], value=formated_biz_stats, inline=False)
-    
+
     # embed.set_thumbnail(url="https://i.imgur.com/KC9rlJd.png")
     # Aici la thumbnail ori facem 3 imagini, mai exact pentru casa, biz si apartament, ori facem imagine cu fiecare biz in-game
     # La poze in-game ar trebui 72 poze cu fiecare business
