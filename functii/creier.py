@@ -38,14 +38,14 @@ def creation_date(path_to_file):
             return stat.st_mtime
 
 def get_profile_data(soup, f2_index: int):
-    # 0 | stats 
-    # 1 | clothes 
-    # 2 | missions 
-    # 3 | badges 
-    # 4 | cars 
-    # 5 | proprietes 
-    # 6 | referral 
-    # 7 | fh 
+    # 0 | stats
+    # 1 | clothes
+    # 2 | missions
+    # 3 | badges
+    # 4 | cars
+    # 5 | proprietes
+    # 6 | referral
+    # 7 | fh
     # 8, 9, 10 | semnatura forum
     f2 = soup.findAll('div', {'class': 'tab-pane'}, {'id': 'properties'})
     data = [
