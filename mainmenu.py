@@ -6,7 +6,7 @@ import panou.ruby
 import stats_views
 from functii.creier import este_player_online, get_nickname
 from functii.discord import disable_all_buttons, enable_buttons
-from functii.debug import print_debug
+from functii.debug import print_debug, send_error_message_to_error_channel
 
 
 class MainMenu(disnake.ui.View):
@@ -15,7 +15,7 @@ class MainMenu(disnake.ui.View):
 
     def __init__(self, soup: str):
         # TODO #26 Maybe maybe dam reset la timeout la fiecare interactiune (apasare de buton, dropdown si ce o mai fi)
-        super().__init__(timeout=180.0)
+        super().__init__(timeout=600.0)
         self.soup = soup
         self.clan_embed = None
         self.faction_embed = None
@@ -61,6 +61,7 @@ class MainMenu(disnake.ui.View):
             self.remove_item(self.children[6])
         await enable_buttons(self)
         button.disabled = True
+        send_error_message_to_error_channel(self.bot, "test")
         await interaction.response.edit_message(content="**Statistici jucator:**",
                                                 embed=await panou.ruby.stats(self.soup), view=self)
 

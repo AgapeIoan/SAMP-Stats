@@ -1,6 +1,5 @@
 2021-12-24 02:13:01.279808 - Command raised an exception: InteractionNotResponded: This interaction hasn't been responded to yet
 2021-12-24 02:13:54.527252 - Command raised an exception: InteractionNotResponded: This interaction hasn't been responded to yet
 2021-12-24 02:15:04.817652 - Command raised an exception: InteractionNotResponded: This interaction hasn't been responded to yet
-2021-12-24 04:11:55.574255 - Command raised an exception: AttributeError: '_RequestContextManager' object has no attribute 'content'
-2021-12-24 04:13:51.073082 - Command raised an exception: AttributeError: 'ClientSession' object has no attribute 'cookies'
-2021-12-24 04:15:12.108309 - Command raised an exception: AttributeError: 'ClientSession' object has no attribute 'cookies'
+2021-12-24 02:05:20.728460 - Command raised an exception: AttributeError: '_RequestContextManager' object has no attribute 'content'
+2021-12-24 12:37:06.936592 - Command raised an exception: AttributeError: 'NoneType' object has no attribute 'get_channel'
