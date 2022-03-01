@@ -29,7 +29,7 @@ bot = commands.Bot(command_prefix=">")
 async def ping(inter):
     za_ping = round(bot.latency * 1000)
     await inter.response.send_message(f'**Pong!**\n🏓 {za_ping} ms')
-    await send_error_message_to_error_channel(bot, f"{inter.author.name}#{inter.author.discriminator} pinged the bot \w " + str(za_ping) + "ms.")
+    await send_error_message_to_error_channel(bot, f"{inter.author.name}#{inter.author.discriminator} pinged the bot \\w " + str(za_ping) + "ms.")
 
 @bot.slash_command(
     name="stats",  # Defaults to the function name
