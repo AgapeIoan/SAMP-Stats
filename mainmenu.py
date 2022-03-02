@@ -55,7 +55,7 @@ class MainMenu(disnake.ui.View):
                                                 ephemeral=True)
         return False
 
-    @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Player Stats", custom_id="stats_button")
+    @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Player Stats", custom_id="stats_button", row=0)
     async def stats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
         if len(self.children) > 6:
             self.remove_item(self.children[6])
@@ -65,26 +65,28 @@ class MainMenu(disnake.ui.View):
         await interaction.response.edit_message(content="**Statistici jucator:**",
                                                 embed=await panou.ruby.stats(self.soup), view=self)
 
-    @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Vehicles", custom_id="vehicles_button")
+    @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Vehicles", custom_id="vehicles_button", row=1)
     async def vstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
         # await enable_buttons(self)
         # button.disabled = True
         view = stats_views.VehiclesMenuView(soup=self.soup, numar_pagina=1, original_author=self.original_author, message=self.message)
         await interaction.response.edit_message(content="**Selecteaza o masina:**", view=view, embed=None)
 
-    @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Properties", custom_id="properties_button")
+    @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Properties", custom_id="properties_button", row=1)
     async def bstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
         view = stats_views.PropertiesMenuView(self.soup, self.original_author, self.message)
         view.original_author = self.original_author
         view.message = self.message
         await interaction.response.edit_message(content="**Lista proprietati:**", view=view, embed=None)
 
-    @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Faction History", custom_id="faction_button")
+    @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Faction History", custom_id="faction_button", row=0)
     async def fhstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
         view = stats_views.FactionHistoryView(soup=self.soup, numar_pagina=1, original_author=self.original_author, message=self.message)
         await interaction.response.edit_message(content="**Lista factiuni:**", view=view, embed=None)
 
-    @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Faction Stats", custom_id="faction_stats_button")
+    # TODO #39 Maybe meniu de outfits?
+
+    @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Faction Stats", custom_id="faction_stats_button", row=0)
     async def fstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
         if len(self.children) > 6:
             self.remove_item(self.children[6])
@@ -95,7 +97,7 @@ class MainMenu(disnake.ui.View):
         await interaction.response.edit_message(content="**Raport factiune:**",
                                                 embed=self.faction_embed, view=self)
 
-    @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Clan", custom_id="clan_button")
+    @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Clan", custom_id="clan_button", row=1)
     async def cstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
         await interaction.response.defer()
         if len(self.children) > 6:

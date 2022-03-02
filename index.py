@@ -1,6 +1,6 @@
 import json
 import os
-
+import requests
 import disnake
 import asyncio
 from disnake import Option, OptionType
@@ -8,19 +8,27 @@ from disnake.ext import commands
 
 import mainmenu
 import panou.ruby
-from functii.creier import get_nickname
+from functii.creier import get_nickname, login_panou_forced, dump_session_to_file
 from functii.debug import print_debug, send_error_message_to_error_channel, print_log
 from functii.discord import disable_not_working_buttons
-
-with open("config.json", "r") as f:
-    config = json.load(f)
-
-BOT_TOKEN = config["BOT_TOKEN"]
+from functii.bools import BOT_TOKEN, is_dev
 
 # If 'test_guilds' param isn't specified, the commands are registered globally.
 # Global registration takes up to 1 hour.
 
 bot = commands.Bot(command_prefix=">")
+
+@bot.command()
+async def reset(ctx):
+    if not is_dev(ctx.author.id): 
+        return
+
+    var = is_dev(ctx.author.id)
+    await ctx.send(f"{var}, {ctx.author.id}, running the commmand.")
+    with requests.Session() as s:
+        login_panou_forced(s)
+        dump_session_to_file(s, "session.pkl")
+    await ctx.send(f"Succesfully ran the command. Dumped the session to file.")
 
 @bot.slash_command(
     name="ping",

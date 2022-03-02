@@ -3,3 +3,6 @@
 2021-12-24 02:15:04.817652 - Command raised an exception: InteractionNotResponded: This interaction hasn't been responded to yet
 2021-12-24 02:05:20.728460 - Command raised an exception: AttributeError: '_RequestContextManager' object has no attribute 'content'
 2021-12-24 12:37:06.936592 - Command raised an exception: AttributeError: 'NoneType' object has no attribute 'get_channel'
+2022-03-02 12:59:55.508817 - Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
+In components.1.components.2.custom_id: Component custom id cannot be duplicated
+2022-03-02 13:12:13.019482 - Command raised an exception: InteractionNotResponded: This interaction hasn't been responded to yet
