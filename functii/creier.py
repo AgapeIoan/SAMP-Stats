@@ -66,6 +66,17 @@ def load_session_from_file(session, filename):
         cookies = pickle.load(f)
     session.cookie_jar.update_cookies(cookies) # ONLY AIOHTTP, NOT REQUESTS
 
+def login_panou_forced(s):
+    url = "https://rubypanel.nephrite.ro/login"
+    r = s.get(url, headers=headers)
+    soup = BeautifulSoup(r.content, features='html5lib')
+    login_data['_token'] = soup.find('input', attrs={'name': '_token'})['value']
+    print_debug(f"Logging in...")
+    print_debug(f"Login data: {login_data}")
+    print_debug(f"Headers: {headers}")
+    r = s.post(url, data=login_data, headers=headers)
+
+    return r
 
 async def login_panou(session):
     unix_modification = os.path.getmtime("session.pkl")

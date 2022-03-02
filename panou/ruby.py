@@ -109,7 +109,7 @@ async def fstats(soup):
                 i+=1
             else:
                 try:
-                    while raport[i].isdigit() or raport[i] == ':' or raport[i] == '/':
+                    while raport[i].isdigit() or raport[i] == ':' or raport[i] == '/' or raport[i] == ',':
                         aux += raport[i]
                         i+=1
                 except IndexError:
@@ -415,7 +415,7 @@ async def get_clan_data_by_id(clan_id, pozitie):
         "right": {'class': 'col-xs-4'}
     }
 
-    if pozitie not in cols.keys():
+    if pozitie not in cols:
         raise ValueError(f"Pozitie invalida: {pozitie}")
 
     async with aiohttp.ClientSession(headers=headers) as session:

@@ -101,10 +101,9 @@ class Events(commands.Cog):
             json.dump(data, f, indent=4)
 
     @commands.Cog.listener()
-    async def on_command_error(self, error, ctx):
-        if isinstance(error, CommandErrorReport):
-            print_debug(f"{error}")
-
+    async def on_command_error(self, ctx, error):
+        # This works only on legacy commands, the ones using @bot.command() decorator
+        print_debug(f"on_command_error: {error}")
 
 
 def setup(bot):
