@@ -190,7 +190,6 @@ class VehiclesMenuView(disnake.ui.View):
         self.add_item(VehiclesMenu(soup, numar_pagina, cars))
         self.children[0].original_author = original_author
         self.children[0].message = message
-        self.children[0].bot = self.bot
 
 
 class FactionHistoryView(disnake.ui.View):

@@ -61,7 +61,6 @@ class MainMenu(disnake.ui.View):
             self.remove_item(self.children[6])
         await enable_buttons(self)
         button.disabled = True
-        send_error_message_to_error_channel(self.bot, "test")
         await interaction.response.edit_message(content="**Statistici jucator:**",
                                                 embed=await panou.ruby.stats(self.soup), view=self)
 

@@ -58,9 +58,8 @@ async def get_faction_name(soup):
 
 async def fstats(soup):
     faction = await get_faction_name(soup)
-    print_debug(f"Faction: {faction}")
     for i in FACTION_NAMES['factiune']:
-        print_debug(f"Faction: {i}")
+        # print_debug(f"{i.lower()} in {faction.lower()}")
         if i.lower() in faction.lower():
             faction = i
             faction_index = FACTION_NAMES['factiune'].index(i)
