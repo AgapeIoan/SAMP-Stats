@@ -15,24 +15,24 @@ class MainMenu(disnake.ui.View):
 
     def __init__(self, soup: str):
         # TODO #26 Maybe maybe dam reset la timeout la fiecare interactiune (apasare de buton, dropdown si ce o mai fi)
-        super().__init__(timeout=600.0)
+        super().__init__(timeout=5.0)
         self.soup = soup
         self.clan_embed = None
         self.faction_embed = None
 
     # Timeout and error handling.
     async def on_timeout(self):
-        if len(self.children) > 6:
-            if self.children[5].options[-1].label == "Inainte":
-                self.children[5].options.pop(-1)
+        if len(self.children) > 7:
+            if self.children[6].options[-1].label == "Inainte":
+                self.children[6].options.pop(-1)
 
-            if self.children[5].options[0].label == "Inapoi":
-                self.children[5].options[0] = disnake.SelectOption(
+            if self.children[6].options[0].label == "Inapoi":
+                self.children[6].options[0] = disnake.SelectOption(
                     label="Butoanele au fost dezactivate datorita inactivitatii!",
                     description="Acestea nu mai pot fi selectate in acest mesaj.",
                     emoji="🔒"
                 )
-        for i in self.children[:5]:
+        for i in self.children[:6]:
             # i.style = disnake.ButtonStyle.red
             i.disabled = True
 
