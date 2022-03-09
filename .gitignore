@@ -105,5 +105,4 @@ ENV/
 
 # logs
 storage/logs/
-storage/clans/clan_list.json
 _SampStats_logs (3).txt
