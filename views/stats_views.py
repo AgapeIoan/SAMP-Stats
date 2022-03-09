@@ -46,7 +46,7 @@ class PropertiesMenu(disnake.ui.Select):
             # print("SELF = ", self.bizes)
             for i in self.bizes:
                 for k, v in i.items():
-                    if (v[0] == biz_name):
+                    if v[0] == biz_name:
                         embed = create_biz_embed(i, nickname=get_nickname(self.soup))
                         embed.color = 0x00ff00 if este_player_online(self.soup) else 0xff0000
 
@@ -115,7 +115,7 @@ class VehiclesMenu(disnake.ui.Select):
                 view=VehiclesMenuView(self.soup, self.numar_pagina + 1, self.cars, self.original_author, self.message))
         else:
             for i in self.cars:
-                if (car_name in i[0]):
+                if car_name in i[0]:
                     embed = create_car_embed(i, nickname=get_nickname(self.soup))
                     embed.color = 0x00ff00 if este_player_online(self.soup) else 0xff0000
 
@@ -169,7 +169,7 @@ class FactionHistory(disnake.ui.Select):
         else:
             for i in self.fh:
                 # print(i)
-                if (i[0][:10] in fh_name):
+                if i[0][:10] in fh_name:
                     embed = create_fh_embed(i, nickname=get_nickname(self.soup))
                     embed.color = 0x00ff00 if este_player_online(self.soup) else 0xff0000
 
