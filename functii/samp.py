@@ -1,10 +1,5 @@
-from functii.debug import print_debug
 import json
 import disnake
-import datetime
-
-from bs4 import BeautifulSoup
-from disnake.channel import _guild_channel_factory
 
 headers = {
     "user-agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0 | https://discord.gg/bmfRfePXm7"
