@@ -4,11 +4,6 @@ with open("debug_state", "r") as f:
     debug_file = f.readline()
 DEBUG_STATE = int(debug_file)
 
-def salvam_codul_sursa(cod_intreg):  # merge doar cu atacul in panou efectuat corect
-    skemaaa = open('logs ruby/html_debug' + str(datetime.datetime.utcnow()) +
-                   '.txt', 'w+', encoding="utf-8")
-    skemaaa.write(str(cod_intreg))
-
 def empty_is_none(cuvant):
     try:
         if not cuvant:
