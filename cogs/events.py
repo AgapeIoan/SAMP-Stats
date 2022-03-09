@@ -2,10 +2,8 @@
 # TODO Event on_command_error for command error print in console
 
 import datetime
-import disnake
 import os
 import json
-from disnake import guild
 
 from disnake.ext import commands
 import custom_errors

@@ -1,7 +1,5 @@
 import disnake
 import panou.ruby
-
-from functii.discord import disable_button
 from functii.debug import print_debug
 
 # UNTESTED !!!

@@ -1,8 +1,6 @@
-import json
 import os
 import requests
 import disnake
-import asyncio
 from disnake import Option, OptionType
 from disnake.ext import commands
 
