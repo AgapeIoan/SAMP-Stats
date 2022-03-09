@@ -7,6 +7,7 @@ from aiohttp.client import request
 from bs4 import BeautifulSoup
 
 from functii.debug import print_debug
+from functii.bools import LOGIN_USERNAME, LOGIN_PASSWORD, USER_IDENTIFIER, USER_TOKEN
 
 headers = {
     # "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0 | https://discord.gg/bmfRfePXm7"
@@ -14,10 +15,10 @@ headers = {
                   "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/618076658678628383 Safari/537.36 "
 }
 login_data = {
-    "_token": "",
-    "login_username": "samp_stats",
-    "login_password": "Apaplata69",
-    "user_identifier": "ae5936028cf47a3b819a0cd109a0d7ed"
+    "_token": USER_TOKEN,
+    "login_username": LOGIN_USERNAME,
+    "login_password": LOGIN_PASSWORD,
+    "user_identifier": USER_IDENTIFIER
 }
 
 def creation_date(path_to_file):
@@ -28,14 +29,13 @@ def creation_date(path_to_file):
     """
     if platform.system() == 'Windows':
         return os.path.getctime(path_to_file)
-    else:
-        stat = os.stat(path_to_file)
-        try:
-            return stat.st_birthtime
-        except AttributeError:
-            # We're probably on Linux. No easy way to get creation dates here,
-            # so we'll settle for when its content was last modified.
-            return stat.st_mtime
+    stat = os.stat(path_to_file)
+    try:
+        return stat.st_birthtime
+    except AttributeError:
+        # We're probably on Linux. No easy way to get creation dates here,
+        # so we'll settle for when its content was last modified.
+        return stat.st_mtime
 
 def get_profile_data(soup, f2_index: int):
     # 0 | stats
