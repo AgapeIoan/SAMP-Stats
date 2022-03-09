@@ -1,4 +1,3 @@
-from functii.debug import print_debug, send_error_message_to_error_channel
 import disnake
 
 import views.mainmenu
@@ -8,7 +7,6 @@ from functii.creier import get_nickname
 from functii.discord import disable_not_working_buttons
 from functii.samp import create_car_embed, create_fh_embed, format_car_data, format_faction_history_data, \
     format_biz_data, create_biz_embed, get_car_category, get_car_emoji_by_category
-from custom_errors import CommandErrorReport
 
 faction_emojis = panou.ruby.load_json("storage/factions/faction_emojis.json")
 
