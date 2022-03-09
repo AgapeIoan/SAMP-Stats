@@ -3,7 +3,6 @@ import os
 import pickle
 import time
 import requests
-from aiohttp.client import request
 from bs4 import BeautifulSoup
 
 from functii.debug import print_debug

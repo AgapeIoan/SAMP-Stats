@@ -6,7 +6,7 @@ import panou.ruby
 import views.stats_views
 from functii.creier import este_player_online, get_nickname
 from functii.discord import disable_all_buttons, enable_buttons
-from functii.debug import print_debug, send_error_message_to_error_channel
+from functii.debug import print_debug
 
 
 class MainMenu(disnake.ui.View):
