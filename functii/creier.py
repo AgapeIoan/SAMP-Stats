@@ -127,8 +127,8 @@ def get_nickname(soup):
 def get_server_provenienta(soup):
     f3 = soup.findAll('h3', {'class': 'profile-username'})
     provenienta = f3[0].findAll('a')
-    if provenienta: 
-        return "jade" 
+    if provenienta:
+        return "jade"
     return "ruby"
 
 
