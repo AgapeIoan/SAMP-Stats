@@ -1,7 +1,7 @@
 from functii.debug import print_debug, send_error_message_to_error_channel
 import disnake
 
-import mainmenu
+import views.mainmenu
 import panou.ruby
 from functii.creier import este_player_online
 from functii.creier import get_nickname
@@ -9,6 +9,8 @@ from functii.discord import disable_not_working_buttons
 from functii.samp import create_car_embed, create_fh_embed, format_car_data, format_faction_history_data, \
     format_biz_data, create_biz_embed, get_car_category, get_car_emoji_by_category
 from custom_errors import CommandErrorReport
+
+faction_emojis = panou.ruby.load_json("storage/factions/faction_emojis.json")
 
 class PropertiesMenu(disnake.ui.Select):
     message: disnake.Message
@@ -36,7 +38,7 @@ class PropertiesMenu(disnake.ui.Select):
         biz_name = self.values[0]
 
         if biz_name == "Inapoi":
-            za_view = await disable_not_working_buttons(mainmenu.MainMenu(self.soup), self.soup)
+            za_view = await disable_not_working_buttons(views.mainmenu.MainMenu(self.soup), self.soup)
             za_view.original_author = self.original_author
             za_view.message = self.message
             await interaction.response.edit_message(
@@ -81,13 +83,7 @@ class VehiclesMenu(disnake.ui.Select):
             # options.append(disnake.SelectOption(label=car_name, description=car_specs, emoji="<:emoji:913364393385934869>"))
             categorie = get_car_category(car_name)
             # car_emoji = "❗" if not categorie else get_car_emoji_by_category(categorie)
-            if not categorie:
-                car_emoji = "❗"
-                # Raise custom error for on_command_error event
-                raise CommandErrorReport(f"Caracteristica `{car_name}` nu are categorie asociata",
-                                         f"Caracteristica `{car_name}` nu are categorie asociata")
-            else:
-                car_emoji = get_car_emoji_by_category(categorie)
+            car_emoji = "❗" if not categorie else get_car_emoji_by_category(categorie)
             options.append(disnake.SelectOption(label=car_name, description=car_specs, emoji=car_emoji))
 
         # TODO De pasat erori in callback pentru a putea folosi await-ul
@@ -104,7 +100,7 @@ class VehiclesMenu(disnake.ui.Select):
 
         if car_name == "Inapoi":
             if self.numar_pagina == 1:
-                za_view = await disable_not_working_buttons(mainmenu.MainMenu(self.soup), self.soup)
+                za_view = await disable_not_working_buttons(views.mainmenu.MainMenu(self.soup), self.soup)
                 # TODO #36 Vezi ca odata ce iti faci un view nou, iti resetezi toate variabilele din view-ul vechi
                 # astfel, ramai fara self.embeds. Ori faci sa le cari cu tine, ori inveti cum sa iti pastrezi view-ul vechi.
                 # Vezi tu, te descurci, esti copil mare.
@@ -143,7 +139,6 @@ class FactionHistory(disnake.ui.Select):
         options = [
             disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️'),
         ]
-        faction_emojis = panou.ruby.load_json("storage/faction_emojis.json")
         for i in self.fh[(self.numar_pagina - 1) * 23:(self.numar_pagina * 23)]:
             aux = i.copy()
             fh_name, fh_specs = format_faction_history_data(aux)
@@ -161,7 +156,7 @@ class FactionHistory(disnake.ui.Select):
 
         if fh_name == "Inapoi":
             if self.numar_pagina == 1:
-                za_view = await disable_not_working_buttons(mainmenu.MainMenu(self.soup), self.soup)
+                za_view = await disable_not_working_buttons(views.mainmenu.MainMenu(self.soup), self.soup)
                 za_view.original_author = self.original_author
                 za_view.message = self.message
                 await interaction.response.edit_message(

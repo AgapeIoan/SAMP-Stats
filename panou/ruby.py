@@ -8,7 +8,6 @@ import aiohttp
 from bs4 import BeautifulSoup
 from disnake import embeds
 from disnake.utils import get
-from functii.samp import vezi_asociere
 from functii.creier import scrape_panou, get_nickname, login_panou, este_player_online, get_server_provenienta, \
     get_profile_data, creation_date, headers
 from functii.debug import print_debug
@@ -25,7 +24,7 @@ def dump_json(file_name, data):
         json.dump(data, f, indent=4)
 
 
-FACTION_NAMES = load_json('storage/factiuni.json')
+FACTION_NAMES = load_json('storage/factions/factiuni.json')
 
 async def get_panel_data(player):
     async with aiohttp.ClientSession(headers=headers) as session:
@@ -360,9 +359,9 @@ def get_clan_name(soup):
 async def get_clan_list():
     print_debug("Getting clan list...")
 
-    unix_modification = os.path.getmtime("storage/clan_list.json")
+    unix_modification = os.path.getmtime("storage/clans/clan_list.json")
     if time.time() - unix_modification < 30400:  # Juma de zi aprox
-        with open("storage/clan_list.json", "r", encoding='utf-8') as f:
+        with open("storage/clans/clan_list.json", "r", encoding='utf-8') as f:
             clan_dict = json.load(f)
         print_debug("Clan list loaded from file.")
         return clan_dict
@@ -382,7 +381,7 @@ async def get_clan_list():
             clan_id, clan_name, clan_tag, clan_members, clan_expire = i
             clan_dict[clan_id] = [clan_name, clan_tag, clan_members, clan_expire]
 
-        dump_json('storage/clan_list.json', clan_dict)
+        dump_json('storage/clans/clan_list.json', clan_dict)
         print_debug("Clan list loaded from web.")
         return clan_dict
 

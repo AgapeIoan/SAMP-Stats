@@ -6,7 +6,7 @@ import asyncio
 from disnake import Option, OptionType
 from disnake.ext import commands
 
-import mainmenu
+import views.mainmenu
 import panou.ruby
 from functii.creier import get_nickname, login_panou_forced, dump_session_to_file
 from functii.debug import print_debug, send_error_message_to_error_channel, print_log
@@ -20,7 +20,7 @@ bot = commands.Bot(command_prefix=">")
 
 @bot.command()
 async def reset(ctx):
-    if not is_dev(ctx.author.id): 
+    if not is_dev(ctx.author.id):
         return
 
     var = is_dev(ctx.author.id)
@@ -65,7 +65,7 @@ async def stats(inter, nickname):
             content=f"Jucatorul **{nickname}** nu a fost gasit. Verifica daca ai introdus corect nickname-ul!")
         return
 
-    view = await disable_not_working_buttons(mainmenu.MainMenu(soup), soup)
+    view = await disable_not_working_buttons(views.mainmenu.MainMenu(soup), soup)
     view.original_author = inter.author
     view.bot = bot
 
@@ -86,7 +86,7 @@ async def stats(inter, nickname):
 # async def clans(inter, param = None):
 #     await inter.response.defer()
 
-#     view = clase_menus.Clans_Menu_View(nr_pagina=1)
+#     view = views.clase_menus.Clans_Menu_View(nr_pagina=1)
 
 #     await inter.edit_original_message(content=f"**CLANS**", view=view)
 

@@ -1,6 +1,8 @@
 import datetime
 
-DEBUG = True
+with open("debug_state", "r") as f:
+    debug_file = f.readline()
+DEBUG_STATE = int(debug_file)
 
 def salvam_codul_sursa(cod_intreg):  # merge doar cu atacul in panou efectuat corect
     skemaaa = open('logs ruby/html_debug' + str(datetime.datetime.utcnow()) +
@@ -21,7 +23,7 @@ def chunks(s, n):
         yield s[start:start + n]
 
 def print_debug(output):
-    if DEBUG:
+    if DEBUG_STATE:
         print(f"{datetime.datetime.now()} | {output}")
 
 def print_log(output):

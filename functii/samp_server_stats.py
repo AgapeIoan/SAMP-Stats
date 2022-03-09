@@ -27,7 +27,7 @@ def format_server_data(server_data):
 
 if __name__ == '__main__':
     # Debug
-    with open('storage\\servers_dns.json', 'r') as f:
+    with open('storage/servers/servers_dns.json', 'r') as f:
         servers_dns = json.load(f)
 
     for server in servers_dns:
