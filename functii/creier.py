@@ -130,8 +130,7 @@ def get_server_provenienta(soup):
     provenienta = f3[0].findAll('a')
     if provenienta: 
         return "jade" 
-    else: 
-        return "ruby"
+    return "ruby"
 
 
 def get_player_id(soup):
