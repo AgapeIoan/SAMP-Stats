@@ -10,7 +10,8 @@
         "Rustler",
         "Shamal",
         "Skimmer",
-        "Stuntplane"
+        "Stuntplane",
+        "Stunt"
     ],
     "helicopters": [
         "Cargobob",
@@ -160,7 +161,8 @@
         "Sadler",
         "Tug",
         "Walton",
-        "Yosemite"
+        "Yosemite",
+        "Whoopee"
     ],
     "suvs_and_vagons": [
         "Huntley",
