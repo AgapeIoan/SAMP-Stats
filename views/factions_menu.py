@@ -5,49 +5,33 @@ from functii.debug import print_debug
 # UNTESTED !!!
 # Extras din vechiul clase_menus.py
 
-class Faction_Menu(disnake.ui.Select):
-    def __init__(self, numar_pagina, clans = None):
-        super().__init__()
+faction_emojis = panou.ruby.load_json("storage/factions/faction_emojis.json")
 
-        options = [disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️')] if numar_pagina > 1 else []
-        self.clans = panou.ruby.get_clan_list() if not clans else clans
-        self.numar_pagina = numar_pagina
 
-        for i in list(self.clans.items())[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
-            # TODO Rewrite this for dictionary usage instead of list
-            k, v = i
-            clan_name, clan_tag, clan_members, clan_expire = v
-            clan_id = k
-            options.append(disnake.SelectOption(label=f"[{clan_tag}] {clan_name}", description=f"ID: {clan_id} | {clan_members} members | expires in {clan_expire}"))
+class FactionMenu(disnake.ui.Select):
+    message: disnake.Message
+    original_author: disnake.User
 
-        options.append(disnake.SelectOption(label="Inainte", description="Afiseaza urmatoarea pagina de masini", emoji="➡️"))
+    def __init__(self, soup):
+        self.soup = soup
+        options = []
+        faction_data = panou.ruby.get_faction_data(self.soup)
 
-        super().__init__(placeholder='Alege clanul | Pagina ' + str(numar_pagina), min_values=1, max_values=1, options=options)
+        for faction in faction_data:
+            emoji = faction_emojis[faction[0]]
+            options.append(disnake.SelectOption(label=f"{faction_data.index(faction) + 1}. {faction[0]}", description=f"{faction[2].capitalize()} | {faction[1]}", emoji=emoji))
+
+        super().__init__(placeholder='Factiuni', min_values=1, max_values=1, options=options)
 
     async def callback(self, interaction: disnake.MessageInteraction):
-        await interaction.response.defer()
-        clan_name_selectat = self.values[0]
-        if clan_name_selectat == "Inapoi":
-            await interaction.response.edit_message(view=Faction_Menu_View(self.numar_pagina - 1))
-        elif clan_name_selectat == "Inainte":
-            await interaction.response.edit_message(view=Faction_Menu_View(self.numar_pagina + 1))
-        else:
-            for i in list(self.clans.items())[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
-                k, v = i
-                clan_name, clan_tag, clan_members, clan_expire = v
-                clan_id = k
-                if f"[{clan_tag}] {clan_name}" == clan_name_selectat:
-                    print_debug('procesam')
-                    # TODO #10 Scrapping cum trebuie pentru left si right, "panou.ruby.get_clan_data_by_id(clan_id, 'left/right')"
-                    panou.ruby.get_clan_data_by_id(clan_id, 'middle')
-                    print_debug('procesat')
-                    await interaction.edit_original_message(content = f"done")
-                    break
+        faction_name = self.values[0][3:].strip()
+
+        await interaction.response.edit_message(content=f"Factiunea **{faction_name}** a fost selectata!")
 
 
-class Faction_Menu_View(disnake.ui.View):
-    def __init__(self, nr_pagina):
+class FactionMenuView(disnake.ui.View):
+    def __init__(self, soup):
         super().__init__()
 
         # Adds the dropdown to our view object.
-        self.add_item(Faction_Menu(nr_pagina))
+        self.add_item(FactionMenu(soup))

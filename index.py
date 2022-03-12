@@ -1,12 +1,15 @@
 import os
 import requests
 import disnake
+import aiohttp
+from bs4 import BeautifulSoup
 from disnake import Option, OptionType
 from disnake.ext import commands
 
 import views.mainmenu
+import views.factions_menu
 import panou.ruby
-from functii.creier import get_nickname, login_panou_forced, dump_session_to_file
+from functii.creier import get_nickname, login_panou_forced, dump_session_to_file, headers
 from functii.debug import print_debug, send_error_message_to_error_channel, print_log
 from functii.discord import disable_not_working_buttons
 from functii.bools import BOT_TOKEN, is_dev
@@ -15,6 +18,7 @@ from functii.bools import BOT_TOKEN, is_dev
 # Global registration takes up to 1 hour.
 
 bot = commands.Bot(command_prefix=">")
+
 
 @bot.command()
 async def reset(ctx):
@@ -28,6 +32,7 @@ async def reset(ctx):
         dump_session_to_file(s, "session.pkl")
     await ctx.send(f"Succesfully ran the command. Dumped the session to file.")
 
+
 @bot.slash_command(
     name="ping",
     description="Pings the bot.",
@@ -36,6 +41,7 @@ async def ping(inter):
     za_ping = round(bot.latency * 1000)
     await inter.response.send_message(f'**Pong!**\n🏓 {za_ping} ms')
     await send_error_message_to_error_channel(bot, f"{inter.author.name}#{inter.author.discriminator} pinged the bot \\w " + str(za_ping) + "ms.")
+
 
 @bot.slash_command(
     name="stats",  # Defaults to the function name
@@ -70,6 +76,7 @@ async def stats(inter, nickname):
     view.message = await inter.edit_original_message(
         content=f"**Selecteaza o optiune pentru jucatorul `{get_nickname(soup)}`:**", view=view)
 
+
 @bot.slash_command(
     name="factions", # Defaults to the function name
     description="Afiseaza lista de factiuni",
@@ -81,8 +88,11 @@ async def stats(inter, nickname):
 )
 async def factions(inter, param = None):
     await inter.response.defer()
+    async with aiohttp.ClientSession(headers=headers) as session:
+        async with session.get("https://rubypanel.nephrite.ro/faction/list") as response:
+            soup = BeautifulSoup(await response.text(), 'html.parser')
 
-    view = views.clase_menus.Clans_Menu_View(nr_pagina=1)
+    view = views.factions_menu.FactionMenuView(soup)
 
     await inter.edit_original_message(content=f"**FACTIONS**", view=view)
 
