@@ -70,6 +70,22 @@ async def stats(inter, nickname):
     view.message = await inter.edit_original_message(
         content=f"**Selecteaza o optiune pentru jucatorul `{get_nickname(soup)}`:**", view=view)
 
+@bot.slash_command(
+    name="factions", # Defaults to the function name
+    description="Afiseaza lista de factiuni",
+    options=[
+        Option("param", "debug", OptionType.string, required=False)
+        # By default, Option is optional
+        # Pass required=True to make it a required arg
+    ]
+)
+async def factions(inter, param = None):
+    await inter.response.defer()
+
+    view = views.clase_menus.Clans_Menu_View(nr_pagina=1)
+
+    await inter.edit_original_message(content=f"**FACTIONS**", view=view)
+
 
 # @bot.slash_command(
 #     name="clans", # Defaults to the function name
