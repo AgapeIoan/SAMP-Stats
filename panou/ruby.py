@@ -341,6 +341,28 @@ def bstats(soup):
     return data[1:]  # lista_properties
 
 
+def get_faction_data(soup):
+    print_debug("Getting faction data...")
+    f2 = soup.findAll('div', {'class': 'col-xs-12'})
+    data = [
+        [td.text for td in tr.find_all('td')]
+        for table in f2 for tr in table.find_all('tr')
+    ]
+
+    faction_data = []
+    for i in data[1:]:
+        # ['1', 'Los Santos Police Department', '37/40 members and 4 admins '
+        # , 'members / logs / applications / complaints', ' applications closed or you are not logged in ', 'level 15 ']
+        print_debug(i)
+        faction_name = i[1]
+        faction_members = i[2]
+        faction_requirements = i[5]
+
+        faction_data.append([faction_name, faction_members, faction_requirements])
+
+    return faction_data
+
+
 def get_clan_name(soup):
     data = get_profile_data(soup, 0)
     if data[4][0] != 'Clan':
