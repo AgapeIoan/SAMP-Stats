@@ -137,10 +137,14 @@ class FactionHistory(disnake.ui.Select):
         options = [
             disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️'),
         ]
+        _fh_names = []
         for i in self.fh[(self.numar_pagina - 1) * 23:(self.numar_pagina * 23)]:
             aux = i.copy()
             fh_name, fh_specs = format_faction_history_data(aux)
             emoji = faction_emojis[fh_name[fh_name.find("|") + 2:]]
+            if fh_name in _fh_names:
+                fh_name = fh_name + "!"*_fh_names.count(fh_name)
+            _fh_names.append(fh_name)
             options.append(disnake.SelectOption(label=fh_name, description=fh_specs, emoji=emoji))
 
         if self.fh[(self.numar_pagina * 23):]:
