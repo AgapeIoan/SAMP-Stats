@@ -113,7 +113,6 @@ async def fstats(soup):
                 raport_formated.append(aux.replace(' / ', ''))
                 aux = ''
 
-
         if nickname == get_nickname(soup):
             print(nickname, rank, fw, days, last_online, raport_formated, reset)
             culoare_player_online = 0x00ff00 if este_player_online(soup) else 0xff0000
@@ -341,7 +340,7 @@ def bstats(soup):
     return data[1:]  # lista_properties
 
 
-def get_faction_data(soup):
+def get_faction_names(soup):
     print_debug("Getting faction data...")
     f2 = soup.findAll('div', {'class': 'col-xs-12'})
     data = [
@@ -361,6 +360,49 @@ def get_faction_data(soup):
         faction_data.append([faction_name, faction_members, faction_requirements])
 
     return faction_data
+
+def get_faction_data(soup):
+    f2 = soup.findAll('div', {'class': 'col-md-12'})
+    data = [
+        [td.text for td in tr.find_all('td')]
+        for table in f2 for tr in table.find_all('tr')
+    ]
+    members = []
+    for date in data[1:]:
+        # ['\n  Seek3r \n', '5\n', '0/3', '48 zile', '2022-02-22 23:40:47',
+        #  '\n\n\nore jucate: 07:26/07:00licente de condus suspendate: 5/5jucatori arestati/ucisi: 30/30 \n',
+        #  'pe data de 26/02/2022 in jurul orelor 20:00-20:30', ' ']
+
+        # zunake 5 0/3 66 zile 2022-02-25 22:18:21 ore jucate: 00:00/07:00materiale depozitate: 0/150000ucideri: 948 / decese: 398 pe data de 04/03/2022 in jurul orelor 23:00-23:30
+
+        nickname = date[0].replace('\n', '').strip()
+        rank = date[1].replace('\n', '').strip()
+        fw = date[2].replace('\n', '').strip()
+        days = date[3].replace('\n', '').strip()
+        last_online = date[4].replace('\n', '').strip()
+        raport = date[5].replace('\n', '').strip()
+        reset = date[6].replace('\n', '').strip()
+
+        raport_formated = []
+        aux = ''
+        i=0
+        while i < len(raport):
+            if not raport[i].isdigit():
+                aux += raport[i]
+                i+=1
+            else:
+                try:
+                    while raport[i].isdigit() or raport[i] == ':' or raport[i] == '/' or raport[i] == ',':
+                        aux += raport[i]
+                        i+=1
+                except IndexError:
+                    pass
+                raport_formated.append(aux.replace(' / ', ''))
+                aux = ''
+
+        members.append([nickname, rank, fw, days, last_online, raport, reset])
+    return members
+
 
 
 def get_clan_name(soup):

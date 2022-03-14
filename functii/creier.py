@@ -3,6 +3,7 @@ import os
 import pickle
 import time
 import requests
+import aiohttp
 from bs4 import BeautifulSoup
 
 from functii.debug import print_debug
@@ -139,3 +140,8 @@ def get_player_id(soup):
     for i in f2:
         if str_sursa in i['src']:
             return i['src'][50:]  # Player id
+
+async def get_soup(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, headers=headers) as response:
+            return BeautifulSoup(await response.read(), features='html5lib')
