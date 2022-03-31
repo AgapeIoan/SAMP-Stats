@@ -9,7 +9,7 @@ from functii.creier import get_soup
 faction_emojis = panou.ruby.load_json("storage/factions/faction_emojis.json")
 
 
-class FactionMenu(disnake.ui.Select):
+class FactionMenuMain(disnake.ui.Select):
     message: disnake.Message
     original_author: disnake.User
 
@@ -74,7 +74,7 @@ class FactionMenuView(disnake.ui.View):
         super().__init__()
 
         # Adds the dropdown to our view object.
-        self.add_item(FactionMenu(soup))
+        self.add_item(FactionMenuMain(soup))
 
 class FactionMembersView(disnake.ui.View):
     def __init__(self, members, numar_pagina=1):
