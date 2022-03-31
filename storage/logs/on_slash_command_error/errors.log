@@ -7,3 +7,11 @@
 In components.1.components.2.custom_id: Component custom id cannot be duplicated
 2022-03-02 13:12:13.019482 - Command raised an exception: InteractionNotResponded: This interaction hasn't been responded to yet
 2022-03-31 10:22:11.135095 - Command raised an exception: IndexError: list index out of range
+2022-03-31 10:37:39.829247 - Command raised an exception: IndexError: list index out of range
+2022-03-31 10:38:02.949031 - Command raised an exception: IndexError: list index out of range
+2022-03-31 10:38:52.910969 - Command raised an exception: KeyError: 'Tow Car Company LS'
+2022-03-31 10:43:07.828135 - Command raised an exception: KeyError: 'Tow Car Company LS'
+2022-03-31 10:44:33.510912 - Command raised an exception: KeyError: 'Tow Car Company LS'
+2022-03-31 10:45:54.967988 - Command raised an exception: KeyError: 'Tow Car Company LS'
+2022-03-31 10:46:57.582385 - Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
+In components.0.components.0.options: Must be between 1 and 25 in length.

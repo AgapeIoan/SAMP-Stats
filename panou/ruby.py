@@ -353,12 +353,16 @@ def get_faction_names(soup):
         # ['1', 'Los Santos Police Department', '37/40 members and 4 admins '
         # , 'members / logs / applications / complaints', ' applications closed or you are not logged in ', 'level 15 ']
         print_debug(i)
-        faction_name = i[1]
-        faction_members = i[2]
-        faction_requirements = i[5]
+        try:
+            faction_name = i[0]
+            faction_members = i[1]
+            faction_requirements = i[4]
 
-        faction_data.append([faction_name, faction_members, faction_requirements])
-
+            faction_data.append([faction_name, faction_members, faction_requirements])
+        except IndexError:
+            print_debug("IndexError")
+            pass
+    print_debug("RETURNEZ FACTION DATA")
     return faction_data
 
 def get_faction_data(soup):
