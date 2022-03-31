@@ -1,10 +1,10 @@
 {
-    "Departamente de politie":[1, 2, 3, 8, 18],
-    "Hitman Agency":[11],
-    "News Reporters":[9],
-    "Taxi":[7,13,17],
-    "Paramedici":[14,19,26],
-    "Mafii":[4,5,6,10,15,16,20,21,23],
-    "Instructori":[12,22],
-    "Tow Car Company":[24,25]
+    "Departamente de politie":["👮",[1, 2, 3, 8, 18]],
+    "Hitman Agency":["🎯", [11]],
+    "News Reporters":["📰", [9]],
+    "Taxi":["🚕", [7,13,17]],
+    "Paramedici":["🏥", [14,19,26]],
+    "Mafii":["🤵", [4,5,6,10,15,16,20,21,23]],
+    "Instructori":["👨‍🏫", [12,22]],
+    "Tow Car Company":["🔧", [24,25]]
 }
