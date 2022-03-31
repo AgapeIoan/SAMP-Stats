@@ -19,6 +19,7 @@ class FactionMenu(disnake.ui.Select):
         self.faction_data = panou.ruby.get_faction_names(self.soup)
 
         for faction in self.faction_data:
+            print_debug(faction)
             emoji = faction_emojis[faction[0]]
             options.append(disnake.SelectOption(label=f"{self.faction_data.index(faction) + 1}. {faction[0]}", description=f"{faction[2].capitalize()} | {faction[1]}", emoji=emoji))
 
