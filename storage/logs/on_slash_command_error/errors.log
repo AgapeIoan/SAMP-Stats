@@ -6,3 +6,4 @@
 2022-03-02 12:59:55.508817 - Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
 In components.1.components.2.custom_id: Component custom id cannot be duplicated
 2022-03-02 13:12:13.019482 - Command raised an exception: InteractionNotResponded: This interaction hasn't been responded to yet
+2022-03-31 10:22:11.135095 - Command raised an exception: IndexError: list index out of range
