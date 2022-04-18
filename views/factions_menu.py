@@ -8,17 +8,48 @@ from functii.creier import get_soup
 
 faction_emojis = panou.ruby.load_json("storage/factions/faction_emojis.json")
 
-
 class FactionMenuMain(disnake.ui.Select):
     message: disnake.Message
     original_author: disnake.User
 
     def __init__(self, soup):
+        options = []
+        self.faction_data = panou.ruby.FACTION_CATEGORIES
+        print_debug(self.faction_data)
+        self.soup = soup
+
+        print_debug("here")
+        for k,v in self.faction_data.items():
+            print_debug(f"k={k} v={v}")
+            emoji = v[0]
+            options.append(disnake.SelectOption(label=f"{k}", description=f" | ", emoji=emoji))
+
+        super().__init__(placeholder='Factiuni', min_values=1, max_values=1, options=options)
+
+    async def callback(self, interaction: disnake.MessageInteraction):
+        i = panou.ruby.FACTION_CATEGORIES[self.values[0]][1]
+        # add all items that contain the index in i from panou.ruby.FACTION_NAMES to a list
+        # and send it to the next view
+        factions = []
+        for faction in panou.ruby.FACTION_NAMES:
+            if i == panou.ruby.FACTION_NAMES.index(faction):
+                factions.append(faction)
+        
+        print_debug(factions) #TODO am ramas aici
+        await interaction.response.edit_message(view=FactionMenuView(self.soup, factions))
+
+class FactionMenu(disnake.ui.Select):
+    message: disnake.Message
+    original_author: disnake.User
+
+    def __init__(self, soup, faction_indexes):
         self.soup = soup
         options = []
         self.faction_data = panou.ruby.get_faction_names(self.soup)
+        self.faction_indexes = faction_indexes
 
         for faction in self.faction_data:
+            faction_name = panou.ruby.FACTION_NAMES[index]
             print_debug(faction)
             emoji = faction_emojis[faction[0]]
             options.append(disnake.SelectOption(label=f"{self.faction_data.index(faction) + 1}. {faction[0]}", description=f"{faction[2].capitalize()} | {faction[1]}", emoji=emoji))
@@ -70,6 +101,13 @@ class FactionMembers(disnake.ui.Select):
 
 
 class FactionMenuView(disnake.ui.View):
+    def __init__(self, soup, index):
+        super().__init__()
+
+        # Adds the dropdown to our view object.
+        self.add_item(FactionMenu(soup, index))
+
+class FactionMenuMainView(disnake.ui.View):
     def __init__(self, soup):
         super().__init__()
 

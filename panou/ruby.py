@@ -23,6 +23,8 @@ def dump_json(file_name, data):
 
 
 FACTION_NAMES = load_json('storage/factions/factiuni.json')
+FACTION_CATEGORIES = load_json('storage/factions/faction_categories.json') # Contine emojis pe fiecare categorie si
+# index-ul fiecarai factiuni in FACTION_NAMES
 
 async def get_panel_data(player):
     async with aiohttp.ClientSession(headers=headers) as session:

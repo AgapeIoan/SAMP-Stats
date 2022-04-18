@@ -21,7 +21,7 @@ class Events(commands.Cog):
         print_log(f'za error {error}')
         # log the error to unique file
         with open(r'storage/logs/on_slash_command_error/errors.log', 'a') as f:
-            f.write(f'{datetime.datetime.now()} - {error}\n')
+            f.write(f'{str(datetime.datetime.now())} - {str(error)}\n')
     # LOG THE INTER
         data = {
             "author": str(inter.author),
