@@ -92,7 +92,7 @@ async def factions(inter, param = None):
         async with session.get("https://rubypanel.nephrite.ro/faction/list") as response:
             soup = BeautifulSoup(await response.text(), 'html.parser')
 
-    view = views.factions_menu.FactionMenuView(soup)
+    view = views.factions_menu.FactionMenuMainView(soup)
 
     await inter.edit_original_message(content=f"**FACTIONS**", view=view)
 

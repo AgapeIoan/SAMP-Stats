@@ -15,3 +15,12 @@ In components.1.components.2.custom_id: Component custom id cannot be duplicated
 2022-03-31 10:45:54.967988 - Command raised an exception: KeyError: 'Tow Car Company LS'
 2022-03-31 10:46:57.582385 - Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
 In components.0.components.0.options: Must be between 1 and 25 in length.
+2022-03-31 11:03:29.566112 - Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
+In components.0.components.0.options: Must be between 1 and 25 in length.
+2022-03-31 11:04:29.382608 - Command raised an exception: KeyError: 'D'
+2022-03-31 11:05:06.658068 - Command raised an exception: ValueError: too many values to unpack (expected 2)
+2022-04-07 10:22:56.677651 - Command raised an exception: ValueError: too many values to unpack (expected 2)
+2022-04-07 10:24:44.919690 - Command raised an exception: ValueError: too many values to unpack (expected 2)
+2022-04-07 10:25:09.312784 - Command raised an exception: ValueError: too many values to unpack (expected 2)
+2022-04-07 10:26:19.203992 - Command raised an exception: ValueError: too many values to unpack (expected 2)
+2022-04-07 10:36:12.885679 - Command raised an exception: TypeError: __init__() missing 1 required positional argument: 'index'
