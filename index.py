@@ -19,7 +19,6 @@ from functii.bools import BOT_TOKEN, is_dev
 
 bot = commands.Bot(command_prefix=">")
 
-
 @bot.command()
 async def reset(ctx):
     if not is_dev(ctx.author.id):
@@ -77,24 +76,24 @@ async def stats(inter, nickname):
         content=f"**Selecteaza o optiune pentru jucatorul `{get_nickname(soup)}`:**", view=view)
 
 
-@bot.slash_command(
-    name="factions", # Defaults to the function name
-    description="Afiseaza lista de factiuni",
-    options=[
-        Option("param", "debug", OptionType.string, required=False)
-        # By default, Option is optional
-        # Pass required=True to make it a required arg
-    ]
-)
-async def factions(inter, param = None):
-    await inter.response.defer()
-    async with aiohttp.ClientSession(headers=headers) as session:
-        async with session.get("https://rubypanel.nephrite.ro/faction/list") as response:
-            soup = BeautifulSoup(await response.text(), 'html.parser')
+# @bot.slash_command(
+#     name="factions", # Defaults to the function name
+#     description="Afiseaza lista de factiuni",
+#     options=[
+#         Option("param", "debug", OptionType.string, required=False)
+#         # By default, Option is optional
+#         # Pass required=True to make it a required arg
+#     ]
+# )
+# async def factions(inter, param = None):
+#     await inter.response.defer()
+#     async with aiohttp.ClientSession(headers=headers) as session:
+#         async with session.get("https://rubypanel.nephrite.ro/faction/list") as response:
+#             soup = BeautifulSoup(await response.text(), 'html.parser')
 
-    view = views.factions_menu.FactionMenuMainView(soup)
+#     view = views.factions_menu.FactionMenuMainView(soup)
 
-    await inter.edit_original_message(content=f"**FACTIONS**", view=view)
+#     await inter.edit_original_message(content=f"**FACTIONS**", view=view)
 
 
 # @bot.slash_command(
