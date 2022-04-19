@@ -1,6 +1,13 @@
 import json
 import disnake
 
+with open("storage/vehicles/vehicles_urls.json") as f:
+    VEHICLE_IMAGES = json.load(f)
+with open("storage/vehicles/vehicle_categories.json") as f:
+    VEHICLE_CATEGORIES = json.load(f)
+with open("storage/vehicles/vehicle_emojis.json", encoding='utf-8') as f:
+    VEHICLE_EMOJIS = json.load(f)
+
 headers = {
     "user-agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0 | https://discord.gg/bmfRfePXm7"
 }
@@ -10,11 +17,9 @@ def get_car_image_link(car_name):
     car_name = car_name[:car_name.find('(ID:')]
     car_name = car_name.strip()
 
-    with open("storage/vehicles/vehicles_urls.json") as f:
-        data = json.load(f)
-    for car in data:
+    for car in VEHICLE_IMAGES:
         if car_name.lower() == car.lower():
-            return data[car]
+            return VEHICLE_IMAGES[car]
     return None
 
 def get_car_category(car_name):
@@ -22,17 +27,13 @@ def get_car_category(car_name):
     car_name = car_name.strip()
     # print_debug(car_name)
 
-    with open("storage/vehicles/vehicle_categories.json") as f:
-        data = json.load(f)
-    for k, v in data.items():
+    for k, v in VEHICLE_CATEGORIES.items():
         if car_name in v:
             return k
     return None
 
 def get_car_emoji_by_category(category):
-    with open("storage/vehicles/vehicle_emojis.json", encoding='utf-8') as f:
-        data = json.load(f)
-    return data[category]
+    return VEHICLE_EMOJIS[category]
 
 def create_car_embed(car_stats, nickname):
     embed=disnake.Embed(color=0x00ff00)
