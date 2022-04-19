@@ -109,6 +109,8 @@ class MainMenu(disnake.ui.View):
             clan_name = panou.ruby.get_clan_name(self.soup)
             clan_tag = await panou.ruby.get_clan_tag_by_name(clan_name)
             data, nicknames = await panou.ruby.get_clan_data_by_id(await panou.ruby.get_clan_id_by_name(clan_name), 'middle')
+            if not data: # Ceva a patit cookie-ul si nu mai este valid
+                data, nicknames = await panou.ruby.get_clan_data_by_id(await panou.ruby.get_clan_id_by_name(clan_name), 'middle', True)
             player_stats = await panou.ruby.get_player_clan_data(data, get_nickname(self.soup), nicknames)
             print_debug(player_stats)
             # player_stats = ['7', 'Nickname', '$12,569,002', '937', '00:00', '']

@@ -78,9 +78,9 @@ def login_panou_forced(s):
 
     return r
 
-async def login_panou(session):
+async def login_panou(session, forced_login=False):
     unix_modification = os.path.getmtime("session.pkl")
-    if time.time() - unix_modification > 250000: # ~3 days
+    if time.time() - unix_modification > 250000 or forced_login: # ~3 days
         with requests.Session() as s:
             url = "https://rubypanel.nephrite.ro/login"
             r = s.get(url, headers=headers)

@@ -473,7 +473,7 @@ async def get_clan_tag_by_name(clan_name):
     return None
 
 
-async def get_clan_data_by_id(clan_id, pozitie):
+async def get_clan_data_by_id(clan_id, pozitie, forced=False):
     print_debug(f"Getting clan data for clan {clan_id}...")
     cols = {
         "left": {'class': 'col-xs-3'},
@@ -486,7 +486,11 @@ async def get_clan_data_by_id(clan_id, pozitie):
 
     async with aiohttp.ClientSession(headers=headers) as session:
         print_debug("Logging in...")
-        await login_panou(session)
+        if not forced:
+            await login_panou(session)
+        else:
+            print_debug("Forced login...")
+            await login_panou(session, forced_login=True)
         print_debug("Logged in.")
         url = 'https://rubypanel.nephrite.ro/clan/view/' + str(clan_id)
         print_debug(f"Getting clan data from {url}...")
@@ -515,6 +519,7 @@ async def get_clan_data_by_id(clan_id, pozitie):
                 nicknames.append(nickname)
 
         print_debug(f"Clan data loaded.")
+        print_debug(f"Clan data: {data}")
         return data, nicknames
 
 
