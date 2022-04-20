@@ -71,7 +71,7 @@ def login_panou_forced(s):
     r = s.get(url, headers=headers)
     soup = BeautifulSoup(r.content, features='html5lib')
     login_data['_token'] = soup.find('input', attrs={'name': '_token'})['value']
-    print_debug(f"Logging in...")
+    print_debug("Logging in...")
     print_debug(f"Login data: {login_data}")
     print_debug(f"Headers: {headers}")
     r = s.post(url, data=login_data, headers=headers)
@@ -86,7 +86,7 @@ async def login_panou(session, forced_login=False):
             r = s.get(url, headers=headers)
             soup = BeautifulSoup(r.content, features='html5lib')
             login_data['_token'] = soup.find('input', attrs={'name': '_token'})['value']
-            print_debug(f"Logging in...")
+            print_debug("Logging in...")
             print_debug(f"Login data: {login_data}")
             print_debug(f"Headers: {headers}")
             r = s.post(url, data=login_data, headers=headers)
