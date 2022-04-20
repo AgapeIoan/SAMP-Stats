@@ -41,7 +41,7 @@ class Clans_Menu(disnake.ui.Select):
                     # TODO #10 Scrapping cum trebuie pentru left si right, "panou.ruby.get_clan_data_by_id(clan_id, 'left/right')"
                     panou.ruby.get_clan_data_by_id(clan_id, 'middle')
                     print_debug('procesat')
-                    await interaction.edit_original_message(content = f"done")
+                    await interaction.edit_original_message(content = "done")
                     break
 
 

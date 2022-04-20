@@ -22,7 +22,7 @@ class FactionMenuMain(disnake.ui.Select):
         for k,v in self.faction_data.items():
             print_debug(f"k={k} v={v}")
             emoji = v[0]
-            options.append(disnake.SelectOption(label=f"{k}", description=f" | ", emoji=emoji))
+            options.append(disnake.SelectOption(label=f"{k}", description=" | ", emoji=emoji))
 
         super().__init__(placeholder='Factiuni', min_values=1, max_values=1, options=options)
 

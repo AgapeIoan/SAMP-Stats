@@ -27,7 +27,7 @@ async def reset(ctx):
     with requests.Session() as s:
         login_panou_forced(s)
         dump_session_to_file(s, "session.pkl")
-    await ctx.send(f"Succesfully ran the command. Dumped the session to file.")
+    await ctx.send("Succesfully ran the command. Dumped the session to file.")
 
 
 @bot.slash_command(
@@ -162,7 +162,7 @@ async def on_ready():
     print_log(f"")
 
 
-print_log(f"Ne logam...")
+print_log("Ne logam...")
 # load cog
 for file in os.listdir("cogs"):
     if file.endswith(".py"):
