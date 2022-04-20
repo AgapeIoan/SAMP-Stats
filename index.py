@@ -1,15 +1,13 @@
 import os
 import requests
 import disnake
-import aiohttp
-from bs4 import BeautifulSoup
 from disnake import Option, OptionType
 from disnake.ext import commands
 
 import views.mainmenu
 import views.factions_menu
 import panou.ruby
-from functii.creier import get_nickname, login_panou_forced, dump_session_to_file, headers
+from functii.creier import get_nickname, login_panou_forced, dump_session_to_file
 from functii.debug import print_debug, send_error_message_to_error_channel, print_log
 from functii.discord import disable_not_working_buttons
 from functii.bools import BOT_TOKEN, is_dev
