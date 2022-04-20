@@ -435,7 +435,7 @@ async def get_clan_list():
         return clan_dict
 
     async with aiohttp.ClientSession(headers=headers) as session:
-        url = f'https://rubypanel.nephrite.ro/clan/list'
+        url = 'https://rubypanel.nephrite.ro/clan/list'
         async with session.get(url) as response:
             soup = BeautifulSoup(await response.text(), 'html.parser')
 
@@ -518,7 +518,7 @@ async def get_clan_data_by_id(clan_id, pozitie, forced=False):
                 nickname = href[38:]
                 nicknames.append(nickname)
 
-        print_debug(f"Clan data loaded.")
+        print_debug("Clan data loaded.")
         print_debug(f"Clan data: {data}")
         return data, nicknames
 
