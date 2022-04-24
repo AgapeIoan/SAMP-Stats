@@ -57,16 +57,11 @@ class Events(commands.Cog):
     async def on_slash_command(self, inter):
         # https://prnt.sc/22ksw6z
 
-        # print_debug("author: " + str(inter.author))
-        # print_debug("channel: " + str(inter.channel))
-        # print_debug("channel_id: " + str(inter.channel_id))
-        # print_debug("data: " + str(inter.data))
-        # print_debug("filled_options: " + str(inter.filled_options))
-        # print_debug("guild: " + str(inter.guild))
-        # print_debug("guild_id: " + str(inter.guild_id))
-        # print_debug("options: " + str(inter.options))
-        # print_debug("permissions: " + str(inter.permissions))
-
+        # dir(inter)
+        # for i in dir(inter):
+        #     if i.startswith("_"):
+        #         continue
+        #     print(f"{i}: {getattr(inter, i)}")
         data = {
             "author": str(inter.author),
             "author_id": int(inter.author.id),
