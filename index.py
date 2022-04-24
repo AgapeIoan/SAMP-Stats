@@ -7,10 +7,12 @@ from disnake.ext import commands
 import views.mainmenu
 import views.factions_menu
 import panou.ruby
+
 from functii.creier import get_nickname, login_panou_forced, dump_session_to_file
 from functii.debug import print_debug, send_error_message_to_error_channel, print_log
 from functii.discord import disable_not_working_buttons
 from functii.bools import BOT_TOKEN, is_dev
+from typing import List
 
 # If 'test_guilds' param isn't specified, the commands are registered globally.
 # Global registration takes up to 1 hour.
@@ -45,8 +47,6 @@ async def ping(inter):
     description="Afiseaza statisticile jucatorului specificat",
     options=[
         Option("nickname", "Introdu nickname-ul", OptionType.string, required=True)
-        # By default, Option is optional
-        # Pass required=True to make it a required arg
     ]
 )
 async def stats(inter, nickname):
@@ -110,47 +110,6 @@ async def stats(inter, nickname):
 #     view = views.clase_menus.Clans_Menu_View(nr_pagina=1)
 
 #     await inter.edit_original_message(content=f"**CLANS**", view=view)
-
-# # TODO #19 Fix comanda raportu
-# @bot.slash_command(
-#     name="raportu", # Defaults to the function name
-#     description="Afiseaza lista de servere samp",
-#     guild_ids=test_guilds,
-#     options=[
-#         Option("server", "Specifica adresa server", OptionType.string, required=False)
-#         # By default, Option is optional
-#         # Pass required=True to make it a required arg
-#     ]
-# )
-# async def raportu(inter, server = None):
-#     await inter.response.defer()
-
-#     embed = disnake.Embed(title="SAMP Servers", color=0x00ff00)
-#     with open("storage\\servers_dns.json", "r") as f:
-#         servers = json.load(f)
-
-#     if server:
-#         for i in servers:
-#             if server in i: # Vedem daca avem keyword matching
-#                 server = i
-#                 break
-
-#         if server.find(".") == -1: # Nu avem ".", adica nu este corect specificat server-ul
-#             await inter.edit_original_message(content = f"Serverul **{server}** nu a fost gasit. Verifica daca ai introdus corect adresa sau numele serverului!")
-#             return
-#         hostname, data = format_server_data(get_server_data(server))
-#         if not hostname:
-#             await inter.edit_original_message(content = f"Serverul **{server}** nu a fost gasit. Verifica daca ai introdus corect adresa sau numele serverului!")
-#             return
-#         embed.add_field(name=hostname, value=data)
-#     else:
-#         for server in servers:
-#             hostname, data = format_server_data(get_server_data(server))
-#             if not hostname:
-#                 continue
-#             embed.add_field(name=hostname, value=data)
-
-#     await inter.edit_original_message(embed=embed)
 
 @bot.listen()
 async def on_ready():

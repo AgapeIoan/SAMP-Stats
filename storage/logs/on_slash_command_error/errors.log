@@ -24,3 +24,6 @@ In components.0.components.0.options: Must be between 1 and 25 in length.
 2022-04-07 10:25:09.312784 - Command raised an exception: ValueError: too many values to unpack (expected 2)
 2022-04-07 10:26:19.203992 - Command raised an exception: ValueError: too many values to unpack (expected 2)
 2022-04-07 10:36:12.885679 - Command raised an exception: TypeError: __init__() missing 1 required positional argument: 'index'
+2022-04-21 20:15:49.032801 - Command raised an exception: TypeError: edit_original_message() takes 1 positional argument but 2 were given
+2022-04-24 17:13:58.975055 - Command raised an exception: ValueError: too many values to unpack (expected 2)
+2022-04-24 17:22:15.372809 - Command raised an exception: TypeError: __init__() got an unexpected keyword argument 'name'
