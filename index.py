@@ -17,7 +17,7 @@ from typing import List
 # If 'test_guilds' param isn't specified, the commands are registered globally.
 # Global registration takes up to 1 hour.
 
-bot = commands.Bot(command_prefix=">")
+bot = commands.Bot(command_prefix=commands.when_mentioned)
 
 @bot.command()
 async def reset(ctx):
