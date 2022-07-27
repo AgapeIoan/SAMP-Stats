@@ -28,7 +28,6 @@ class Samp(commands.Cog):
     )
     async def raportu(self, inter: disnake.CommandInteraction, server_address: str = commands.Param(autocomplete=autocomplete_servers),):
         await inter.response.defer()
-        x = get_server_data(server_address)
         server_data = format_server_data(get_server_data(server_address)) # Dictionary
         if not server_data:
             await inter.edit_original_message(content="**" + inter.author.name + "**, nu am putut gasi date legate de serverul specificat.")
@@ -42,14 +41,7 @@ class Samp(commands.Cog):
         embed = disnake.Embed(title=server_data['hostname'], description=description, color=0x00ff00)
 
         await inter.edit_original_message(embed=embed)
-        
-        @commands.slash_command(
-        name="raportu2",
-        description="Afiseaza statisticile serverului de SAMP specificat",
-        guild_ids=[722442573137969174],
-    )
-    async def raportu2(self, inter):
-
+    
     
 
 def setup(bot):

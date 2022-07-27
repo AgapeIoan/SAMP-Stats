@@ -2,9 +2,14 @@ import json
 from samp_client.client import SampClient
 
 def get_server_data(server_address):
+    if server_address.find(":") == -1:
+        PORT = 7777
+    else:
+        PORT = int(server_address.split(":")[1])
+        server_address = server_address.split(":")[0]
     for _ in range(3):
         try:
-            with SampClient(address=server_address, port=7777) as client:
+            with SampClient(address=server_address, port=PORT) as client:
                 server_data = client.get_server_info()
             return server_data
         except Exception as e:
