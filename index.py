@@ -1,6 +1,7 @@
 import os
 import requests
 import disnake
+import time
 from disnake import Option, OptionType
 from disnake.ext import commands
 
@@ -9,7 +10,7 @@ import views.factions_menu
 import panou.ruby
 
 from functii.creier import get_nickname, login_panou_forced, dump_session_to_file
-from functii.debug import print_debug, send_error_message_to_error_channel, print_log
+from functii.debug import DEBUG_STATE, print_debug, send_error_message_to_error_channel, print_log
 from functii.discord import disable_not_working_buttons
 from functii.bools import BOT_TOKEN, is_dev
 from typing import List
@@ -121,7 +122,14 @@ async def on_ready():
     print_log(f"")
 
 
-print_log("Ne logam...")
+print_log("Ne logam...\n")
+if not DEBUG_STATE:
+    print_log("DEBUG_STATE is False, urmeaza sa folosesti token-ul de productie!")
+    print_log("Daca nu doresti sa folosesti token-ul de productie, trebuie sa modifici debug_state-ul!\n")
+    for i in range(3):
+        print_log("Bot-ul va porni in " + str(3*5 - i*5) + " secunde.")
+        time.sleep(5)
+
 # load cog
 for file in os.listdir("cogs"):
     if file.endswith(".py"):
