@@ -1,5 +1,7 @@
+from datetime import datetime
 import disnake
 import panou.ruby
+import asyncio
 from functii.debug import print_debug
 from functii.creier import get_soup
 
@@ -59,15 +61,16 @@ class FactionMenu(disnake.ui.Select):
         super().__init__(placeholder='Factiuni', min_values=1, max_values=1, options=options)
 
     async def callback(self, interaction: disnake.MessageInteraction):
-        faction_name = self.values[0][3:].strip()
-        for faction in self.faction_data:
-            if faction[0] == faction_name:
-                faction_index = self.faction_data.index(faction)
-                break
-        url = "https://rubypanel.nephrite.ro/faction/members/" + str(faction_index + 1)
-        soup = await get_soup(url)
-        members = panou.ruby.get_faction_data(soup)
-        await interaction.response.edit_message(view=FactionMembersView(members))
+        faction_name = self.values[0][3:]
+        faction_data = panou.ruby.find_faction_data_by_name(self.faction_data_big, faction_name)
+        to_send = f"• {faction_data[1]}\n• Requirements: {faction_data[2].strip()}"
+        embed = disnake.Embed(title=faction_data[0], description=to_send, color=0x00ff00)
+        embed.set_footer(text="ruby.nephrite.ro")
+        embed.timestamp = datetime.now()
+        embed.set_thumbnail(url="https://img1.pnghut.com/11/23/20/neTwkQiTuZ/emoji-area-car-rental-compact.jpg") # DEBUG, trebe sa fac lista custom cu poze de genul pentru toate factiunile
+        view = MainMenu(faction_name)
+        await interaction.response.edit_message(embed=embed, view=view)
+        
 
 
 class FactionMembers(disnake.ui.Select):
@@ -100,7 +103,63 @@ class FactionMembers(disnake.ui.Select):
                 view=FactionMembersView(self.members, self.numar_pagina + 1))
         else:
             await interaction.response.edit_message(content=str(member))
+########################
+class MainMenu(disnake.ui.View):
+    message: disnake.Message
+    original_author: disnake.User
 
+    def __init__(self, faction_name: str):
+        # TODO #26 Maybe maybe dam reset la timeout la fiecare interactiune (apasare de buton, dropdown si ce o mai fi)
+        super().__init__(timeout=400.0)
+        self.faction_name = faction_name
+        self.clan_embed = None
+        self.faction_embed = None
+
+    # Timeout and error handling.
+    async def on_timeout(self):
+        if len(self.children) > 7:
+            if self.children[2].options[-1].label == "Inainte":
+                self.children[2].options.pop(-1)
+
+            if self.children[2].options[0].label == "Inapoi":
+                self.children[2].options[0] = disnake.SelectOption(
+                    label="Butoanele au fost dezactivate datorita inactivitatii!",
+                    description="Acestea nu mai pot fi selectate in acest mesaj.",
+                    emoji="🔒"
+                )
+        for i in self.children[:2]:
+            # i.style = disnake.ButtonStyle.red
+            i.disabled = True
+
+        # make sure to update the message with the new buttons
+        await self.message.edit(content="**🔒 Butoanele au fost dezactivate datorita inactivitatii!**", view=self)
+        try:
+            await asyncio.sleep(60)
+            await self.message.edit(content="")
+        except disnake.HTTPException:
+            pass
+
+    async def interaction_check(self, interaction):
+        # print_debug(f"{interaction.author.id} != {self.original_author.id}")
+        # print_debug(interaction.author.id != self.original_author.id)
+
+        if interaction.author.id == self.original_author.id:
+            return True
+
+        await interaction.response.send_message("**❗ Nu poti folosi comanda deoarece nu esti autorul acesteia!**",
+                                                ephemeral=True)
+        return False
+
+    @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Testers", custom_id="testers_button", row=0)
+    async def testers(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
+        # if len(self.children) > 2:
+        #     self.remove_item(self.children[2])
+        # button.disabled = True
+        pass
+
+    @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Aplicatii", custom_id="aplicatii_button", row=0)
+    async def aplicatii(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
+        pass
 
 class FactionMenuView(disnake.ui.View):
     def __init__(self, soup, index):

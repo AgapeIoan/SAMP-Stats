@@ -39,7 +39,7 @@ class Factions(commands.Cog):
                 soup = BeautifulSoup(await response.text(), 'html.parser')
         view = views.factions_menu.FactionMenuMainView(soup)
 
-        await inter.edit_original_message(content=f"**FACTIONS**", view=view)
+        await inter.edit_original_message(content=f"**DEBUG**", view=view)
 
 
     @commands.slash_command(
