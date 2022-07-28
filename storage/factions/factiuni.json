@@ -1,6 +1,5 @@
-{
-    "factiune" : ["Civilia",
-    "Los Santos Police Department",
+["Civilia",
+"Los Santos Police Department",
 "Federal Bureau of Investigation",
 "National Guard",
 "Los Aztecas",
@@ -26,4 +25,3 @@
 "Tow Car Company LS",
 "Tow Car Company LV",
 "Paramedic Department SF"]
-}

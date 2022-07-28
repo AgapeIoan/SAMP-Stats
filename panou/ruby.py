@@ -5,10 +5,13 @@ import os
 import time
 import aiohttp
 
+import functii.typo_proof as typo
+
 from bs4 import BeautifulSoup
 from functii.creier import scrape_panou, get_nickname, login_panou, este_player_online, get_server_provenienta, \
     get_profile_data, headers
 from functii.debug import print_debug
+
 
 
 # load json file
@@ -57,11 +60,11 @@ async def get_faction_name(soup):
 
 async def fstats(soup):
     faction = await get_faction_name(soup)
-    for i in FACTION_NAMES['factiune']:
+    for i in FACTION_NAMES:
         # print_debug(f"{i.lower()} in {faction.lower()}")
         if i.lower() in faction.lower():
             faction = i
-            faction_index = FACTION_NAMES['factiune'].index(i)
+            faction_index = FACTION_NAMES.index(i)
             break
 
     if faction_index == 0:
@@ -366,6 +369,21 @@ def get_faction_names(soup):
             pass
     print_debug("RETURNEZ FACTION DATA")
     return faction_data
+
+def find_faction_data_by_name(faction_data, faction_name):
+    for i in faction_data:
+        if typo.is_lev_legit(typo.compare_faction_names(i[0], faction_name)):
+            return i
+    return None
+
+def get_closest_faction_name(faction_name):
+    faction_name = faction_name.lower()
+    for name in FACTION_NAMES:
+        aux = name
+        name = name.lower()
+        if typo.is_lev_legit(typo.compare_faction_names(faction_name, name)):
+            return aux
+    return None    
 
 def get_faction_data(soup):
     f2 = soup.findAll('div', {'class': 'col-md-12'})

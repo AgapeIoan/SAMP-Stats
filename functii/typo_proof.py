@@ -45,11 +45,11 @@ def compare_faction_names(string1, string2):
     return lev_dist(string1, string2)
 
 def is_lev_legit(lev_distance):
-    # Maximum 2 chars should be accepted afaik. 
+    # Maximum 2 chars should be accepted afaik.
     return lev_distance <= 2 and lev_distance != -1
 
 if __name__ == "__main__":
-    text = "Hitman Agency"
-    result = compare_faction_names(text, "Hitmen")
+    text = "Federal Bureau Of Investigations"
+    result = compare_faction_names(text, "Federal Bureau Of Investigation")
 
     print(result)
