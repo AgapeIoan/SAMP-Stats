@@ -38,8 +38,8 @@ class Factions(commands.Cog):
             async with session.get("https://rubypanel.nephrite.ro/faction/list") as response:
                 soup = BeautifulSoup(await response.text(), 'html.parser')
         view = views.factions_menu.FactionMenuMainView(soup)
-
-        await inter.edit_original_message(content=f"**DEBUG**", view=view)
+        view.original_author = inter.author
+        view.message = await inter.edit_original_message(content=f"**DEBUG**", view=view)
 
 
     @commands.slash_command(

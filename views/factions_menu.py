@@ -21,7 +21,7 @@ class FactionMenuMain(disnake.ui.Select):
         for k,v in self.faction_data.items():
             print_debug(f"k={k} v={v}")
             emoji = v[0]
-            options.append(disnake.SelectOption(label=f"{k}", description=" | ", emoji=emoji))
+            options.append(disnake.SelectOption(label=f"{k}", emoji=emoji))
 
         super().__init__(placeholder='Factiuni', min_values=1, max_values=1, options=options)
 
@@ -67,10 +67,10 @@ class FactionMenu(disnake.ui.Select):
         embed = disnake.Embed(title=faction_data[0], description=to_send, color=0x00ff00)
         embed.set_footer(text="ruby.nephrite.ro")
         embed.timestamp = datetime.now()
-        embed.set_thumbnail(url="https://img1.pnghut.com/11/23/20/neTwkQiTuZ/emoji-area-car-rental-compact.jpg") # DEBUG, trebe sa fac lista custom cu poze de genul pentru toate factiunile
+        embed.set_thumbnail(url="https://img.agapeioan.ro/samp/logo.png") # DEBUG, trebe sa fac lista custom cu poze de genul pentru toate factiunile
+        # TODO Dictionar thumbnails per faction
         view = MainMenu(faction_name)
         await interaction.response.edit_message(embed=embed, view=view)
-        
 
 
 class FactionMembers(disnake.ui.Select):
@@ -150,16 +150,16 @@ class MainMenu(disnake.ui.View):
                                                 ephemeral=True)
         return False
 
-    @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Testers", custom_id="testers_button", row=0)
-    async def testers(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        # if len(self.children) > 2:
-        #     self.remove_item(self.children[2])
-        # button.disabled = True
-        pass
+    # @disnake.ui.button(style=disnake.ButtonStyle.gray, label="Testers", custom_id="testers_button", row=0, disabled=True)
+    # async def testers(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
+    #     # if len(self.children) > 2:
+    #     #     self.remove_item(self.children[2])
+    #     # button.disabled = True
+    #     pass
 
-    @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Aplicatii", custom_id="aplicatii_button", row=0)
-    async def aplicatii(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        pass
+    # @disnake.ui.button(style=disnake.ButtonStyle.gray, label="Aplicatii", custom_id="aplicatii_button", row=0, disabled=True)
+    # async def aplicatii(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
+    #     pass
 
 class FactionMenuView(disnake.ui.View):
     def __init__(self, soup, index):
