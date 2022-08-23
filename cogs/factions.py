@@ -41,7 +41,7 @@ class Factions(commands.Cog):
         view.original_author = inter.author
         view.message = await inter.edit_original_message(content=f"**DEBUG**", view=view)
 
-
+    """
     @commands.slash_command(
         name="testers",
         description="Afiseaza lista testerilor din cadrul factiunii specificate",
@@ -60,7 +60,7 @@ class Factions(commands.Cog):
     async def aplicatii(self, inter: disnake.CommandInteraction, faction: str = commands.Param(autocomplete=autocomplete_factions),):
         await inter.response.defer()
         await inter.edit_original_message(content="**" + inter.author.name + "**, asteapta... ||mult si bine||")
-
+    """
 
 def setup(bot):
     bot.add_cog(Factions(bot))

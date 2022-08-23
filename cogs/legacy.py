@@ -79,5 +79,58 @@ class Legacy(commands.Cog):
                 embed.add_field(name=match[0], value=f"Level: {match[1]}\nFaction: {match[2]}\nHours Played: {match[3]}")
             await inter.edit_original_message(embed=embed)
 
+    @commands.slash_command(
+        name="testers",
+        description="[Legacy] Afiseaza lista testerilor online din factiunea specificata",
+        #guild_ids=[722442573137969174],
+        guild_ids=[921316017584631829],
+    )
+    async def testers(self, inter: disnake.CommandInteraction, faction: str = commands.Param(autocomplete=autocomplete_factions),):
+        if faction not in factiuni_json:
+            await inter.response.send_message(content="Nu am putut gasi factiunea specificata, verifica daca ai scris numele corect!", ephemeral=True)
+            return
+
+        await inter.response.defer()
+
+        testers = []
+        id = factiuni_json.index(faction) + 1
+
+        async with aiohttp.ClientSession(headers=headers) as session:
+            url = f"https://rubypanel.nephrite.ro/faction/members/{id}"
+            async with session.get(url) as response:
+                soup = BeautifulSoup(await response.text(), 'html.parser')
+                f2 = soup.findAll('div', {'class': 'col-md-12'})
+            data = [
+                [td.text for td in tr.find_all('td')]
+                for table in f2 for tr in table.find_all('tr')
+            ]
+
+            for member in data[1:]:
+                if "leader" in member[1].strip() or "tester" in member[1].strip():
+                    testers.append(member[0].strip())
+            print(testers)
+
+            url = "https://rubypanel.nephrite.ro/online"
+            async with session.get(url) as response:
+                soup = BeautifulSoup(await response.text(), 'html.parser')
+                f2 = soup.findAll('div', {'class': 'col-xs-12'})
+                data = [
+                    [td.text for td in tr.find_all('td')]
+                    for table in f2 for tr in table.find_all('tr')
+                ]
+
+            matches = []
+            for tester in testers:
+                for date in data[1:]:
+                    if tester.lower() == date[0].lower():
+                        matches.append(tester.lower())
+                        break
+            
+            to_send = ""
+            for tester in testers:
+                online_status = "🟢" if tester.lower() in matches else "🔴"
+                to_send += online_status + " " + tester + "\n"
+            embed = disnake.Embed(title=faction, description="Online Testers\n\n"+to_send)
+            await inter.edit_original_message(embed=embed)
 def setup(bot):
     bot.add_cog(Legacy(bot))
