@@ -32,6 +32,18 @@ async def reset(ctx):
         dump_session_to_file(s, "session.pkl")
     await ctx.send("Succesfully ran the command. Dumped the session to file.")
 
+@bot.command()
+async def riperrors(ctx):
+    if not is_dev(ctx.author.id):
+        return
+
+    var = is_dev(ctx.author.id)
+    await ctx.send(f"{var}, {ctx.author.id}, running the commmand.")
+    channels = await ctx.guild.fetch_channels()
+    for channel in channels:
+        if channel.name == "error":
+            await channel.delete()
+
 
 @bot.slash_command(
     name="ping",
