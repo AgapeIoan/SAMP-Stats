@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 
 from functii.debug import print_debug, print_log
 from functii.samp_server_stats import get_server_data, format_server_data
-from functii.creier import headers
+from functii.creier import headers, color_by_list_lenght
 
 with open("storage/factions/factiuni.json", "r") as f:
     factiuni_json = json.load(f)[1:] # Faction list, excepts "Civlian" aka first element
@@ -125,12 +125,14 @@ class Legacy(commands.Cog):
                     if tester.lower() == date[0].lower():
                         matches.append(tester.lower())
                         break
-            
+            disponibilitate = color_by_list_lenght(testers, matches)
             to_send = ""
             for tester in testers:
                 online_status = "🟢" if tester.lower() in matches else "🔴"
                 to_send += online_status + " " + tester + "\n"
-            embed = disnake.Embed(title=faction, description="Online Testers\n\n"+to_send)
+            embed = disnake.Embed(title="Online Testers", description=to_send, color=disponibilitate)
+            embed.set_footer(text = faction + " | ruby.nephrite.ro")
+            
             await inter.edit_original_message(embed=embed)
 def setup(bot):
     bot.add_cog(Legacy(bot))

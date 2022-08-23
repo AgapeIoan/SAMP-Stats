@@ -145,3 +145,14 @@ async def get_soup(url):
     async with aiohttp.ClientSession() as session:
         async with session.get(url, headers=headers) as response:
             return BeautifulSoup(await response.read(), features='html5lib')
+
+def color_by_list_lenght(list_1, list_2):
+    if len(list_2) > len(list_1):
+        list_1, list_2 = list_2, list_1
+
+    if len(list_2) == 0:
+        return 0xff2d00
+    if len(list_2) == len(list_1):
+        return 0x50ff00
+    else:
+        return 0xff8e00
