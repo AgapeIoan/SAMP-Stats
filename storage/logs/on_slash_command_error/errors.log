@@ -27,3 +27,27 @@ In components.0.components.0.options: Must be between 1 and 25 in length.
 2022-04-21 20:15:49.032801 - Command raised an exception: TypeError: edit_original_message() takes 1 positional argument but 2 were given
 2022-04-24 17:13:58.975055 - Command raised an exception: ValueError: too many values to unpack (expected 2)
 2022-04-24 17:22:15.372809 - Command raised an exception: TypeError: __init__() got an unexpected keyword argument 'name'
+2022-08-20 21:52:02.810686 - Command raised an exception: NameError: name 'soup2' is not defined
+2022-08-20 21:53:09.974511 - Command raised an exception: NameError: name 'scrape_panou' is not defined
+2022-08-20 21:53:20.084436 - Command raised an exception: NameError: name 'scrape_panou' is not defined
+2022-08-23 22:57:40.470767 - Command raised an exception: IndexError: list index out of range
+2022-08-23 22:59:40.521691 - Command raised an exception: IndexError: list index out of range
+2022-08-23 23:04:29.972991 - Command raised an exception: IndexError: list index out of range
+2022-08-23 23:20:50.291183 - Command raised an exception: NameError: name 'scrape_panou' is not defined
+2022-08-23 23:22:22.992933 - Command raised an exception: NameError: name 'scrape_panou' is not defined
+2022-08-23 23:23:59.566323 - Command raised an exception: NameError: name 'scrape_panou' is not defined
+2022-08-23 23:24:12.174616 - Command raised an exception: NameError: name 'scrape_panou' is not defined
+2022-08-23 23:24:33.410097 - Command raised an exception: NameError: name 'scrape_panou' is not defined
+2022-08-23 23:26:25.967641 - Command raised an exception: TypeError: 'in <string>' requires string as left operand, not bool
+2022-08-23 23:28:10.585950 - Command raised an exception: NameError: name 'scrape_panou' is not defined
+2022-08-23 23:29:22.026443 - Command raised an exception: NameError: name 'scrape_panou' is not defined
+2022-08-23 23:30:09.923633 - Command raised an exception: NameError: name 'scrape_panou' is not defined
+2022-08-23 23:37:56.856417 - Command raised an exception: NameError: name 'nickname' is not defined
+2022-08-23 23:39:17.448486 - Command raised an exception: NameError: name 'nickname' is not defined
+2022-08-23 23:39:31.538082 - Command raised an exception: TypeError: Expected disnake.Colour, int, or Embed.Empty but received method instead.
+2022-08-23 23:39:56.682890 - Command raised an exception: TypeError: Expected disnake.Colour, int, or Embed.Empty but received method instead.
+2022-08-24 22:01:30.435505 - Command raised an exception: NameError: name 'session' is not defined
+2022-08-24 22:28:53.329349 - Command raised an exception: IndexError: list index out of range
+2022-08-24 22:43:40.207621 - Command raised an exception: IndexError: list index out of range
+2022-08-24 22:44:06.964687 - Command raised an exception: IndexError: list index out of range
+2022-08-24 23:05:35.711990 - Command raised an exception: NameError: name 'helpers' is not defined

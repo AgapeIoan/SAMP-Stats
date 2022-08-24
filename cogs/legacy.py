@@ -161,7 +161,6 @@ class Legacy(commands.Cog):
         helpers = staff_list[2]
         text_to_send = ""
         for helper in helpers:
-            print_debug(helper)
             if online_statuses[helpers.index(helper)] == "Online":
                 text_to_send += f"🟢 **{helper[0]}** - Level {helper[1]}\n"
             else:
@@ -170,6 +169,34 @@ class Legacy(commands.Cog):
             embed = disnake.Embed(title="Online Helpers", description=text_to_send, color=0x7cfc00)
             embed.set_footer(text = "ruby.nephrite.ro")
         await inter.edit_original_message(embed=embed)
+
+
+    @commands.slash_command(
+        name="admins",
+        description="[Legacy] Afiseaza lista adminilor de pe server",
+        #guild_ids=[722442573137969174],
+        guild_ids=[921316017584631829],
+    )
+    async def admins(self, inter: disnake.CommandInteraction):
+        await inter.response.defer()
+        
+        staff_list, online_statuses = await get_staff_list()
+        online_statuses = online_statuses
+        admins = staff_list[0] + staff_list[1]
+        text_to_send = ""
+        for admin in admins:
+            print_debug(admin)
+            # TODO - Sanitize badges
+            # [' qThePoweR', '4\n manager paramedic  support, account moderator ', '\n manager paramedic  support, account moderator ', '2022-08-23 22:12:44']
+            if online_statuses[admins.index(admin)] == "Online":
+                text_to_send += f"🟢 **{admin[0]}** - Level {admin[1][0]}\n"
+            else:
+                text_to_send += f"🔴 **{admin[0]}** - Level {admin[1][0]}\n"
+
+            embed = disnake.Embed(title="Online Admins", description=text_to_send, color=0x7cfc00)
+            embed.set_footer(text = "ruby.nephrite.ro")
+        await inter.edit_original_message(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Legacy(bot))
