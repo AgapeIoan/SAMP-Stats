@@ -156,3 +156,9 @@ def color_by_list_lenght(list_1, list_2):
         return 0x50ff00
     else:
         return 0xff8e00
+
+def sum_list_indexes(list_of_lists, index_to_stop):
+    first_element = 0
+    for i in range(0,index_to_stop):
+        first_element += len(list_of_lists[i])
+    return first_element

@@ -12,7 +12,8 @@ from bs4 import BeautifulSoup
 
 from functii.debug import print_debug, print_log
 from functii.samp_server_stats import get_server_data, format_server_data
-from functii.creier import headers, color_by_list_lenght
+from functii.creier import headers, color_by_list_lenght, sum_list_indexes
+from panou.ruby import get_online_players, get_staff_list
 
 with open("storage/factions/factiuni.json", "r") as f:
     factiuni_json = json.load(f)[1:] # Faction list, excepts "Civlian" aka first element
@@ -54,30 +55,22 @@ class Legacy(commands.Cog):
     async def id(inter, nickname):
         await inter.response.defer()
 
-        url = "https://rubypanel.nephrite.ro/online"
-        async with aiohttp.ClientSession(headers=headers) as session:
-            async with session.get(url) as response:
-                soup = BeautifulSoup(await response.text(), 'html.parser')
-                f2 = soup.findAll('div', {'class': 'col-xs-12'})
-                data = [
-                    [td.text for td in tr.find_all('td')]
-                    for table in f2 for tr in table.find_all('tr')
-                ]
+        data = await get_online_players()
 
-            matches = []
-            for date in data[1:]:
-                print_debug(date)
-                if nickname.lower() in date[0].lower():
-                    matches.append(date)
+        matches = []
+        for date in data[1:]:
+            print_debug(date)
+            if nickname.lower() in date[0].lower():
+                matches.append(date)
 
-            if not matches:
-                await inter.edit_original_message(content=f"Jucatorul {nickname} nu este online!")
-                return
+        if not matches:
+            await inter.edit_original_message(content=f"Jucatorul {nickname} nu este online!")
+            return
 
-            embed = disnake.Embed(title="Online Players", description=f"{len(data[1:])}/1000", color=0x7cfc00)
-            for match in matches:
-                embed.add_field(name=match[0], value=f"Level: {match[1]}\nFaction: {match[2]}\nHours Played: {match[3]}")
-            await inter.edit_original_message(embed=embed)
+        embed = disnake.Embed(title="Online Players", description=f"{len(data[1:])}/1000", color=0x7cfc00)
+        for match in matches:
+            embed.add_field(name=match[0], value=f"Level: {match[1]}\nFaction: {match[2]}\nHours Played: {match[3]}")
+        await inter.edit_original_message(embed=embed)
 
     @commands.slash_command(
         name="testers",
@@ -110,14 +103,7 @@ class Legacy(commands.Cog):
                     testers.append(member[0].strip())
             print(testers)
 
-            url = "https://rubypanel.nephrite.ro/online"
-            async with session.get(url) as response:
-                soup = BeautifulSoup(await response.text(), 'html.parser')
-                f2 = soup.findAll('div', {'class': 'col-xs-12'})
-                data = [
-                    [td.text for td in tr.find_all('td')]
-                    for table in f2 for tr in table.find_all('tr')
-                ]
+            data = get_online_players()
 
             matches = []
             for tester in testers:
@@ -134,5 +120,33 @@ class Legacy(commands.Cog):
             embed.set_footer(text = faction + " | ruby.nephrite.ro")
             
             await inter.edit_original_message(embed=embed)
+
+    @commands.slash_command(
+        name="leaders",
+        description="[Legacy] Afiseaza lista liderilor de factiuni",
+        #guild_ids=[722442573137969174],
+        guild_ids=[921316017584631829],
+    )
+    async def leaders(self, inter: disnake.CommandInteraction):
+        await inter.response.defer()
+        
+        staff_list, online_statuses = await get_staff_list()
+        online_statuses = online_statuses[sum_list_indexes(staff_list, 3):] # Fereasca ce am putut gandi
+        leaders = staff_list[3]
+        text_to_send = ""
+        for leader in leaders:
+            # [' Baster.', 'Paramedic Department SF', '136', '2022-08-23 21:32:46']
+            # Paramedic Department SF - Baster - 136 days
+            # text_to_send += f"{leader[1]} - {leader[0]} - {leader[2]} days\n"
+            if online_statuses[leaders.index(leader)] == "Online":
+                text_to_send += f"🟢 **{leader[0]}** - {leader[1]} - {leader[2]} days\n"
+            else:
+                text_to_send += f"🔴 **{leader[0]}** - {leader[1]} - {leader[2]} days\n"
+
+            embed = disnake.Embed(title="Online Leaders", description=text_to_send, color=0x7cfc00)
+            embed.set_footer(text = "ruby.nephrite.ro")
+        await inter.edit_original_message(embed=embed)
+
+
 def setup(bot):
     bot.add_cog(Legacy(bot))

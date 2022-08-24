@@ -29,6 +29,50 @@ FACTION_NAMES = load_json('storage/factions/factiuni.json')
 FACTION_CATEGORIES = load_json('storage/factions/faction_categories.json') # Contine emojis pe fiecare categorie si
 # index-ul fiecarai factiuni in FACTION_NAMES
 
+async def get_staff_list():
+    # staff = [[owners], [admins], [helpers], [leaders]]
+
+    async with aiohttp.ClientSession(headers=headers) as session:
+        async with session.get("https://rubypanel.nephrite.ro/staff") as response:
+            soup = BeautifulSoup(await response.text(), 'html.parser')
+            f2 = soup.findAll('div', {'class': 'col-xs-12'})
+            data = [
+                [td.text for td in tr.find_all('td')]
+                for table in f2 for tr in table.find_all('tr')
+            ]
+            i_tags = f2[0].find_all('i')
+        
+            staff = [[],[],[],[]]
+            online_statuses = []
+            staff_index = -1
+        
+            for i in i_tags:
+                original_title = i.get('data-original-title')
+                if original_title == "Online" or original_title == "Offline":
+                    online_statuses.append(original_title)
+        
+            for date in data[1:]:
+                if not date:
+                    staff_index += 1
+                    continue
+                staff[staff_index].append(date)
+            
+            # Nush si nici nu vreau sa stiu cum drq a aparut bug de cere sa fac treaba asta ca sa nu fut outputu
+            staff[0], staff[1], staff[2], staff[3] = staff[3], staff[0], staff[1], staff[2]
+            return staff, online_statuses
+
+async def get_online_players():
+    async with aiohttp.ClientSession(headers=headers) as session:
+        async with session.get("https://rubypanel.nephrite.ro/online") as response:
+            soup = BeautifulSoup(await response.text(), 'html.parser')
+            f2 = soup.findAll('div', {'class': 'col-xs-12'})
+            data = [
+                [td.text for td in tr.find_all('td')]
+                for table in f2 for tr in table.find_all('tr')
+            ]
+    
+    return data
+
 async def get_panel_data(player):
     async with aiohttp.ClientSession(headers=headers) as session:
         if player.lower() != "managera5":
