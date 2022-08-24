@@ -147,6 +147,29 @@ class Legacy(commands.Cog):
             embed.set_footer(text = "ruby.nephrite.ro")
         await inter.edit_original_message(embed=embed)
 
+    @commands.slash_command(
+        name="helpers",
+        description="[Legacy] Afiseaza lista helperilor de pe server",
+        #guild_ids=[722442573137969174],
+        guild_ids=[921316017584631829],
+    )
+    async def helpers(self, inter: disnake.CommandInteraction):
+        await inter.response.defer()
+        
+        staff_list, online_statuses = await get_staff_list()
+        online_statuses = online_statuses[sum_list_indexes(staff_list, 2):] # Fereasca ce am putut gandi
+        helpers = staff_list[2]
+        text_to_send = ""
+        for helper in helpers:
+            print_debug(helper)
+            if online_statuses[helpers.index(helper)] == "Online":
+                text_to_send += f"🟢 **{helper[0]}** - Level {helper[1]}\n"
+            else:
+                text_to_send += f"🔴 **{helper[0]}** - Level {helper[1]}\n"
+
+            embed = disnake.Embed(title="Online Helpers", description=text_to_send, color=0x7cfc00)
+            embed.set_footer(text = "ruby.nephrite.ro")
+        await inter.edit_original_message(embed=embed)
 
 def setup(bot):
     bot.add_cog(Legacy(bot))
