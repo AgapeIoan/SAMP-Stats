@@ -49,8 +49,6 @@ class Legacy(commands.Cog):
         options=[
             disnake.Option("nickname", "Introdu nickname-ul", disnake.OptionType.string, required=True)
         ],
-        guild_ids=[921316017584631829],
-
     )
     async def id(inter, nickname):
         await inter.response.defer()
@@ -75,8 +73,6 @@ class Legacy(commands.Cog):
     @commands.slash_command(
         name="testers",
         description="[Legacy] Afiseaza lista testerilor online din factiunea specificata",
-        #guild_ids=[722442573137969174],
-        guild_ids=[921316017584631829],
     )
     async def testers(self, inter: disnake.CommandInteraction, faction: str = commands.Param(autocomplete=autocomplete_factions),):
         if faction not in factiuni_json:
@@ -101,7 +97,6 @@ class Legacy(commands.Cog):
             for member in data[1:]:
                 if "leader" in member[1].strip() or "tester" in member[1].strip():
                     testers.append(member[0].strip())
-            print(testers)
 
             data = get_online_players()
 
@@ -124,8 +119,6 @@ class Legacy(commands.Cog):
     @commands.slash_command(
         name="leaders",
         description="[Legacy] Afiseaza lista liderilor de factiuni",
-        #guild_ids=[722442573137969174],
-        guild_ids=[921316017584631829],
     )
     async def leaders(self, inter: disnake.CommandInteraction):
         await inter.response.defer()
@@ -174,8 +167,6 @@ class Legacy(commands.Cog):
     @commands.slash_command(
         name="admins",
         description="[Legacy] Afiseaza lista adminilor de pe server",
-        #guild_ids=[722442573137969174],
-        guild_ids=[921316017584631829],
     )
     async def admins(self, inter: disnake.CommandInteraction):
         await inter.response.defer()
@@ -186,7 +177,6 @@ class Legacy(commands.Cog):
         text_to_send = ""
         for admin in admins:
             print_debug(admin)
-            # TODO - Sanitize badges
             # [' qThePoweR', '4\n manager paramedic  support, account moderator ', '\n manager paramedic  support, account moderator ', '2022-08-23 22:12:44']
             descriere_admin = admin[1].replace("  ", " | ").replace("\n ", " - ").replace("\n","").strip() # Quick fix, not the best, not the worst
             if online_statuses[admins.index(admin)] == "Online":

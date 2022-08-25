@@ -7,6 +7,7 @@ def get_server_data(server_address):
     else:
         PORT = int(server_address.split(":")[1])
         server_address = server_address.split(":")[0]
+
     for _ in range(3):
         try:
             with SampClient(address=server_address, port=PORT) as client:

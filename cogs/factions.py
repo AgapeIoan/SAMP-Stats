@@ -39,7 +39,7 @@ class Factions(commands.Cog):
                 soup = BeautifulSoup(await response.text(), 'html.parser')
         view = views.factions_menu.FactionMenuMainView(soup)
         view.original_author = inter.author
-        view.message = await inter.edit_original_message(content=f"**DEBUG**", view=view)
+        view.message = await inter.edit_original_message(content=f"**Alege o categorie**", view=view)
 
     """
     @commands.slash_command(

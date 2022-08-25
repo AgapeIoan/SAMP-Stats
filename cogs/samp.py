@@ -24,9 +24,13 @@ class Samp(commands.Cog):
     @commands.slash_command(
         name="raportu",
         description="Afiseaza statisticile serverului de SAMP specificat",
-        guild_ids=[722442573137969174],
     )
     async def raportu(self, inter: disnake.CommandInteraction, server_address: str = commands.Param(autocomplete=autocomplete_servers),):
+        
+        if server_address not in servers_dns:
+            await inter.response.send_message(content = "Adresa specificata trebuie sa fie una dintre acestea: \n **- " + "\n- ".join(servers_dns) + "**\n" + "Pe viitor, mai multe servere o sa poata fi verificate.", ephemeral=True)
+            return
+        
         await inter.response.defer()
         server_data = format_server_data(get_server_data(server_address)) # Dictionary
         if not server_data:
