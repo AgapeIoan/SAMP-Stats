@@ -188,10 +188,11 @@ class Legacy(commands.Cog):
             print_debug(admin)
             # TODO - Sanitize badges
             # [' qThePoweR', '4\n manager paramedic  support, account moderator ', '\n manager paramedic  support, account moderator ', '2022-08-23 22:12:44']
+            descriere_admin = admin[1].replace("  ", " | ").replace("\n ", " - ").replace("\n","").strip() # Quick fix, not the best, not the worst
             if online_statuses[admins.index(admin)] == "Online":
-                text_to_send += f"🟢 **{admin[0]}** - Level {admin[1][0]}\n"
+                text_to_send += f"🟢 **{admin[0]}** - Level {descriere_admin}\n"
             else:
-                text_to_send += f"🔴 **{admin[0]}** - Level {admin[1][0]}\n"
+                text_to_send += f"🔴 **{admin[0]}** - Level {descriere_admin}\n"
 
             embed = disnake.Embed(title="Online Admins", description=text_to_send, color=0x7cfc00)
             embed.set_footer(text = "ruby.nephrite.ro")
