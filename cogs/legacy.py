@@ -98,7 +98,7 @@ class Legacy(commands.Cog):
                 if "leader" in member[1].strip() or "tester" in member[1].strip():
                     testers.append(member[0].strip())
 
-            data = get_online_players()
+            data = await get_online_players()
 
             matches = []
             for tester in testers:
