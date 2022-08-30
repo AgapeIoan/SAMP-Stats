@@ -31,7 +31,6 @@ class Factions(commands.Cog):
     @commands.slash_command(
         name="faction",
         description="Afiseaza statisticile factiunii specificate",
-        guild_ids=[722442573137969174],
     )
     async def faction(self, inter: disnake.CommandInteraction, faction: str = commands.Param(autocomplete=autocomplete_factions),):
         await inter.response.defer()
