@@ -33,6 +33,10 @@ class Factions(commands.Cog):
         description="Afiseaza statisticile factiunii specificate",
     )
     async def faction(self, inter: disnake.CommandInteraction, faction: str = commands.Param(autocomplete=autocomplete_factions),):
+        if faction not in factiuni_json:
+            await inter.response.send_message(content="Nu am putut gasi factiunea specificata, verifica daca ai scris numele corect!", ephemeral=True)
+            return
+        
         await inter.response.defer()
         async with aiohttp.ClientSession(headers=headers) as session:
             async with session.get("https://rubypanel.nephrite.ro/faction/list") as response:
