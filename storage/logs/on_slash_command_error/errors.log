@@ -56,3 +56,12 @@ In components.0.components.0.options: Must be between 1 and 25 in length.
 2022-08-30 22:44:54.832732 - Command raised an exception: TypeError: 'coroutine' object is not subscriptable
 2022-08-30 22:45:01.533066 - Command raised an exception: TypeError: 'coroutine' object is not subscriptable
 2022-08-30 22:46:30.912971 - Command raised an exception: TypeError: 'coroutine' object is not subscriptable
+2022-08-30 23:02:08.329798 - Command raised an exception: NameError: name 'faction_name' is not defined
+2022-08-30 23:02:32.995139 - Command raised an exception: AttributeError: 'Factions' object has no attribute 'faction_data_big'
+2022-08-30 23:02:56.760373 - Command raised an exception: NameError: name 'faction_name' is not defined
+2022-08-30 23:03:35.024164 - Command raised an exception: AttributeError: module 'datetime' has no attribute 'now'
+2022-08-30 23:03:53.412991 - Command raised an exception: AttributeError: module 'datetime' has no attribute 'now'
+2022-08-30 23:04:23.151852 - Command raised an exception: NameError: name 'MainMenu' is not defined
+2022-08-30 23:05:03.094306 - Command raised an exception: NameError: name 'interaction' is not defined
+2022-08-30 23:05:19.486890 - Command raised an exception: InteractionResponded: This interaction has already been responded to before
+2022-08-30 23:15:18.060169 - Command raised an exception: NameError: name 'embed' is not defined

@@ -1,10 +1,11 @@
-import datetime
+from datetime import datetime
 import os
 import json
 import disnake
 import aiohttp
 import views
 import asyncio
+import panou.ruby
 
 from typing import List
 from disnake.ext import commands
@@ -37,9 +38,18 @@ class Factions(commands.Cog):
         async with aiohttp.ClientSession(headers=headers) as session:
             async with session.get("https://rubypanel.nephrite.ro/faction/list") as response:
                 soup = BeautifulSoup(await response.text(), 'html.parser')
-        view = views.factions_menu.FactionMenuMainView(soup)
+        
+        faction_data_big = panou.ruby.get_faction_names(soup)
+        faction_data = panou.ruby.find_faction_data_by_name(faction_data_big, faction)
+        to_send = f"• {faction_data[1]}\n• Requirements: {faction_data[2].strip()}"
+        embed = disnake.Embed(title=faction_data[0], description=to_send, color=0x00ff00)
+        embed.set_footer(text="ruby.nephrite.ro")
+        embed.timestamp = datetime.now()
+        embed.set_thumbnail(url="https://img.agapeioan.ro/samp/logo.png") # DEBUG, trebe sa fac lista custom cu poze de genul pentru toate factiunile
+        view = views.factions_menu.MainMenu(faction)
         view.original_author = inter.author
-        view.message = await inter.edit_original_message(content=f"**Alege o categorie**", view=view)
+        view.embed = embed
+        view.message = await inter.edit_original_message(embed=embed, view=view)
 
     """
     @commands.slash_command(

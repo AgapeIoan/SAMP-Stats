@@ -2,6 +2,7 @@ from datetime import datetime
 import disnake
 import panou.ruby
 import asyncio
+import functii.lazyfuncs as lf
 from functii.debug import print_debug
 from functii.creier import get_soup
 
@@ -107,6 +108,7 @@ class FactionMembers(disnake.ui.Select):
 class MainMenu(disnake.ui.View):
     message: disnake.Message
     original_author: disnake.User
+    embed: disnake.Embed
 
     def __init__(self, faction_name: str):
         # TODO #26 Maybe maybe dam reset la timeout la fiecare interactiune (apasare de buton, dropdown si ce o mai fi)
@@ -114,6 +116,7 @@ class MainMenu(disnake.ui.View):
         self.faction_name = faction_name
         self.clan_embed = None
         self.faction_embed = None
+        
 
     # Timeout and error handling.
     async def on_timeout(self):
@@ -150,14 +153,15 @@ class MainMenu(disnake.ui.View):
                                                 ephemeral=True)
         return False
 
-    # @disnake.ui.button(style=disnake.ButtonStyle.gray, label="Testers", custom_id="testers_button", row=0, disabled=True)
-    # async def testers(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-    #     # if len(self.children) > 2:
-    #     #     self.remove_item(self.children[2])
-    #     # button.disabled = True
-    #     pass
+    @disnake.ui.button(style=disnake.ButtonStyle.green, label="Testers", custom_id="testers_button", row=0)
+    async def testers(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
+        if len(self.children) > 2:
+            self.remove_item(self.children[2])
+        self.embed.add_field(name="Online Testers", value=await lf.testers(self.faction_name), inline=False)
+        button.disabled = True
+        await interaction.response.edit_message(embed=self.embed, view=self)
 
-    # @disnake.ui.button(style=disnake.ButtonStyle.gray, label="Aplicatii", custom_id="aplicatii_button", row=0, disabled=True)
+    # @disnake.ui.button(style=disnake.ButtonStyle.green, label="Aplicatii", custom_id="aplicatii_button", row=0)
     # async def aplicatii(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
     #     pass
 
