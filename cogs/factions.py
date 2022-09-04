@@ -5,7 +5,7 @@ import disnake
 import aiohttp
 import views
 import asyncio
-import panou.ruby
+import panou.ruby.ruby
 
 from typing import List
 from disnake.ext import commands
@@ -42,8 +42,8 @@ class Factions(commands.Cog):
             async with session.get("https://rubypanel.nephrite.ro/faction/list") as response:
                 soup = BeautifulSoup(await response.text(), 'html.parser')
         
-        faction_data_big = panou.ruby.get_faction_names(soup)
-        faction_data = panou.ruby.find_faction_data_by_name(faction_data_big, faction)
+        faction_data_big = panou.ruby.ruby.get_faction_names(soup)
+        faction_data = panou.ruby.ruby.find_faction_data_by_name(faction_data_big, faction)
         to_send = f"• {faction_data[1]}\n• Requirements: {faction_data[2].strip()}"
         embed = disnake.Embed(title=faction_data[0], description=to_send, color=0x00ff00)
         embed.set_footer(text="ruby.nephrite.ro")

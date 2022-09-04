@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 from functii.debug import print_debug, print_log
 from functii.samp_server_stats import get_server_data, format_server_data
 from functii.creier import headers, color_by_list_lenght, sum_list_indexes
-from panou.ruby import get_online_players, get_staff_list
+from panou.ruby.ruby import get_online_players, get_staff_list
 
 with open("storage/factions/factiuni.json", "r") as f:
     factiuni_json = json.load(f)[1:] # Faction list, excepts "Civlian" aka first element
