@@ -1,14 +1,14 @@
 import disnake
 
 import views.mainmenu
-import panou.ruby
+import panou.ruby.ruby
 from functii.creier import este_player_online
 from functii.creier import get_nickname
 from functii.discord import disable_not_working_buttons
 from functii.samp import create_car_embed, create_fh_embed, format_car_data, format_faction_history_data, \
     format_biz_data, create_biz_embed, get_car_category, get_car_emoji_by_category
 
-faction_emojis = panou.ruby.load_json("storage/factions/faction_emojis.json")
+faction_emojis = panou.ruby.ruby.load_json("storage/factions/faction_emojis.json")
 
 class PropertiesMenu(disnake.ui.Select):
     message: disnake.Message
@@ -23,7 +23,7 @@ class PropertiesMenu(disnake.ui.Select):
             disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️'),
         ]
         # https://cdn.discordapp.com/emojis/897425271475560481.png?size=44
-        self.bizes = panou.ruby.bstats_analyzer(self.soup)
+        self.bizes = panou.ruby.ruby.bstats_analyzer(self.soup)
 
         for i in self.bizes:
             aux = i.copy()
@@ -62,7 +62,7 @@ class VehiclesMenu(disnake.ui.Select):
         self.message = message
         self.soup = soup
         self.numar_pagina = numar_pagina
-        self.cars = panou.ruby.vstats(soup) if not cars else cars
+        self.cars = panou.ruby.ruby.vstats(soup) if not cars else cars
         options = [
             disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️'),
         ]
@@ -131,7 +131,7 @@ class FactionHistory(disnake.ui.Select):
         self.original_author = original_author
         self.message = message
         self.soup = soup
-        self.fh = panou.ruby.fhstats(soup) if not fh else fh
+        self.fh = panou.ruby.ruby.fhstats(soup) if not fh else fh
         self.numar_pagina = numar_pagina
 
         options = [

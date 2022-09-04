@@ -7,7 +7,7 @@ from disnake.ext import commands
 
 import views.mainmenu
 import views.factions_menu
-import panou.ruby
+import panou.ruby.ruby
 
 from functii.creier import get_nickname, login_panou_forced, dump_session_to_file
 from functii.debug import DEBUG_STATE, print_debug, send_error_message_to_error_channel, print_log
@@ -71,7 +71,7 @@ async def stats(inter, nickname):
 
     try:
         print_debug(f"Getting za data for {nickname}")
-        soup = await panou.ruby.get_panel_data(nickname)
+        soup = await panou.ruby.ruby.get_panel_data(nickname)
     except IndexError:
         # TODO #3 Sa isi dea seama bot-ul daca e vorba de panel picat, pagina blank, lipsa profil sau orice altceva se poate intampla
         # si sa afiseze un mesaj de eroare corespunzator

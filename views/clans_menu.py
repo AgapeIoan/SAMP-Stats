@@ -1,5 +1,5 @@
 import disnake
-import panou.ruby
+import panou.ruby.ruby
 from functii.debug import print_debug
 
 # UNTESTED !!!
@@ -10,7 +10,7 @@ class Clans_Menu(disnake.ui.Select):
         super().__init__()
 
         options = [disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️')] if numar_pagina > 1 else []
-        self.clans = panou.ruby.get_clan_list() if not clans else clans
+        self.clans = panou.ruby.ruby.get_clan_list() if not clans else clans
         self.numar_pagina = numar_pagina
 
         for i in list(self.clans.items())[(self.numar_pagina-1)*23:(self.numar_pagina*23)]:
@@ -39,7 +39,7 @@ class Clans_Menu(disnake.ui.Select):
                 if f"[{clan_tag}] {clan_name}" == clan_name_selectat:
                     print_debug('procesam')
                     # TODO #10 Scrapping cum trebuie pentru left si right, "panou.ruby.get_clan_data_by_id(clan_id, 'left/right')"
-                    panou.ruby.get_clan_data_by_id(clan_id, 'middle')
+                    panou.ruby.ruby.get_clan_data_by_id(clan_id, 'middle')
                     print_debug('procesat')
                     await interaction.edit_original_message(content = "done")
                     break

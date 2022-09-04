@@ -1,5 +1,6 @@
 from datetime import datetime
 import disnake
+<<<<<<< Updated upstream
 import panou.ruby
 import asyncio
 import functii.lazyfuncs as lf
@@ -7,6 +8,16 @@ from functii.debug import print_debug
 from functii.creier import get_soup
 
 FACTION_EMOJIS = panou.ruby.load_json("storage/factions/faction_emojis.json") # indexare de la 0
+=======
+import panou.ruby.ruby
+from functii.debug import print_debug
+from functii.creier import get_soup
+
+# UNTESTED !!!
+# Extras din vechiul clase_menus.py
+
+faction_emojis = panou.ruby.ruby.load_json("storage/factions/faction_emojis.json")
+>>>>>>> Stashed changes
 
 class FactionMenuMain(disnake.ui.Select):
     message: disnake.Message
@@ -14,7 +25,7 @@ class FactionMenuMain(disnake.ui.Select):
 
     def __init__(self, soup):
         options = []
-        self.faction_data = panou.ruby.FACTION_CATEGORIES
+        self.faction_data = panou.ruby.ruby.FACTION_CATEGORIES
         print_debug(self.faction_data)
         self.soup = soup
 
@@ -27,6 +38,7 @@ class FactionMenuMain(disnake.ui.Select):
         super().__init__(placeholder='Factiuni', min_values=1, max_values=1, options=options)
 
     async def callback(self, interaction: disnake.MessageInteraction):
+<<<<<<< Updated upstream
         faction_indexes = panou.ruby.FACTION_CATEGORIES[self.values[0]][1]
         # add all items that contain the index in i from panou.ruby.FACTION_NAMES to a list
         # and send it to the next view
@@ -36,6 +48,17 @@ class FactionMenuMain(disnake.ui.Select):
         ]
 
         print_debug(factions)
+=======
+        i = panou.ruby.ruby.FACTION_CATEGORIES[self.values[0]][1]
+        # add all items that contain the index in i from panou.ruby.FACTION_NAMES to a list
+        # and send it to the next view
+        factions = []
+        for faction in panou.ruby.ruby.FACTION_NAMES:
+            if i == panou.ruby.ruby.FACTION_NAMES.index(faction):
+                factions.append(faction)
+        
+        print_debug(factions) #TODO am ramas aici
+>>>>>>> Stashed changes
         await interaction.response.edit_message(view=FactionMenuView(self.soup, factions))
 
 class FactionMenu(disnake.ui.Select):
@@ -45,6 +68,7 @@ class FactionMenu(disnake.ui.Select):
     def __init__(self, soup, faction_names):
         self.soup = soup
         options = []
+<<<<<<< Updated upstream
         self.faction_data_big = panou.ruby.get_faction_names(self.soup)
         self.faction_names = faction_names
 
@@ -58,10 +82,21 @@ class FactionMenu(disnake.ui.Select):
                     faction_index = self.faction_data_big.index(data)
                     break
             options.append(disnake.SelectOption(label=f"{faction_index + 1}. {faction_name}", description=f"{faction_data[2].capitalize()} | {faction_data[1]}", emoji=emoji))
+=======
+        self.faction_data = panou.ruby.ruby.get_faction_names(self.soup)
+        self.faction_indexes = faction_indexes
+
+        for faction in self.faction_data:
+            faction_name = panou.ruby.ruby.FACTION_NAMES[index]
+            print_debug(faction)
+            emoji = faction_emojis[faction[0]]
+            options.append(disnake.SelectOption(label=f"{self.faction_data.index(faction) + 1}. {faction[0]}", description=f"{faction[2].capitalize()} | {faction[1]}", emoji=emoji))
+>>>>>>> Stashed changes
 
         super().__init__(placeholder='Factiuni', min_values=1, max_values=1, options=options)
 
     async def callback(self, interaction: disnake.MessageInteraction):
+<<<<<<< Updated upstream
         faction_name = self.values[0][3:]
         faction_data = panou.ruby.find_faction_data_by_name(self.faction_data_big, faction_name)
         to_send = f"• {faction_data[1]}\n• Requirements: {faction_data[2].strip()}"
@@ -72,6 +107,17 @@ class FactionMenu(disnake.ui.Select):
         # TODO Dictionar thumbnails per faction
         view = MainMenu(faction_name)
         await interaction.response.edit_message(embed=embed, view=view)
+=======
+        faction_name = self.values[0][3:].strip()
+        for faction in self.faction_data:
+            if faction[0] == faction_name:
+                faction_index = self.faction_data.index(faction)
+                break
+        url = "https://rubypanel.nephrite.ro/faction/members/" + str(faction_index + 1)
+        soup = await get_soup(url)
+        members = panou.ruby.ruby.get_faction_data(soup)
+        await interaction.response.edit_message(view=FactionMembersView(members))
+>>>>>>> Stashed changes
 
 
 class FactionMembers(disnake.ui.Select):

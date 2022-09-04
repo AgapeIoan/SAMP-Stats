@@ -2,7 +2,7 @@ import asyncio
 
 import disnake
 
-import panou.ruby
+import panou.ruby.ruby
 import views.stats_views
 from functii.creier import este_player_online, get_nickname
 from functii.discord import disable_all_buttons, enable_buttons
@@ -62,7 +62,7 @@ class MainMenu(disnake.ui.View):
         await enable_buttons(self)
         button.disabled = True
         await interaction.response.edit_message(content="**Statistici jucator:**",
-                                                embed=await panou.ruby.stats(self.soup), view=self)
+                                                embed=await panou.ruby.ruby.stats(self.soup), view=self)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Vehicles", custom_id="vehicles_button", row=1)
     async def vstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
@@ -92,7 +92,7 @@ class MainMenu(disnake.ui.View):
         await enable_buttons(self)
         button.disabled = True
         if not self.faction_embed:
-            self.faction_embed = await panou.ruby.fstats(self.soup)
+            self.faction_embed = await panou.ruby.ruby.fstats(self.soup)
         await interaction.response.edit_message(content="**Raport factiune:**",
                                                 embed=self.faction_embed, view=self)
 
@@ -106,12 +106,12 @@ class MainMenu(disnake.ui.View):
             await disable_all_buttons(self)
             await interaction.edit_original_message(content="**Caut datele de clan cerute...**", view=self, embed=None)
 
-            clan_name = panou.ruby.get_clan_name(self.soup)
-            clan_tag = await panou.ruby.get_clan_tag_by_name(clan_name)
-            data, nicknames = await panou.ruby.get_clan_data_by_id(await panou.ruby.get_clan_id_by_name(clan_name), 'middle')
+            clan_name = panou.ruby.ruby.get_clan_name(self.soup)
+            clan_tag = await panou.ruby.ruby.get_clan_tag_by_name(clan_name)
+            data, nicknames = await panou.ruby.ruby.get_clan_data_by_id(await panou.ruby.ruby.get_clan_id_by_name(clan_name), 'middle')
             if not data: # Ceva a patit cookie-ul si nu mai este valid
-                data, nicknames = await panou.ruby.get_clan_data_by_id(await panou.ruby.get_clan_id_by_name(clan_name), 'middle', True)
-            player_stats = await panou.ruby.get_player_clan_data(data, get_nickname(self.soup), nicknames)
+                data, nicknames = await panou.ruby.ruby.get_clan_data_by_id(await panou.ruby.ruby.get_clan_id_by_name(clan_name), 'middle', True)
+            player_stats = await panou.ruby.ruby.get_player_clan_data(data, get_nickname(self.soup), nicknames)
             print_debug(player_stats)
             # player_stats = ['7', 'Nickname', '$12,569,002', '937', '00:00', '']
 
