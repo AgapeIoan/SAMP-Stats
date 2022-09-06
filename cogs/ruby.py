@@ -23,7 +23,7 @@ class Ruby(commands.Cog):
         self.bot = bot
 
     @commands.slash_command(
-        name="aplicatii",
+        name="aplicati",
         description="Afiseaza aplicantii din cadrul factiunii specificate",
         guild_ids=[722442573137969174],
     )
@@ -43,7 +43,7 @@ class Ruby(commands.Cog):
 
         view = await disable_not_working_buttons_aplicants(AplicatiiMenu(soup), soup)
         view.original_author = inter.author
-        view.message = await inter.edit_original_message(content=f"[DEBUG] **Aplicatii {factiune}**", view=view)
+        view.message = await inter.edit_original_message(content=f"Aplicatii **{factiune}**", view=view)
 
 def setup(bot):
     bot.add_cog(Ruby(bot))

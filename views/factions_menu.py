@@ -6,7 +6,7 @@ import functii.lazyfuncs as lf
 from functii.debug import print_debug
 from functii.creier import get_soup
 
-FACTION_EMOJIS = panou.ruby.load_json("storage/factions/faction_emojis.json") # indexare de la 0
+FACTION_EMOJIS = panou.ruby.ruby.load_json("storage/factions/faction_emojis.json") # indexare de la 0
 
 class FactionMenuMain(disnake.ui.Select):
     message: disnake.Message
@@ -18,7 +18,6 @@ class FactionMenuMain(disnake.ui.Select):
         print_debug(self.faction_data)
         self.soup = soup
 
-        print_debug("here")
         for k,v in self.faction_data.items():
             print_debug(f"k={k} v={v}")
             emoji = v[0]

@@ -187,7 +187,32 @@ class Legacy(commands.Cog):
             embed = disnake.Embed(title="Online Admins", description=text_to_send, color=0x7cfc00)
             embed.set_footer(text = "ruby.nephrite.ro")
         await inter.edit_original_message(embed=embed)
+        
+    @commands.slash_command(
+        name="clan",
+        description="[Legacy] Afiseaza detaliile clanului specificat",
+        guild_ids=[722442573137969174],
+    )
+    async def clan(self, inter: disnake.CommandInteraction):
+        await inter.response.defer()
+        # TODO
+        # functii/clan.py - anything clan related scrapping
+        # get_clan_info(clan_name)
+        # get_clans_list() - scraps https://rubypanel.nephrite.ro/clan/list , clan should be formated as {ID, Name, Tag, Members, Expires}
+        # get_clans_names(clans_list) - returns a list of clan names
+        # get_clan_data(clan_name) - returns soup of clan page
+        # get_clan_members(clan_data) - list of members, formated as {Rank, Name, Deposited Money, Clan Days, Time last 7 days}
+        # get_clan_vehicles(clan_data) - list of vehicles, formated as {Vehicle Name, Rank, Colours}
+        # get_clan_info(clan_data) - returns short clan info and clan hq info
+        # get_clan_description(clan_data) - returns clan description
+        # get_clan_logs(clan_data) - returns the recent clan logs, visible on the clan page
+        # get_clan_ranks(clan_data) - returns the clan ranks, visible on the clan page
 
+        # Clans list should be cached, and updated every 24 hours or so
+        # If a clan is not in the list, it should be scrapped and added to the list
+        # If a clan expires, it should be removed from the list
+
+        await inter.edit_original_message("Nope")
 
 def setup(bot):
     bot.add_cog(Legacy(bot))
