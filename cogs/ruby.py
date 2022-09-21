@@ -23,9 +23,8 @@ class Ruby(commands.Cog):
         self.bot = bot
 
     @commands.slash_command(
-        name="aplicati",
+        name="aplicatii",
         description="Afiseaza aplicantii din cadrul factiunii specificate",
-        guild_ids=[722442573137969174],
     )
     async def aplicatii(self, inter: disnake.CommandInteraction, factiune: str = commands.Param(autocomplete=autocomplete_factions),):
         await inter.response.defer()
@@ -38,8 +37,6 @@ class Ruby(commands.Cog):
         async with aiohttp.ClientSession(headers=headers) as session:
             async with session.get(f"https://rubypanel.nephrite.ro/faction/applications/{index_factiune}") as response:
                 soup = BeautifulSoup(await response.text(), 'html.parser')
-
-        aplicatii = get_aplicants(soup)
 
         view = await disable_not_working_buttons_aplicants(AplicatiiMenu(soup), soup)
         view.original_author = inter.author
