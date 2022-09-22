@@ -9,6 +9,10 @@ with open(storage + 'factions/factiuni.json', 'r') as f:
 with open(storage + 'factions/faction_categories.json', 'r', encoding='utf-8') as f:
     LISTA_FACTIUNI_CATEGORIES = list(json.load(f).keys())
 
+status_aplicatii_factiuni = []
+for i in range(27):
+    status_aplicatii_factiuni.append(0) # Init status ca empty list
+
 # {
 #     "factiune" : [
 #     "Los Santos Police Department",

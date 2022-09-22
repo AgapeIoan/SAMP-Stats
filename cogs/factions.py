@@ -14,13 +14,18 @@ from bs4 import BeautifulSoup
 from functii.debug import print_debug, print_log
 from functii.samp_server_stats import get_server_data, format_server_data
 from functii.creier import headers
-
-
-with open("storage/factions/factiuni.json", "r") as f:
-    factiuni_json = json.load(f)[1:] # Faction list, excepts "Civlian" aka first element
+from functii.storage import LISTA_FACTIUNI
+LISTA_FACTIUNI = LISTA_FACTIUNI[1:]
 
 async def autocomplete_factions(inter, string: str) -> List[str]:
-    return [lang for lang in factiuni_json if string.lower() in lang.lower()][:24]
+    from functii.storage import status_aplicatii_factiuni
+    print_debug(status_aplicatii_factiuni)
+    factiuni = []
+    for i in range(26):
+        faction_status = "🟢" if status_aplicatii_factiuni[i+1] else "🔴"
+        factiuni.append(f"{faction_status} {LISTA_FACTIUNI[i]}")
+
+    return [lang for lang in factiuni if string.lower() in lang.lower()][:24]
 
 
 class Factions(commands.Cog):
