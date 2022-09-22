@@ -1,6 +1,6 @@
-from turtle import title
 import disnake
 import panou.ruby
+import asyncio
 
 from functii.discord import disable_all_buttons, enable_buttons, disable_not_working_buttons_aplicants
 from functii.debug import print_debug
@@ -95,7 +95,27 @@ class AplicatiiMenu(disnake.ui.View):
         return False
 
     async def on_timeout(self):
-        await self.message.edit("[DEBUG] TIMEOUT GO BRRRRR")
+        if len(self.children) > 7:
+            if self.children[6].options[-1].label == "Inainte":
+                self.children[6].options.pop(-1)
+
+            if self.children[6].options[0].label == "Inapoi":
+                self.children[6].options[0] = disnake.SelectOption(
+                    label="Butoanele au fost dezactivate datorita inactivitatii!",
+                    description="Acestea nu mai pot fi selectate in acest mesaj.",
+                    emoji="🔒"
+                )
+        for i in self.children[:6]:
+            # i.style = disnake.ButtonStyle.red
+            i.disabled = True
+
+        # make sure to update the message with the new buttons
+        await self.message.edit(content="**🔒 Butoanele au fost dezactivate datorita inactivitatii!**", view=self)
+        try:
+            await asyncio.sleep(60)
+            await self.message.edit(content="")
+        except disnake.HTTPException:
+            pass
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Aplicatii noi", custom_id="aplicatii_0", row=0)
     async def aplicatii_noi(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
