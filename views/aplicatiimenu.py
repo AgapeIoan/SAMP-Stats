@@ -101,22 +101,22 @@ class AplicatiiMenu(disnake.ui.View):
     async def aplicatii_noi(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
         button.disabled = True
         view = AplicatiiListView(soup=self.soup, numar_pagina=1, original_author=self.original_author, message=self.message, aplicants=self.aplicatii[0], title_placeholder="Aplicatii noi")
-        await interaction.response.edit_message(content="**Aplicatii noi**", view=view)
+        await interaction.response.edit_message(content=f"**Numar aplicatii: {len(self.aplicatii[0])}**", view=view)
 
     @disnake.ui.button(style=disnake.ButtonStyle.green, label="Aplicatii acceptate", custom_id="aplicatii_1", row=0)
     async def aplicatii_acceptate(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
         button.disabled = True
         view = AplicatiiListView(soup=self.soup, numar_pagina=1, original_author=self.original_author, message=self.message, aplicants=self.aplicatii[1], title_placeholder="Aplicatii acceptate")
-        await interaction.response.edit_message(content="**Aplicatii acceptate**", view=view)
+        await interaction.response.edit_message(content=f"**Numar aplicatii: {len(self.aplicatii[1])}**", view=view)
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Aplicanti invitati", custom_id="aplicatii_2", row=0)
     async def aplicatii_invitate(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
         button.disabled = True
         view = AplicatiiListView(soup=self.soup, numar_pagina=1, original_author=self.original_author, message=self.message, aplicants=self.aplicatii[2], title_placeholder="Aplicanti invitati")
-        await interaction.response.edit_message(content="**Aplicanti invitati**", view=view)
+        await interaction.response.edit_message(content=f"**Numar aplicatii: {len(self.aplicatii[2])}**", view=view)
 
     @disnake.ui.button(style=disnake.ButtonStyle.red, label="Aplicatii respinse", custom_id="aplicatii_3", row=0)
     async def aplicatii_respinse(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
         button.disabled = True
         view = AplicatiiListView(soup=self.soup, numar_pagina=1, original_author=self.original_author, message=self.message, aplicants=self.aplicatii[3], title_placeholder="Aplicatii respinse")
-        await interaction.response.edit_message(content="**Aplicatii respinse**", view=view)
+        await interaction.response.edit_message(content=f"**Numar aplicatii: {len(self.aplicatii[3])}**", view=view)
