@@ -86,44 +86,6 @@ async def stats(inter, nickname):
     view.message = await inter.edit_original_message(
         content=f"**Selecteaza o optiune pentru jucatorul `{get_nickname(soup)}`:**", view=view)
 
-
-# @bot.slash_command(
-#     name="factions", # Defaults to the function name
-#     description="Afiseaza lista de factiuni",
-#     options=[
-#         Option("param", "debug", OptionType.string, required=False)
-#         # By default, Option is optional
-#         # Pass required=True to make it a required arg
-#     ]
-# )
-# async def factions(inter, param = None):
-#     await inter.response.defer()
-#     async with aiohttp.ClientSession(headers=headers) as session:
-#         async with session.get("https://rubypanel.nephrite.ro/faction/list") as response:
-#             soup = BeautifulSoup(await response.text(), 'html.parser')
-
-#     view = views.factions_menu.FactionMenuMainView(soup)
-
-#     await inter.edit_original_message(content=f"**FACTIONS**", view=view)
-
-
-# @bot.slash_command(
-#     name="clans", # Defaults to the function name
-#     description="Afiseaza lista de clanuri",
-#     guild_ids=test_guilds,
-#     options=[
-#         Option("param", "debug", OptionType.string, required=False)
-#         # By default, Option is optional
-#         # Pass required=True to make it a required arg
-#     ]
-# )
-# async def clans(inter, param = None):
-#     await inter.response.defer()
-
-#     view = views.clase_menus.Clans_Menu_View(nr_pagina=1)
-
-#     await inter.edit_original_message(content=f"**CLANS**", view=view)
-
 @bot.listen()
 async def on_ready():
     print_log("Ne-am conectat cu succes!")
@@ -134,6 +96,7 @@ async def on_ready():
     print_log(f"")
 
 
+# Proces de boot
 print_log("Ne logam...\n")
 if not DEBUG_STATE:
     print_log("DEBUG_STATE is False, urmeaza sa folosesti token-ul de productie!")
@@ -141,6 +104,11 @@ if not DEBUG_STATE:
     for i in range(3):
         print_log("Bot-ul va porni in " + str(3*5 - i*5) + " secunde.")
         time.sleep(5)
+
+# Initiam stuff
+from functii.storage import status_aplicatii_factiuni
+for i in range(27):
+    status_aplicatii_factiuni.append(0) # Init status ca empty list
 
 # load cog
 for file in os.listdir("cogs"):

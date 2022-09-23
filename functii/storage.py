@@ -10,8 +10,7 @@ with open(storage + 'factions/faction_categories.json', 'r', encoding='utf-8') a
     LISTA_FACTIUNI_CATEGORIES = list(json.load(f).keys())
 
 status_aplicatii_factiuni = []
-for i in range(27):
-    status_aplicatii_factiuni.append(0) # Init status ca empty list
+clan_dict = {}
 
 # {
 #     "factiune" : [
