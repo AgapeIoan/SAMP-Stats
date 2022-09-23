@@ -35,8 +35,9 @@ class Ruby(commands.Cog):
     )
     async def aplicatii(self, inter: disnake.CommandInteraction, factiune: str = commands.Param(autocomplete=autocomplete_factions),):
         await inter.response.defer()
+        factiune = factiune[2:]
         try:
-            index_factiune = LISTA_FACTIUNI.index(factiune)
+            index_factiune = LISTA_FACTIUNI.index(factiune) + 1
         except ValueError:
             await inter.edit_original_message(content="**" + inter.author.name + "**, nu am putut gasi factiunea specificata.")
             return

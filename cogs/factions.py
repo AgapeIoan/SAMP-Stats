@@ -38,7 +38,8 @@ class Factions(commands.Cog):
         description="Afiseaza statisticile factiunii specificate",
     )
     async def faction(self, inter: disnake.CommandInteraction, faction: str = commands.Param(autocomplete=autocomplete_factions),):
-        if faction not in factiuni_json:
+        faction = faction[2:]
+        if faction not in LISTA_FACTIUNI:
             await inter.response.send_message(content="Nu am putut gasi factiunea specificata, verifica daca ai scris numele corect!", ephemeral=True)
             return
         
