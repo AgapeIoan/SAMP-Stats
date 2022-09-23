@@ -188,13 +188,13 @@ class Legacy(commands.Cog):
             embed.set_footer(text = "ruby.nephrite.ro")
         await inter.edit_original_message(embed=embed)
         
-    @commands.slash_command(
-        name="clan",
-        description="[Legacy] Afiseaza detaliile clanului specificat",
-        guild_ids=[722442573137969174],
-    )
-    async def clan(self, inter: disnake.CommandInteraction):
-        await inter.response.defer()
+    # @commands.slash_command(
+    #     name="clan",
+    #     description="[Legacy] Afiseaza detaliile clanului specificat",
+    #     guild_ids=[722442573137969174],
+    # )
+    # async def clan(self, inter: disnake.CommandInteraction):
+    #     await inter.response.defer()
         # TODO
         # functii/clan.py - anything clan related scrapping
         # get_clan_info(clan_name)
@@ -212,7 +212,7 @@ class Legacy(commands.Cog):
         # If a clan is not in the list, it should be scrapped and added to the list
         # If a clan expires, it should be removed from the list
 
-        await inter.edit_original_message("Nope")
+        # await inter.edit_original_message("Nope")
 
 def setup(bot):
     bot.add_cog(Legacy(bot))
