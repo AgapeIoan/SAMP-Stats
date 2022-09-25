@@ -15,6 +15,7 @@ def get_clan_names(clan_list):
 def get_clan_id_by_name(clan_name):
     for k,v in clan_dict.items():
         if v['name'] == clan_name:
+            print_debug(f"Found clan {clan_name} with id {k}")
             return k
     return None
 
@@ -36,9 +37,21 @@ async def get_clan_members(soup):
         [td.text for td in tr.find_all('td')]
         for table in f2 for tr in table.find_all('tr')
     ]
+    data2 = f2[0].find_all('tr')
+    online_statuses = []
+    for tr in data2[1:]:
+        if tr.find('i', {'class': 'fa fa-circle text-green'}):
+            online_statuses.append("Online")
+        elif tr.find('i', {'class': 'fa fa-circle text-red'}):
+            online_statuses.append("Offline")
+        else:
+            online_statuses.append("Unknown")
+    
+    for on, player in zip(online_statuses, data[1:]):
+        player[5] = on
 
-    # [['7', ' AgapeIoan', '$12,569,002', '1225', '00:00', '']]
-    # Rank, Name, Money, Days, Activity, None
+    # [['7', ' AgapeIoan', '$12,569,002', '1225', '00:00', 'Offline (nu ma asteptam la altceva)']]
+    # Rank, Name, Money, Days, Activity, Online status
     return data[1:]
 
 async def get_clan_vehicles(soup):
@@ -58,11 +71,19 @@ async def get_clan_info(soup):
     panels = f2[0].findAll('div', {'class': 'panel-body'})
     
     # Name, Tag, Members, MOTD, Expires
-    clan_info = panels[0].text.strip().split('\n')
-    clan_info.pop(4) # junk
+    clan_info = []
+    clan_info_temp = panels[0].text.strip().split('\n')
+    clan_info_temp.pop(4) # junk
+    for det in clan_info_temp:
+        det = det.split(': ')
+        clan_info.append(" ".join(det[1:])) # In caz ca omul are `:` in MOTD, asa nu luam paguba
     
     # HQ ID, Status, Radio, Furniture
-    clan_hq = panels[1].text.strip().split('\n')
+    clan_hq = []
+    clan_hq_temp = panels[1].text.strip().split('\n')
+    for det in clan_hq_temp:
+        det = det.split(': ')
+        clan_hq.append(" ".join(det[1:]))
     
     # String
     clan_description = panels[2].text.strip()
