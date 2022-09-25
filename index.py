@@ -9,41 +9,16 @@ import views.mainmenu
 import views.factions_menu
 import panou.ruby.ruby
 
-from functii.creier import get_nickname, login_panou_forced, dump_session_to_file
+from functii.creier import get_nickname
 from functii.debug import DEBUG_STATE, print_debug, send_error_message_to_error_channel, print_log
 from functii.discord import disable_not_working_buttons
-from functii.bools import BOT_TOKEN, is_dev
+from functii.bools import BOT_TOKEN
 from typing import List
 
 # If 'test_guilds' param isn't specified, the commands are registered globally.
 # Global registration takes up to 1 hour.
 
 bot = commands.Bot(command_prefix=commands.when_mentioned)
-
-@bot.command()
-async def reset(ctx):
-    if not is_dev(ctx.author.id):
-        return
-
-    var = is_dev(ctx.author.id)
-    await ctx.send(f"{var}, {ctx.author.id}, running the commmand.")
-    with requests.Session() as s:
-        login_panou_forced(s)
-        dump_session_to_file(s, "session.pkl")
-    await ctx.send("Succesfully ran the command. Dumped the session to file.")
-
-@bot.command()
-async def riperrors(ctx):
-    if not is_dev(ctx.author.id):
-        return
-
-    var = is_dev(ctx.author.id)
-    await ctx.send(f"{var}, {ctx.author.id}, running the commmand.")
-    channels = await ctx.guild.fetch_channels()
-    for channel in channels:
-        if channel.name == "error":
-            await channel.delete()
-
 
 @bot.slash_command(
     name="ping",

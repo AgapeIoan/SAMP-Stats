@@ -14,5 +14,5 @@ LOGIN_PASSWORD = config["LOGIN_PASSWORD"]
 USER_IDENTIFIER = config["USER_IDENTIFIER"]
 USER_TOKEN = config["USER_TOKEN"]
 
-def is_dev(user_id):
-    return user_id == DEV_ID
+def is_dev(ctx):
+    return ctx.author.id == DEV_ID
