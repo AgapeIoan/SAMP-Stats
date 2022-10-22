@@ -36,6 +36,7 @@ class Admins(commands.Cog):
         for channel in channels:
             if channel.name == "error":
                 await channel.delete()
+                
         await ctx.send("Succesfully ran the command. Deleted the error channels.")
 
     @commands.command()

@@ -39,6 +39,7 @@ async def get_clan_members(soup):
     ]
     data2 = f2[0].find_all('tr')
     online_statuses = []
+    hrefs = []
     for tr in data2[1:]:
         if tr.find('i', {'class': 'fa fa-circle text-green'}):
             online_statuses.append("Online")
@@ -46,9 +47,13 @@ async def get_clan_members(soup):
             online_statuses.append("Offline")
         else:
             online_statuses.append("Unknown")
+
+        # get href
+        hrefs.append(tr.find('a').get('href'))
     
-    for on, player in zip(online_statuses, data[1:]):
+    for on, player, href in zip(online_statuses, data[1:], hrefs):
         player[5] = on
+        player.append(href)
 
     # [['7', ' AgapeIoan', '$12,569,002', '1225', '00:00', 'Offline (nu ma asteptam la altceva)']]
     # Rank, Name, Money, Days, Activity, Online status
@@ -113,3 +118,15 @@ async def get_clan_logs_snippet(soup):
         logs.append(log.strip())
     
     return logs
+
+def clan_veh_list_counter(list_of_lists):
+    # Counts the number of list occurences and returns it in a dict
+    dict_list = {}
+    for veh in list_of_lists:
+        # ID_Name_Rank
+        name = f"{veh[0]}_{veh[1]}_{veh[2]}"
+        if name not in dict_list:
+            dict_list[name] = 0
+        dict_list[name] += 1
+
+    return dict_list

@@ -42,7 +42,6 @@ class Crons(commands.Cog):
                     # ['85', 'Agency 510', 'A5', '71/150', 'in 52 days']
                     print_debug(clan)
                     clan_dict[int(clan[0])] = {"name": clan[1], "tag": clan[2], "members": clan[3], "days_left": int(clan[4].split(" ")[1])}
-                
         print_debug("Fetched clan list")
 
     @tasks.loop(seconds=3600)
