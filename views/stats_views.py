@@ -8,7 +8,7 @@ from functii.discord import disable_not_working_buttons
 from functii.samp import create_car_embed, create_fh_embed, format_car_data, format_faction_history_data, \
     format_biz_data, create_biz_embed, get_car_category, get_car_emoji_by_category
 
-faction_emojis = panou.ruby.ruby.load_json("storage/factions/faction_emojis.json")
+FACTION_EMOJIS = panou.ruby.ruby.load_json("storage/factions/faction_emojis.json")
 
 class PropertiesMenu(disnake.ui.Select):
     message: disnake.Message
@@ -141,7 +141,7 @@ class FactionHistory(disnake.ui.Select):
         for i in self.fh[(self.numar_pagina - 1) * 23:(self.numar_pagina * 23)]:
             aux = i.copy()
             fh_name, fh_specs = format_faction_history_data(aux)
-            emoji = faction_emojis[fh_name[fh_name.find("|") + 2:]]
+            emoji = FACTION_EMOJIS[fh_name[fh_name.find("|") + 2:].lower()]
             if fh_name in _fh_names:
                 fh_name = fh_name + "!"*_fh_names.count(fh_name)
             _fh_names.append(fh_name)
