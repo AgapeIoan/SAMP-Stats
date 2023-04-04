@@ -41,8 +41,7 @@ async def stats(inter, nickname):
     try:
         await inter.response.defer()
     except disnake.errors.NotFound:
-        print_debug("DEFER ERROR !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        # TODO #16 Bug mult prea dubios la response.defer()
+        pass
 
     try:
         print_debug(f"Getting za data for {nickname}")

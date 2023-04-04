@@ -81,7 +81,6 @@ class FactionMembers(disnake.ui.Select):
         options = [disnake.SelectOption(label='Inapoi', description='Reveniti la pagina anterioara', emoji='⬅️'),] if numar_pagina > 1 else []
 
         for member in self.members[(self.numar_pagina - 1) * 23:(self.numar_pagina * 23)]:
-            # TODO Aranjat frumos datele
             options.append(disnake.SelectOption(label=member[0], description=f"{member[1]} | {member[2]}"))
         
         if self.members[(self.numar_pagina * 23):]:
@@ -101,14 +100,13 @@ class FactionMembers(disnake.ui.Select):
                 view=FactionMembersView(self.members, self.numar_pagina + 1))
         else:
             await interaction.response.edit_message(content=str(member))
-########################
+
 class MainMenu(disnake.ui.View):
     message: disnake.Message
     original_author: disnake.User
     embed: disnake.Embed
 
     def __init__(self, faction_name: str):
-        # TODO #26 Maybe maybe dam reset la timeout la fiecare interactiune (apasare de buton, dropdown si ce o mai fi)
         super().__init__(timeout=400.0)
         self.faction_name = faction_name
         self.clan_embed = None
@@ -128,10 +126,8 @@ class MainMenu(disnake.ui.View):
                     emoji="🔒"
                 )
         for i in self.children[:2]:
-            # i.style = disnake.ButtonStyle.red
             i.disabled = True
 
-        # make sure to update the message with the new buttons
         await self.message.edit(content="**🔒 Butoanele au fost dezactivate datorita inactivitatii!**", view=self)
         try:
             await asyncio.sleep(60)
@@ -140,9 +136,6 @@ class MainMenu(disnake.ui.View):
             pass
 
     async def interaction_check(self, interaction):
-        # print_debug(f"{interaction.author.id} != {self.original_author.id}")
-        # print_debug(interaction.author.id != self.original_author.id)
-
         if interaction.author.id == self.original_author.id:
             return True
 
@@ -158,27 +151,20 @@ class MainMenu(disnake.ui.View):
         button.disabled = True
         await interaction.response.edit_message(embed=self.embed, view=self)
 
-    # @disnake.ui.button(style=disnake.ButtonStyle.green, label="Aplicatii", custom_id="aplicatii_button", row=0)
-    # async def aplicatii(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-    #     pass
-
 class FactionMenuView(disnake.ui.View):
     def __init__(self, soup, index):
         super().__init__()
 
-        # Adds the dropdown to our view object.
         self.add_item(FactionMenu(soup, index))
 
 class FactionMenuMainView(disnake.ui.View):
     def __init__(self, soup):
         super().__init__()
 
-        # Adds the dropdown to our view object.
         self.add_item(FactionMenuMain(soup))
 
 class FactionMembersView(disnake.ui.View):
     def __init__(self, members, numar_pagina=1):
         super().__init__()
 
-        # Adds the dropdown to our view object.
         self.add_item(FactionMembers(members, numar_pagina))

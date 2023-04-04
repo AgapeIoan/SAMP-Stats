@@ -14,7 +14,6 @@ class MainMenu(disnake.ui.View):
     original_author: disnake.User
 
     def __init__(self, soup: str):
-        # TODO #26 Maybe maybe dam reset la timeout la fiecare interactiune (apasare de buton, dropdown si ce o mai fi)
         super().__init__(timeout=600.0)
         self.soup = soup
         self.clan_embed = None
@@ -33,10 +32,8 @@ class MainMenu(disnake.ui.View):
                     emoji="🔒"
                 )
         for i in self.children[:6]:
-            # i.style = disnake.ButtonStyle.red
             i.disabled = True
 
-        # make sure to update the message with the new buttons
         await self.message.edit(content="**🔒 Butoanele au fost dezactivate datorita inactivitatii!**", view=self)
         try:
             await asyncio.sleep(60)
@@ -45,9 +42,6 @@ class MainMenu(disnake.ui.View):
             pass
 
     async def interaction_check(self, interaction):
-        # print_debug(f"{interaction.author.id} != {self.original_author.id}")
-        # print_debug(interaction.author.id != self.original_author.id)
-
         if interaction.author.id == self.original_author.id:
             return True
 
@@ -66,8 +60,6 @@ class MainMenu(disnake.ui.View):
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Vehicles", custom_id="vehicles_button", row=1)
     async def vstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
-        # await enable_buttons(self)
-        # button.disabled = True
         view = views.stats_views.VehiclesMenuView(soup=self.soup, numar_pagina=1, original_author=self.original_author, message=self.message)
         await interaction.response.edit_message(content="**Selecteaza o masina:**", view=view, embed=None)
 
@@ -82,8 +74,6 @@ class MainMenu(disnake.ui.View):
     async def fhstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):
         view = views.stats_views.FactionHistoryView(soup=self.soup, numar_pagina=1, original_author=self.original_author, message=self.message)
         await interaction.response.edit_message(content="**Lista factiuni:**", view=view, embed=None)
-
-    # TODO #39 Maybe meniu de outfits?
 
     @disnake.ui.button(style=disnake.ButtonStyle.primary, label="Faction Stats", custom_id="faction_stats_button", row=0)
     async def fstats(self, button: disnake.ui.Button, interaction: disnake.MessageInteraction):

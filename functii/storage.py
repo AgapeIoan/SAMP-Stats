@@ -14,33 +14,3 @@ with open(storage + 'vehicles/vehicle_custom_emojis.json', 'r', encoding='utf-8'
 
 status_aplicatii_factiuni = []
 clan_dict = {}
-
-# {
-#     "factiune" : [
-#     "Los Santos Police Department",
-# "Federal Bureau of Investigation",
-# "National Guard",
-# "Los Aztecas",
-# "Grove Street",
-# "Crips Gang",
-# "Taxi Las Venturas",
-# "Las Venturas Police Department",
-# "News Reporters",
-# "Ballas",
-# "Hitman",
-# "School Instructors LV",
-# "Taxi Los Santos",
-# "Paramedic Department LV",
-# "Red Dragon Triads",
-# "The Russian Mafia",
-# "Taxi San Fierro",
-# "San Fierro Police Department",
-# "Paramedic Department LS",
-# "San Fierro Rifa",
-# "The Italian Mafia",
-# "School Instructors SF",
-# "Da Nang Boys",
-# "Tow Car Company LS",
-# "Tow Car Company LV",
-# "Paramedic Department SF"]
-# }

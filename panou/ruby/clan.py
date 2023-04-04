@@ -120,7 +120,6 @@ async def get_clan_logs_snippet(soup):
     return logs
 
 def clan_veh_list_counter(list_of_lists):
-    # Counts the number of list occurences and returns it in a dict
     dict_list = {}
     for veh in list_of_lists:
         # ID_Name_Rank

@@ -33,8 +33,6 @@ def creation_date(path_to_file):
     try:
         return stat.st_birthtime
     except AttributeError:
-        # We're probably on Linux. No easy way to get creation dates here,
-        # so we'll settle for when its content was last modified.
         return stat.st_mtime
 
 def get_profile_data(soup, f2_index: int):
@@ -120,10 +118,6 @@ def get_nickname(soup):
     nickname_ruby = nickname_ruby[0].nextSibling.strip()
 
     return nickname_ruby or f3[0].findAll('a', {'data-toggle': 'tooltip'})[0].text.strip() # or nickname_jade
-    # Puteam salva nickname_jade intr-o variabila si sa compar 2 variabile frumos la return insaaa
-    # nickname_ruby va fi mereu gasit, nickname jade o sa dea IndexError si trebuie obligatoriu inca o conditie
-    # sau un try except si ar fi fost mai spachetti cod-ul in caz ca mergeam pe ruta asta
-    # As fi putut scapa si de nickname_ruby insa deja era prea lung return-ul
 
 def get_server_provenienta(soup):
     f3 = soup.findAll('h3', {'class': 'profile-username'})

@@ -61,7 +61,6 @@ class AplicatiiList(disnake.ui.Select):
                 view=AplicatiiListView(self.soup, self.numar_pagina + 1, self.aplicants, self.original_author, self.message, self.title_placeholder))
         else:
             for i in self.aplicants:
-                # print(i)
                 if i[1] == aplicant_name:
                     await interaction.response.defer()
                     temp_soup = await panou.ruby.ruby.get_panel_data(aplicant_name)
@@ -106,10 +105,8 @@ class AplicatiiMenu(disnake.ui.View):
                     emoji="🔒"
                 )
         for i in self.children[:6]:
-            # i.style = disnake.ButtonStyle.red
             i.disabled = True
 
-        # make sure to update the message with the new buttons
         await self.message.edit(content="**🔒 Butoanele au fost dezactivate datorita inactivitatii!**", view=self)
         try:
             await asyncio.sleep(60)

@@ -142,7 +142,6 @@ class ClanMembers(disnake.ui.Select):
         options = [disnake.SelectOption(label='Inapoi', description='Reveniti la pagina anterioara', emoji='⬅️'),] if numar_pagina > 1 else []
 
         for member in self.members[(self.numar_pagina - 1) * 23:(self.numar_pagina * 23)]:
-            # TODO Aranjat frumos datele
             options.append(disnake.SelectOption(label=member[1], description=f"{member[0]} | {member[2]}", emoji="🧑")) # TODO Emojis per rank
         
         if self.members[(self.numar_pagina * 23):]:

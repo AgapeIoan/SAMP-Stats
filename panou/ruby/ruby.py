@@ -12,18 +12,13 @@ from functii.creier import scrape_panou, get_nickname, login_panou, este_player_
     get_profile_data, headers
 from functii.debug import print_debug
 
-
-
-# load json file
 def load_json(file_name):
     with open(file_name, 'r', encoding='utf-8') as f:
         return json.load(f)
 
-
 def dump_json(file_name, data):
     with open(file_name, 'w') as f:
         json.dump(data, f, indent=4)
-
 
 FACTION_NAMES = load_json('storage/factions/factiuni.json')
 FACTION_CATEGORIES = load_json('storage/factions/faction_categories.json') # Contine emojis pe fiecare categorie si
@@ -57,8 +52,7 @@ async def get_staff_list():
                     continue
                 staff[staff_index].append(date)
             
-            # Nush si nici nu vreau sa stiu cum drq a aparut bug de cere sa fac treaba asta ca sa nu fut outputu
-            staff[0], staff[1], staff[2], staff[3] = staff[3], staff[0], staff[1], staff[2]
+            staff[0], staff[1], staff[2], staff[3] = staff[3], staff[0], staff[1], staff[2] # bruh
             return staff, online_statuses
 
 async def get_online_players():
@@ -79,17 +73,12 @@ async def get_panel_data(player):
             await login_panou(session)
         url = f'https://rubypanel.nephrite.ro/profile/{player}'
         print_debug("Requesting: " + url)
-        # Async request
         async with session.get(url) as response:
-            # Parse html
             soup = BeautifulSoup(await response.text(), 'html.parser')
         print_debug("Done.")
 
         if not get_nickname(soup):
             return None
-
-        # for cookie in session.cookie_jar:
-        #     print(cookie)
 
         return soup
 
@@ -105,7 +94,6 @@ async def get_faction_name(soup):
 async def fstats(soup):
     faction = await get_faction_name(soup)
     for i in FACTION_NAMES:
-        # print_debug(f"{i.lower()} in {faction.lower()}")
         if i.lower() in faction.lower():
             faction = i
             faction_index = FACTION_NAMES.index(i)
@@ -166,7 +154,6 @@ async def fstats(soup):
             print(nickname, rank, fw, days, last_online, raport_formated, reset)
             culoare_player_online = 0x00ff00 if este_player_online(soup) else 0xff0000
             to_send = f"Rank: **{rank}**\nFW: **{fw}**\nMembru de: **{days}**"
-            # to_send += f"\nLast online: {last_online}"
             for i in raport_formated:
                 i = i.capitalize().replace(': ', ': **') + "**"
                 to_send += f"\n{i}"
@@ -195,7 +182,6 @@ async def stats(soup):
 
     try:
         ban_string = ban_status_raw[0].findAll('h4')
-        # TODO De infrumusetat urm secventa de linii de cod cand n-am cf
         detrmban = ban_string[0].nextSibling
         motiv_string_lista = []
         for _ in range(5):
@@ -203,9 +189,6 @@ async def stats(soup):
             detrmban = detrmban.nextSibling
     except IndexError:
         motiv_string_lista = []
-
-    # nickname_player, player_online, server_de_provenienta = este_player_online(
-    #     str(user_name_panou), player)
 
     nickname_player = get_nickname(soup)
     player_online = "online" if este_player_online(soup) else "offline"
@@ -272,8 +255,6 @@ def extract_cars(f2):
                     aux_list.append(aux_2)
             lista_de_trimis.append(aux_list)
 
-    # for i in lista_de_trimis:
-    #     print(i)
     return lista_de_trimis
 
 
@@ -371,17 +352,11 @@ def bstats_analyzer(soup):
             bizes_data.append({apartament[1][:-3]: [apartament_name, "ID " + apartament_id, apartament_type,
                                                     apartament_door, apartament_floor]})
 
-    # for i in bizes_data:
-    #     print_debug(i)
     return bizes_data
 
 
 def bstats(soup):
     f2 = soup.findAll('div', {'class': 'tab-pane'}, {'id': 'properties'})
-
-    # for i in f2:
-    #     with open(f"skema{f2.index(i)}.txt", "w+", encoding='utf-8') as f:
-    #         f.write(str(i))
     data = [
         [td.text for td in tr.find_all('td')]
         for table in [f2[5]] for tr in table.find_all('tr')
@@ -399,8 +374,6 @@ def get_faction_names(soup):
 
     faction_data = []
     for i in data[1:]:
-        # ['1', 'Los Santos Police Department', '37/40 members and 4 admins '
-        # , 'members / logs / applications / complaints', ' applications closed or you are not logged in ', 'level 15 ']
         print_debug(i)
         try:
             faction_name = i[0]
@@ -517,9 +490,6 @@ async def get_clan_list():
 
 
 async def get_clan_id_by_name(clan_name):
-    # TODO #21: Se poate folosi mai putin functia asta, anume
-    # cand se face scrape-ul pentru get_clan_name, putem obtine href cu clan_url si astfel nu mai este nevoie sa facem
-    # skeme cu get_clan_list()-ul
     clan_dict = await get_clan_list()
     for i in clan_dict:
         if clan_dict[i][0] == clan_name:
@@ -558,24 +528,14 @@ async def get_clan_data_by_id(clan_id, pozitie, forced=False):
         print_debug(f"Getting clan data from {url}...")
         async with session.get(url) as response:
             soup = BeautifulSoup(await response.text(), 'html.parser')
-        # TODO Continuat comanda
-        # Fac sa acceseze pe id care il luam ez din lista clanuri, dupa fac functii pentru vazut membrii, masini, etc.
-        # Maybe fac sa vezi si logs clan?
-        # Sa fac drq si baza pentru parcurs pagini in Select Menus  |   EDIT: Doneee
-        # Sa se actualizeze cache clan de fiecare data cand folosesc /clans (o sa ajute la comanda /stats unde stim ca mereu clanul ala exista)
-        # Pentru /clans folosesc paramatru ca search, sa zica omul primele litere din clan sau clantag, si in lista o sa se returneze rezultate
-
         f2 = soup.findAll('div', cols[pozitie])
         data = [
             [td.text for td in tr.find_all('td')]
             for table in f2 for tr in table.find_all('tr')
         ]
-        # TODO Sa facem treaba de mai jos doar in cazul 'middle'
         hrefs = [a.get('href') for a in soup.find_all('a')]
         nicknames = []
         for href in hrefs:
-            # Get NICKNAME from the string below
-            # https://rubypanel.nephrite.ro/profile/NICKNAME
             if "https://rubypanel.nephrite.ro/profile/" in href:
                 nickname = href[38:]
                 nicknames.append(nickname)
@@ -588,6 +548,5 @@ async def get_clan_data_by_id(clan_id, pozitie, forced=False):
 async def get_player_clan_data(data, nickname_original, nicknames):
     data.pop(0)
     for i in nicknames:
-        # ['7', ' Nickname', '$12,569,002', '937', '00:00', '']
         if i == nickname_original:
             return data[nicknames.index(i)]

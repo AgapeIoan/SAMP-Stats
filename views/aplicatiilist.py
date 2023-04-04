@@ -19,8 +19,6 @@ class AplicatiiList(disnake.ui.Select):
         options = [
             disnake.SelectOption(label='Inapoi', description='Reveniti la meniul principal', emoji='⬅️'),
         ]
-        # https://cdn.discordapp.com/emojis/897425271475560481.png?size=44
-        # https://cdn.discordapp.com/emojis/913364393385934869.png?size=96
         for i in self.cars[(self.numar_pagina - 1) * 23:(self.numar_pagina * 23)]:
             aux = i.copy()
             car_name, car_specs = format_car_data(aux)
@@ -28,17 +26,9 @@ class AplicatiiList(disnake.ui.Select):
                 # In caz de EMS sau ceva descriere lunga idk, edge cases mai pe scurt
                 car_specs = car_specs[:95] + "..."
 
-            # TODO: #9 Fix EMS edge cases https://prnt.sc/20hc3uf
-
-            # Za name alternative: emoji="<:emoji:897425271475560481>"
-            # options.append(disnake.SelectOption(label=car_name, description=car_specs, emoji="<:emoji:913364393385934869>"))
             categorie = get_car_category(car_name)
-            # car_emoji = "❗" if not categorie else get_car_emoji_by_category(categorie)
             car_emoji = "❗" if not categorie else get_car_emoji_by_category(categorie)
             options.append(disnake.SelectOption(label=car_name, description=car_specs, emoji=car_emoji))
-
-        # TODO De pasat erori in callback pentru a putea folosi await-ul
-        # await send_error_message_to_error_channel(self.bot, "VehiclesMenu: " + str(self.cars))
 
         if self.cars[(self.numar_pagina * 23):]:
             options.append(
@@ -69,7 +59,6 @@ class AplicatiiList(disnake.ui.Select):
                     embed = create_car_embed(i, nickname=get_nickname(self.soup))
                     embed.color = 0x00ff00 if este_player_online(self.soup) else 0xff0000
 
-            # TODO: #2 In momentul in care alegem masina, sa se faca optiunea ca default ca sa apara in ui.Select
             await interaction.response.edit_message(embed=embed)
 
 class VehiclesMenuView(disnake.ui.View):
