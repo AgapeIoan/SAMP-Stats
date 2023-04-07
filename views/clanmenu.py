@@ -105,8 +105,12 @@ class ClanVehicles(disnake.ui.Select):
         for vehicle in list(veh_count)[(self.numar_pagina - 1) * 23:(self.numar_pagina * 23)]:
             veh_temp = vehicle.split("_")
             print_debug(veh_temp)
-            za_emoji = DICT_EMOJIS_CUSTOM_VEHICLES[veh_temp[1].lower()]
-            options.append(disnake.SelectOption(label=veh_temp[1], description=f"ID: {veh_temp[0]} | Rank {veh_temp[2]} | {veh_count[vehicle]} pcs", emoji=f"<:emoji:{za_emoji}>"))
+            za_emoji = DICT_EMOJIS_CUSTOM_VEHICLES.get(veh_temp[1].lower())
+            if not za_emoji:
+                emoji = "🚗"
+            else:
+                emoji = f"<:emoji:{za_emoji}>"
+            options.append(disnake.SelectOption(label=veh_temp[1], description=f"ID: {veh_temp[0]} | Rank {veh_temp[2]} | {veh_count[vehicle]} pcs", emoji=emoji))
             # TODO Emojis pentru fiecare masina pe dropdown lista de vehs clan
 
         if self.vehicles[(self.numar_pagina * 23):]:
